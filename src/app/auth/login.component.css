@@ -1,0 +1,21 @@
+.wrapper{
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content:center;
+  align-items:center;
+}
+
+
+mat-card {
+  width: 30%;
+  height:fit-content;
+  background-color: rgb(255, 255, 195)
+}
+
+mat-form-field,
+textarea{
+  width: 100%;
+}
+
+

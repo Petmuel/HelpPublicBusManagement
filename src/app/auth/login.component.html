@@ -1,0 +1,38 @@
+<div class="wrapper">
+  <mat-card>
+    <h3>Admin Login</h3>
+    <form #loginForm="ngForm">
+      <mat-form-field>
+        <input
+          matInput
+          name="email"
+          type="email"
+          placeholder="E-mail"
+          #emailInput = "ngModel"
+          ngModel
+          required
+          email>
+          <mat-error *ngIf="emailInput.invalid">Please enter valid email</mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input
+          matInput
+          name="password"
+          type="password"
+          placeholder="password"
+          ngModel
+          #passwordInput = "ngModel"
+          required>
+          <mat-error *ngIf="passwordInput.invalid">Please enter valid password</mat-error>
+      </mat-form-field>
+
+      <button
+        mat-raised-button
+        color="accent"
+        type="submit"
+        routerLink="/manage">Login
+      </button>
+    </form>
+  </mat-card>
+</div>
