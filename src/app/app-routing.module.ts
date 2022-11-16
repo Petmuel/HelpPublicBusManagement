@@ -14,7 +14,8 @@ const routes: Routes = [
     {path:'buses', component: BusesComponent},
     {path:'busDriver', component: BusDriverComponent}
   ]},
-  {path: 'login', component: LoginComponent}
+  {path: 'login', component: LoginComponent},
+  {path: '', redirectTo: 'login', pathMatch: 'full'},
 ];
 
 @NgModule({

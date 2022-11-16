@@ -22,6 +22,7 @@ import { BusesComponent } from './component/dashboard/buses/buses.component';
 import { BusDriverComponent } from './component/dashboard/bus-driver/bus-driver.component';
 import { AddBusrouteComponent } from './component/dashboard/bus-route/add-busroute/add-busroute.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { DashboardComponent } from './component/dashboard/dashboard.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     SidebarComponent,
     BusesComponent,
     BusDriverComponent,
-    AddBusrouteComponent
+    AddBusrouteComponent,
+    DashboardComponent
   ],
   imports: [
     CommonModule,
