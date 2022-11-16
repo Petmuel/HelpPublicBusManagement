@@ -105,7 +105,7 @@ export class BusRouteComponent implements OnInit {
   }
 
   viewBusRoute(row:any){
-    window.open('/bus-route/'+row.id, '_blank');
+    window.open('/dashboard/busRoute/'+row.id, '_blank');
   }
 
   openSnackBar(message: string, action: string) {
