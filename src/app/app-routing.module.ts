@@ -5,17 +5,21 @@ import { BusRouteComponent } from './component/dashboard/bus-route/bus-route.com
 import { BusesComponent } from './component/dashboard/buses/buses.component';
 import { BusDriverComponent } from './component/dashboard/bus-driver/bus-driver.component';
 import { ViewBusRouteComponent } from './component/dashboard/bus-route/view-bus-route/view-bus-route.component';
+import { DashboardComponent } from './component/dashboard/dashboard.component';
 
 const routes: Routes = [
-  {path: 'dashboard', children:[
-    {path: '', redirectTo: 'busRoute', pathMatch: 'full'},
+  {path: 'dashboard',
+    component: DashboardComponent,
+    children:[
+    {path: 'dashboard/busRoute', redirectTo: 'busRoute', pathMatch: 'full'},
     {path:'busRoute', component: BusRouteComponent},
     {path:'busRoute/:id', component: ViewBusRouteComponent},
     {path:'buses', component: BusesComponent},
     {path:'busDriver', component: BusDriverComponent}
-  ]},
+  ]
+  },
   {path: 'login', component: LoginComponent},
-  {path: '', redirectTo: 'login', pathMatch: 'full'},
+  {path: '**', redirectTo: 'login', pathMatch: 'full'},
 ];
 
 @NgModule({
