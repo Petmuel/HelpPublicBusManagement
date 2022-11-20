@@ -8,7 +8,14 @@ import { CommonModule } from '@angular/common';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './shared/header/header.component';
 import { LoginComponent } from './auth/login.component';
-
+import { BusRouteComponent } from './component/dashboard/bus-route/bus-route.component';
+import { SidebarComponent } from './component/dashboard/sidebar/sidebar.component';
+import { BusesComponent } from './component/dashboard/buses/buses.component';
+import { BusDriverComponent } from './component/dashboard/bus-driver/bus-driver.component';
+import { AddBusrouteComponent } from './component/dashboard/bus-route/add-busroute/add-busroute.component';
+import { DashboardComponent } from './component/dashboard/dashboard.component';
+import { ViewBusRouteComponent } from './component/dashboard/bus-route/view-bus-route/view-bus-route.component';
+import { DeleteBusRouteComponent } from './component/dashboard/bus-route/delete-bus-route/delete-bus-route.component';
 //angular materials (design & styling)
 import { MaterialModule } from './material/material/material.module';
 
@@ -16,13 +23,7 @@ import { MaterialModule } from './material/material/material.module';
 import {AngularFireModule } from '@angular/fire/compat';
 import {AngularFirestoreModule} from '@angular/fire/compat/firestore';
 import { environment } from 'src/environments/environment';
-import { BusRouteComponent } from './component/dashboard/bus-route/bus-route.component';
-import { SidebarComponent } from './component/dashboard/sidebar/sidebar.component';
-import { BusesComponent } from './component/dashboard/buses/buses.component';
-import { BusDriverComponent } from './component/dashboard/bus-driver/bus-driver.component';
-import { AddBusrouteComponent } from './component/dashboard/bus-route/add-busroute/add-busroute.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { DashboardComponent } from './component/dashboard/dashboard.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,9 @@ import { DashboardComponent } from './component/dashboard/dashboard.component';
     BusesComponent,
     BusDriverComponent,
     AddBusrouteComponent,
-    DashboardComponent
+    DashboardComponent,
+    ViewBusRouteComponent,
+    DeleteBusRouteComponent
   ],
   imports: [
     CommonModule,
