@@ -19,7 +19,6 @@ export class ViewBusRouteComponent implements OnInit {
   ngOnInit(): void {
     this.getBusRouteById();
   }
-
   getBusRouteById(){
     this.dataApi.getBusRouteById(this.id).subscribe(res=>{
       this.busRouteObj=res;

@@ -20,9 +20,18 @@ export class AuthService {
     this.angularFireAuth
     .signInWithEmailAndPassword(email, password)
     .then(res => {
-      this.userData = res;
-      this.userDataUpdate.next(this.userData);
-      this.router.navigate(["dashboard/busRoute"]);
+      this.angularFireAuth.authState.subscribe(user=>{
+        if(user){
+          this.userData = res;
+          this.userDataUpdate.next(this.userData);
+          this.router.navigate(["dashboard"]);
+        }
+      })
+    })
+    .catch( error=>{
+      setTimeout(()=>{
+        window.alert('Invalid password/email, please try again');
+      }, 100);
     })
   }
 
@@ -30,4 +39,7 @@ export class AuthService {
     return this.userDataUpdate;
   }
 
+  logout(){
+    this.router.navigate([''])
+  }
 }

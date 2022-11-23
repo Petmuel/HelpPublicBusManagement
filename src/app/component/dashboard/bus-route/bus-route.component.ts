@@ -8,7 +8,7 @@ import { BusRoute } from 'src/app/shared/model/bus-route';
 import { DataService } from 'src/app/shared/service/data.service';
 import { AddBusrouteComponent } from './add-busroute/add-busroute.component';
 import { DeleteBusRouteComponent } from './delete-bus-route/delete-bus-route.component';
-
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-bus-route',
   templateUrl: './bus-route.component.html',
@@ -24,7 +24,8 @@ export class BusRouteComponent implements OnInit {
 
   constructor(public dialog: MatDialog,
     private dataApi: DataService,
-    private _snackBar: MatSnackBar) { }
+    private _snackBar: MatSnackBar,
+    private router: Router) { }
 
   ngOnInit(): void {
     this.getAllBusRoutes();
@@ -42,7 +43,7 @@ export class BusRouteComponent implements OnInit {
     const dialogRef = this.dialog.open(AddBusrouteComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(data=>{
       if(data){
-        this.dataApi.addBusRoute(data);
+        this.dataApi.addBusRoute(data); //data service
         this.openSnackBar("Registration of bus route is successful.", "OK")
       }
     })
@@ -65,7 +66,7 @@ export class BusRouteComponent implements OnInit {
     dialogRef.afterClosed().subscribe(data=>{
       if(data){
         this.dataApi.updateBusRoute(data);
-        this.openSnackBar("Bus route is udpated successfully.", "OK")
+        this.openSnackBar("Bus route is updated successfully.", "OK")
       }
     })
 
@@ -105,7 +106,7 @@ export class BusRouteComponent implements OnInit {
   }
 
   viewBusRoute(row:any){
-    window.open('/dashboard/busRoute/'+row.id, '_blank');
+    this.router.navigateByUrl('/dashboard/busRoute/'+row.id);
   }
 
   openSnackBar(message: string, action: string) {

@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore'
-import { BusRouteComponent } from 'src/app/component/dashboard/bus-route/bus-route.component';
 @Injectable({
   providedIn: 'root'
 })

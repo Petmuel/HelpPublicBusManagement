@@ -1,16 +1,9 @@
-
-<mat-card>
+<h4 class="m-3">Bus Route Information</h4>
+<mat-card class="m-3">
   <mat-card-title>{{busRouteObj?.routeNo}}</mat-card-title>
-  <mat-card-subtitle>{{busRouteObj?.description}}</mat-card-subtitle>
-  <mat-card-actions>
-    <mat-divider></mat-divider>
-    <div class="row pt-3">
-      <div class="col-md-6">
-        <mat-card-content>
-          <span>Destination: </span>{{busRouteObj?.destination}}<br>
-          <span>Arrival: </span>{{busRouteObj?.arrival}}
-        </mat-card-content>
-      </div>
-    </div>
-  </mat-card-actions>
-  </mat-card>
+    <mat-card-subtitle>Destination: {{busRouteObj?.destination}}</mat-card-subtitle>
+    <mat-card-subtitle>Arrival: {{busRouteObj?.arrival}}</mat-card-subtitle>
+    <mat-card-subtitle>Description: {{busRouteObj?.description}}</mat-card-subtitle>
+</mat-card>
+
+
