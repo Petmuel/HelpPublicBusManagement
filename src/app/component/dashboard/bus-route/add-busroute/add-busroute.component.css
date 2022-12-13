@@ -1,7 +1,12 @@
 mat-dialog-content{
   width: 600px;
+  text-align: center;
 }
 
 .mat-grid-list{
   overflow:hidden;
+}
+
+mat-form-field{
+  width: 100%;
 }

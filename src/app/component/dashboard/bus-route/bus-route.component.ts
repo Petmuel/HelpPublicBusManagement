@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { BusRoute } from 'src/app/shared/model/bus-route';
@@ -25,7 +25,8 @@ export class BusRouteComponent implements OnInit {
   constructor(public dialog: MatDialog,
     private dataApi: DataService,
     private _snackBar: MatSnackBar,
-    private router: Router) { }
+    private router: Router,
+    public snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
     this.getAllBusRoutes();
@@ -44,7 +45,9 @@ export class BusRouteComponent implements OnInit {
     dialogRef.afterClosed().subscribe(data=>{
       if(data){
         this.dataApi.addBusRoute(data); //data service
-        this.openSnackBar("Registration of bus route is successful.", "OK")
+        this.snackBar.open('Bus route is registered successfully.','OK',{
+          duration: 2000
+        });
       }
     })
 
@@ -66,7 +69,9 @@ export class BusRouteComponent implements OnInit {
     dialogRef.afterClosed().subscribe(data=>{
       if(data){
         this.dataApi.updateBusRoute(data);
-        this.openSnackBar("Bus route is updated successfully.", "OK")
+        this.snackBar.open('Bus route is updated successfully.','OK',{
+          duration: 2000
+        });
       }
     })
 
@@ -85,7 +90,9 @@ export class BusRouteComponent implements OnInit {
     dialogRef.afterClosed().subscribe(data=>{
       if(data){
         this.dataApi.deleteBusRoute(row.id);
-        this.openSnackBar("Bus route deleted successfully.", "OK")
+        this.snackBar.open('Bus route deleted successfully.','OK',{
+          duration: 2000
+        });
       }
     })
 

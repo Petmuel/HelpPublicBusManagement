@@ -15,4 +15,16 @@ table {
   width: 100%;
 }
 
+th{
+  font-weight: bold;
+  color: black;
+  font-size: 85%;
+}
+
+.mat-header-row{
+  background-color: rgb(221, 236, 255);
+}
+
+
+
 

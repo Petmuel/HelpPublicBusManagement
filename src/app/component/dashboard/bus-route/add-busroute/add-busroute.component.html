@@ -2,47 +2,48 @@
 <mat-divider></mat-divider>
 
 <mat-dialog-content [formGroup] = "form">
-  <mat-grid-list cols="2">
-    <mat-grid-tile>
-      <div>
-        <mat-form-field>
-          <mat-label>Route No.</mat-label>
-          <input matInput
-              placeholder="RouteNo"
-              formControlName="routeNo"
-              required>
-          <mat-error *ngIf="form.get('routeNo')?.invalid || form.get('routeNo')?.dirty || form.get('routeNo')?.touched">Enter the route number</mat-error>
-        </mat-form-field>
+  <mat-form-field>
+    <mat-label>Route No.</mat-label>
+    <input matInput
+        placeholder="RouteNo"
+        formControlName="routeNo"
+        required>
+    <mat-error *ngIf="form.get('routeNo')?.invalid || form.get('routeNo')?.dirty || form.get('routeNo')?.touched">Enter the route number</mat-error>
+  </mat-form-field>
 
-        <mat-form-field>
-          <mat-label>Description</mat-label>
-          <input matInput
-              placeholder="Description"
-              formControlName="description"
-              required>
-          <mat-error *ngIf="form.get('description')?.invalid || form.get('description')?.dirty || form.get('description')?.touched">Enter the description</mat-error>
-        </mat-form-field>
+  <mat-form-field>
+    <mat-label>Description</mat-label>
+    <input matInput
+        placeholder="Description"
+        formControlName="description"
+        required>
+    <mat-error *ngIf="form.get('description')?.invalid || form.get('description')?.dirty || form.get('description')?.touched">Enter the description</mat-error>
+  </mat-form-field>
 
-        <mat-form-field>
-          <mat-label>Destination</mat-label>
-          <input matInput
-              placeholder="Destination"
-              formControlName="destination"
-              required>
-          <mat-error *ngIf="form.get('destination')?.invalid || form.get('destination')?.dirty || form.get('destination')?.touched">Enter the destination</mat-error>
-        </mat-form-field>
+  <mat-form-field>
+    <mat-label>Destination</mat-label>
+    <input matInput
+        placeholder="Destination"
+        formControlName="destination"
+        required>
+    <mat-error *ngIf="form.get('destination')?.invalid || form.get('destination')?.dirty || form.get('destination')?.touched">Enter the destination</mat-error>
+  </mat-form-field>
 
-        <mat-form-field>
-          <mat-label>Arrival</mat-label>
-          <input matInput
-              placeholder="Arrival"
-              formControlName="arrival"
-              required>
-          <mat-error *ngIf="form.get('arrival')?.invalid || form.get('arrival')?.dirty || form.get('arrival')?.touched">Enter the arrival</mat-error>
-        </mat-form-field>
-      </div>
-    </mat-grid-tile>
-  </mat-grid-list>
+  <mat-form-field>
+    <mat-label>Arrival</mat-label>
+    <input matInput
+        placeholder="Arrival"
+        formControlName="arrival"
+        required>
+    <mat-error *ngIf="form.get('arrival')?.invalid || form.get('arrival')?.dirty || form.get('arrival')?.touched">Enter the arrival</mat-error>
+  </mat-form-field>
+
+  <!--mat-form-field>
+    Add a new bus stop
+    <button type="button" mat-raised-button color="accent"><mat-icon matTooltip="Add a new user">add</mat-icon></button>
+
+  </!--mat-form-field>
+  -->
 </mat-dialog-content>
 
 <div mat-dialog-actions>
