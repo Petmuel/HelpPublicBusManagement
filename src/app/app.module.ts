@@ -16,6 +16,7 @@ import { AddBusrouteComponent } from './component/dashboard/bus-route/add-busrou
 import { DashboardComponent } from './component/dashboard/dashboard.component';
 import { ViewBusRouteComponent } from './component/dashboard/bus-route/view-bus-route/view-bus-route.component';
 import { DeleteBusRouteComponent } from './component/dashboard/bus-route/delete-bus-route/delete-bus-route.component';
+import { MultiformsComponent } from './component/dashboard/bus-route/multiforms/multiforms.component';
 //angular materials (design & styling)
 import { MaterialModule } from './material/material/material.module';
 
@@ -24,6 +25,7 @@ import {AngularFireModule } from '@angular/fire/compat';
 import {AngularFirestoreModule} from '@angular/fire/compat/firestore';
 import { environment } from 'src/environments/environment';
 import { ReactiveFormsModule } from '@angular/forms';
+
 
 @NgModule({
   declarations: [
@@ -37,7 +39,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     AddBusrouteComponent,
     DashboardComponent,
     ViewBusRouteComponent,
-    DeleteBusRouteComponent
+    DeleteBusRouteComponent,
+    MultiformsComponent
   ],
   imports: [
     CommonModule,

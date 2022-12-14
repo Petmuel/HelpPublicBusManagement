@@ -44,6 +44,7 @@ export class BusRouteComponent implements OnInit {
     const dialogRef = this.dialog.open(AddBusrouteComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(data=>{
       if(data){
+        console.log(data);
         this.dataApi.addBusRoute(data); //data service
         this.snackBar.open('Bus route is registered successfully.','OK',{
           duration: 2000
@@ -53,6 +54,9 @@ export class BusRouteComponent implements OnInit {
 
   }
 
+  registerBusRoute(){
+    this.router.navigateByUrl('/dashboard/multiform')
+  }
   editBusRoute(row:any){
     if (row.id == null){
       return;
