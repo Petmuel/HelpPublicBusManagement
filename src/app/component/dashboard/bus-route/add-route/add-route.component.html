@@ -1,0 +1,78 @@
+ <div class="container" *ngIf="isListing2">
+    <form class="mat-elevation-z8" [formGroup]="routeRegister" (ngSubmit)="saveBusStop()">
+        <div class="text-center">
+            <h3 class="pt-3">Register Bus Route</h3>
+            <mat-form-field appearance="fill">
+              <mat-label>RouteNo</mat-label>
+              <input matInput placeholder="routeNo" formControlName="routeNo">
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+                <mat-label>description</mat-label>
+                <input matInput placeholder="description" formControlName="description">
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+                <mat-label>destination</mat-label>
+                <input matInput placeholder="destination" formControlName="destination">
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+                <mat-label>arrival</mat-label>
+                <input matInput placeholder="arrival" formControlName="arrival">
+            </mat-form-field>
+        </div>
+
+        <br>
+        <mat-divider></mat-divider>
+        <br>
+        <h3 class="text-center">Bus Stop Info</h3>
+        <div class="overflow">
+            <table formArrayName="busStops" style="margin:2%;width: 96%;" class="mat-table cdk-table mat-elevation-z8 table-bordered">
+                <thead class="text-center">
+                    <tr>
+                        <td>Name</td>
+                        <td>Address</td>
+                        <td>Longitude</td>
+                        <td>Latitude</td>
+                        <td>Action</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of allBusStops.controls; let i=index" [formGroupName]="i">
+                        <td>
+                            <input  class="form-control" formControlName="name">
+                        </td>
+                        <td>
+                            <input  class="form-control" formControlName="address">
+                        </td>
+                        <td>
+                            <input  class="form-control" formControlName="longitude">
+                        </td>
+                        <td>
+                            <input  class="form-control" formControlName="latitude">
+                        </td>
+                        <td>
+                            <a  mat-raised-button color="accent" (click)="removeBusStop(i)">Remove</a>
+                        </td>
+                    </tr>
+
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="5">
+                            <a mat-raised-button color="primary" (click)="addBusStops()">Add New (+) </a>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div style="padding: 1%">
+            <a mat-raised-button color="accent" routerLink="/dashboard/busRoute">Cancel</a> |
+            <button mat-raised-button color="primary">Save</button>
+        </div>
+      </form>
+
+ </div>
+

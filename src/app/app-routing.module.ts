@@ -7,6 +7,8 @@ import { BusDriverComponent } from './component/dashboard/bus-driver/bus-driver.
 import { ViewBusRouteComponent } from './component/dashboard/bus-route/view-bus-route/view-bus-route.component';
 import { DashboardComponent } from './component/dashboard/dashboard.component';
 import { MultiformsComponent } from './component/dashboard/bus-route/multiforms/multiforms.component';
+import { AddBusrouteComponent } from './component/dashboard/bus-route/add-busroute/add-busroute.component';
+import { AddRouteComponent } from './component/dashboard/bus-route/add-route/add-route.component';
 
 const routes: Routes = [
   {path: 'dashboard',
@@ -14,15 +16,17 @@ const routes: Routes = [
     children:[
     {path: 'dashboard/busRoute', redirectTo: 'busRoute', pathMatch: 'full'},
     {path:'busRoute', component: BusRouteComponent},
+    {path:'busRoute/create', component: AddRouteComponent},
+    {path:'edit/:id', component: AddRouteComponent},
     {path:'busRoute/:id', component: ViewBusRouteComponent},
     {path:'buses', component: BusesComponent},
     {path:'busDriver', component: BusDriverComponent},
-    {path: 'dashboard/multiform', redirectTo: 'multiform', pathMatch: 'full'},
+    {path: 'busRoute/multiform', redirectTo: 'multiform', pathMatch: 'full'},
     {path:'multiform', component: MultiformsComponent}
   ]
   },
   {path: 'login', component: LoginComponent},
-  {path: '**', redirectTo: 'login', pathMatch: 'full'},
+  {path: '**', redirectTo: 'login', pathMatch: 'full'}
 ];
 
 @NgModule({

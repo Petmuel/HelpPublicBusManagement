@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, DoCheck, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
@@ -14,11 +14,10 @@ import { Router } from '@angular/router';
   templateUrl: './bus-route.component.html',
   styleUrls: ['./bus-route.component.css']
 })
-export class BusRouteComponent implements OnInit {
+export class BusRouteComponent implements OnInit, DoCheck {
   busRoutesArr : BusRoute[] = [];
   displayedColumns: string[] = ['routeNo', 'description', 'destination', 'arrival', 'action'];
   dataSource!: MatTableDataSource<BusRoute>;
-
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -27,6 +26,36 @@ export class BusRouteComponent implements OnInit {
     private _snackBar: MatSnackBar,
     private router: Router,
     public snackBar: MatSnackBar) { }
+
+///////////////////////////
+ngDoCheck(): void {
+    let currenturl = this.router.url;
+    if (currenturl=='/dashboard/busRoute'){
+      this.islisting=true;
+    }
+    else{
+      this.islisting=false;
+    }
+  }
+  displayColumns:string[]=["name", "address", "longitude", "latitude", "action"];
+  islisting = true;
+  routedata!: MatTableDataSource<BusRoute>;
+
+  editRoute(row:any){
+    if (row.id == null){
+      return;
+    }
+    console.log(row.id)
+  }
+
+  registerBusRoute(){
+    this.router.navigateByUrl('/dashboard/multiform')
+  }
+
+  create(){
+    this.router.navigateByUrl('/dashboard/busRoute/create');
+  }
+///////////////////////////
 
   ngOnInit(): void {
     this.getAllBusRoutes();
@@ -54,9 +83,6 @@ export class BusRouteComponent implements OnInit {
 
   }
 
-  registerBusRoute(){
-    this.router.navigateByUrl('/dashboard/multiform')
-  }
   editBusRoute(row:any){
     if (row.id == null){
       return;
@@ -113,6 +139,12 @@ export class BusRouteComponent implements OnInit {
       this.dataSource = new MatTableDataSource(this.busRoutesArr);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
+
+      /////////////////////
+      this.routedata = new MatTableDataSource(this.busRoutesArr);
+      this.routedata.paginator = this.paginator;
+      this.routedata.sort = this.sort;
+      ////////////////////
     })
   }
 

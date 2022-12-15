@@ -17,6 +17,8 @@ import { DashboardComponent } from './component/dashboard/dashboard.component';
 import { ViewBusRouteComponent } from './component/dashboard/bus-route/view-bus-route/view-bus-route.component';
 import { DeleteBusRouteComponent } from './component/dashboard/bus-route/delete-bus-route/delete-bus-route.component';
 import { MultiformsComponent } from './component/dashboard/bus-route/multiforms/multiforms.component';
+import { AddRouteComponent } from './component/dashboard/bus-route/add-route/add-route.component';
+
 //angular materials (design & styling)
 import { MaterialModule } from './material/material/material.module';
 
@@ -40,7 +42,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     DashboardComponent,
     ViewBusRouteComponent,
     DeleteBusRouteComponent,
-    MultiformsComponent
+    MultiformsComponent,
+    AddRouteComponent
   ],
   imports: [
     CommonModule,

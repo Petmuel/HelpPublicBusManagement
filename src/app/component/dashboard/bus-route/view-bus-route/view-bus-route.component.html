@@ -1,9 +1,12 @@
-<h4 class="m-3">Bus Route Information</h4>
-<mat-card class="m-3">
-  <mat-card-title>{{busRouteObj?.routeNo}}</mat-card-title>
-    <mat-card-subtitle>Destination: {{busRouteObj?.destination}}</mat-card-subtitle>
-    <mat-card-subtitle>Arrival: {{busRouteObj?.arrival}}</mat-card-subtitle>
-    <mat-card-subtitle>Description: {{busRouteObj?.description}}</mat-card-subtitle>
-</mat-card>
+<div *ngIf="isListing">
+  <h4 class="m-3">Bus Route Information</h4>
+  <mat-card class="m-3">
+    <mat-card-title>{{busRouteObj?.routeNo}}</mat-card-title>
+      <mat-card-subtitle>Destination: {{busRouteObj?.destination}}</mat-card-subtitle>
+      <mat-card-subtitle>Arrival: {{busRouteObj?.arrival}}</mat-card-subtitle>
+      <mat-card-subtitle>Description: {{busRouteObj?.description}}</mat-card-subtitle>
+  </mat-card>
+</div>
+
 
 
