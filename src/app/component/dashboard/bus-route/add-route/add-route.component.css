@@ -1,11 +1,11 @@
   .mat-form-field{
-    width: 48%;
+    width: 50%;
     padding: 1%;
     margin-top: 10px;
   }
 
   .form-control{
-    width: 150px;
+    width: 300px;
     border-radius: 8px;
     padding: 5px;
   }
@@ -18,3 +18,17 @@
   .overflow{
     overflow-x: auto
   }
+
+.form-control{
+    width: 100%;
+  }
+
+  mat-dialog-content{
+    max-width: 800px;
+    text-align: center;
+  }
+
+  .mat-grid-list{
+    overflow:hidden;
+  }
+

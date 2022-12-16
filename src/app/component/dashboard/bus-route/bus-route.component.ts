@@ -9,6 +9,7 @@ import { DataService } from 'src/app/shared/service/data.service';
 import { AddBusrouteComponent } from './add-busroute/add-busroute.component';
 import { DeleteBusRouteComponent } from './delete-bus-route/delete-bus-route.component';
 import { Router } from '@angular/router';
+import { AddRouteComponent } from './add-route/add-route.component';
 @Component({
   selector: 'app-bus-route',
   templateUrl: './bus-route.component.html',
@@ -27,7 +28,8 @@ export class BusRouteComponent implements OnInit, DoCheck {
     private router: Router,
     public snackBar: MatSnackBar) { }
 
-///////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
 ngDoCheck(): void {
     let currenturl = this.router.url;
     if (currenturl=='/dashboard/busRoute'){
@@ -55,8 +57,53 @@ ngDoCheck(): void {
   create(){
     this.router.navigateByUrl('/dashboard/busRoute/create');
   }
-///////////////////////////
 
+  addBusRoute2(){
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.data = {
+      title: 'Register Bus Route',
+      buttonName: 'Register'
+    }
+
+    const dialogRef = this.dialog.open(AddRouteComponent, dialogConfig);
+    dialogRef.afterClosed().subscribe(data=>{
+      if(data){
+        this.dataApi.addBusRoute(data); //data service
+        this.snackBar.open('Bus route is registered successfully.','OK',{
+          duration: 2000
+        });
+      }
+    })
+  }
+
+  editBusRoute2(row:any){
+    if (row.id == null){
+      return;
+    }
+
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.data=row;
+    console.log('hi')
+    dialogConfig.data.title="Edit Bus Route";
+    dialogConfig.data.buttonName="Update";
+    const dialogRef = this.dialog.open(AddRouteComponent, dialogConfig);
+    dialogRef.afterClosed().subscribe(data=>{
+      if(data){
+        console.log(dialogConfig.data.id)
+        this.dataApi.updateBusRoute(data);
+        this.snackBar.open('Bus route is updated successfully.','OK',{
+          duration: 2000
+        });
+      }
+    })
+
+  }
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
   ngOnInit(): void {
     this.getAllBusRoutes();
   }

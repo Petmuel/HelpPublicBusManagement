@@ -1,35 +1,50 @@
- <div class="container" *ngIf="isListing2">
-    <form class="mat-elevation-z8" [formGroup]="routeRegister" (ngSubmit)="saveBusStop()">
+ <h2 class="text-center" mat-dialog-tile>{{title}}</h2>
+    <mat-dialog-content [formGroup]="routeRegister">
         <div class="text-center">
-            <h3 class="pt-3">Register Bus Route</h3>
             <mat-form-field appearance="fill">
-              <mat-label>RouteNo</mat-label>
-              <input matInput placeholder="routeNo" formControlName="routeNo">
+              <mat-label>Route No.</mat-label>
+              <input matInput
+                  placeholder="RouteNo"
+                  formControlName="routeNo"
+                  required>
+              <mat-error *ngIf="routeRegister.get('routeNo')?.invalid || routeRegister.get('routeNo')?.dirty || routeRegister.get('routeNo')?.touched">Enter the route number</mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="fill">
-                <mat-label>description</mat-label>
-                <input matInput placeholder="description" formControlName="description">
+              <mat-label>Description</mat-label>
+              <input matInput
+                  placeholder="Description"
+                  formControlName="description"
+                  required>
+              <mat-error *ngIf="routeRegister.get('description')?.invalid || routeRegister.get('description')?.dirty || routeRegister.get('description')?.touched">Enter the description</mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="fill">
-                <mat-label>destination</mat-label>
-                <input matInput placeholder="destination" formControlName="destination">
+              <mat-label>Destination</mat-label>
+              <input matInput
+                  placeholder="Destination"
+                  formControlName="destination"
+                  required>
+              <mat-error *ngIf="routeRegister.get('destination')?.invalid || routeRegister.get('destination')?.dirty || routeRegister.get('destination')?.touched">Enter the destination</mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="fill">
-                <mat-label>arrival</mat-label>
-                <input matInput placeholder="arrival" formControlName="arrival">
+              <mat-label>Arrival</mat-label>
+              <input matInput
+                  placeholder="Arrival"
+                  formControlName="arrival"
+                  required>
+              <mat-error *ngIf="routeRegister.get('arrival')?.invalid || routeRegister.get('arrival')?.dirty || routeRegister.get('arrival')?.touched">Enter the arrival</mat-error>
             </mat-form-field>
         </div>
 
-        <br>
+
         <mat-divider></mat-divider>
         <br>
-        <h3 class="text-center">Bus Stop Info</h3>
+        <h3>Add Bus Stops</h3>
         <div class="overflow">
-            <table formArrayName="busStops" style="margin:2%;width: 96%;" class="mat-table cdk-table mat-elevation-z8 table-bordered">
-                <thead class="text-center">
+            <table formArrayName="busStops" style="margin:2%;width: 96%;" class="mat-table cdk-table">
+                <thead class="">
                     <tr>
                         <td>Name</td>
                         <td>Address</td>
@@ -68,11 +83,87 @@
             </table>
         </div>
 
-        <div style="padding: 1%">
-            <a mat-raised-button color="accent" routerLink="/dashboard/busRoute">Cancel</a> |
-            <button mat-raised-button color="primary">Save</button>
+        <div mat-dialog-actions>
+          <button mat-raised-button mat-dialog-close (click)="cancelRegistration()">Cancel</button>
+          <button mat-raised-button  color="primary" mat-dialog-close cdkFocusInitial (click)="registerBusRoute()" [disabled]="routeRegister.invalid">{{buttonName}}</button>
         </div>
-      </form>
+    </mat-dialog-content>
 
- </div>
+ <!-- <div class="container" *ngIf="isListing2">
+  <form class="mat-elevation-z8" [formGroup]="routeRegister" (ngSubmit)="saveBusStop()">
+      <div class="text-center">
+          <h3 class="pt-3">Register Bus Route</h3>
+          <mat-form-field appearance="fill">
+            <mat-label>RouteNo</mat-label>
+            <input matInput placeholder="routeNo" formControlName="routeNo">
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+              <mat-label>description</mat-label>
+              <input matInput placeholder="description" formControlName="description">
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+              <mat-label>destination</mat-label>
+              <input matInput placeholder="destination" formControlName="destination">
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+              <mat-label>arrival</mat-label>
+              <input matInput placeholder="arrival" formControlName="arrival">
+          </mat-form-field>
+      </div>
+
+      <br>
+      <mat-divider></mat-divider>
+      <br>
+      <h3 class="text-center">Add Bus Stops</h3>
+      <div class="overflow">
+          <table formArrayName="busStops" style="margin:2%;width: 96%;" class="mat-table cdk-table mat-elevation-z8 table-bordered">
+              <thead class="text-center">
+                  <tr>
+                      <td>Name</td>
+                      <td>Address</td>
+                      <td>Longitude</td>
+                      <td>Latitude</td>
+                      <td>Action</td>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr *ngFor="let item of allBusStops.controls; let i=index" [formGroupName]="i">
+                      <td>
+                          <input  class="form-control" formControlName="name">
+                      </td>
+                      <td>
+                          <input  class="form-control" formControlName="address">
+                      </td>
+                      <td>
+                          <input  class="form-control" formControlName="longitude">
+                      </td>
+                      <td>
+                          <input  class="form-control" formControlName="latitude">
+                      </td>
+                      <td>
+                          <a  mat-raised-button color="accent" (click)="removeBusStop(i)">Remove</a>
+                      </td>
+                  </tr>
+
+              </tbody>
+              <tfoot>
+                  <tr>
+                      <td colspan="5">
+                          <a mat-raised-button color="primary" (click)="addBusStops()">Add New (+) </a>
+                      </td>
+                  </tr>
+              </tfoot>
+          </table>
+      </div>
+
+      <div style="padding: 1%">
+          <a mat-raised-button color="accent" routerLink="/dashboard/busRoute">Cancel</a> |
+          <button mat-raised-button color="primary">Save</button>
+      </div>
+    </form>
+
+</div> -->
 
