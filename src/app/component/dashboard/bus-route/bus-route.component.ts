@@ -42,7 +42,7 @@ ngDoCheck(): void {
   displayColumns:string[]=["name", "address", "longitude", "latitude", "action"];
   islisting = true;
   routedata!: MatTableDataSource<BusRoute>;
-
+  allIds=[];
   editRoute(row:any){
     if (row.id == null){
       return;
@@ -70,7 +70,18 @@ ngDoCheck(): void {
     const dialogRef = this.dialog.open(AddRouteComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(data=>{
       if(data){
-        this.dataApi.addBusRoute(data); //data service
+        //add bus route object
+        var busRouteObj = {
+          id:"BusRoute"+Date.now(),
+          routeNo:data.routeNo,
+          description: data.description,
+          destination: data.destination,
+          arrival: data.arrival
+        };
+        this.dataApi.addBusRoute(busRouteObj);//data service to add bus route
+        console.log('add', busRouteObj.id, data.busStops);
+            //add bus stops in the bus route
+        this.dataApi.addBusStop( busRouteObj.id, data.busStops);
         this.snackBar.open('Bus route is registered successfully.','OK',{
           duration: 2000
         });
@@ -87,14 +98,22 @@ ngDoCheck(): void {
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.data=row;
-    console.log('hi')
     dialogConfig.data.title="Edit Bus Route";
     dialogConfig.data.buttonName="Update";
     const dialogRef = this.dialog.open(AddRouteComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(data=>{
       if(data){
-        console.log(dialogConfig.data.id)
-        this.dataApi.updateBusRoute(data);
+        //update bus route object
+        var busRouteObj = {
+          id:data.id,
+          routeNo:data.routeNo,
+          description: data.description,
+          destination: data.destination,
+          arrival: data.arrival
+       };
+        // console.log(this.dataApi.isBusRouteChange(data));
+        console.log(busRouteObj);
+        this.dataApi.updateBusRoute(busRouteObj);
         this.snackBar.open('Bus route is updated successfully.','OK',{
           duration: 2000
         });
@@ -106,6 +125,8 @@ ngDoCheck(): void {
 ///////////////////////////////////////////////////////////////////////////////////////////
   ngOnInit(): void {
     this.getAllBusRoutes();
+
+
   }
 
   addBusRoute(){
@@ -187,11 +208,11 @@ ngDoCheck(): void {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
 
-      /////////////////////
-      this.routedata = new MatTableDataSource(this.busRoutesArr);
-      this.routedata.paginator = this.paginator;
-      this.routedata.sort = this.sort;
-      ////////////////////
+      // /////////////////////
+      // this.routedata = new MatTableDataSource(this.busRoutesArr);
+      // this.routedata.paginator = this.paginator;
+      // this.routedata.sort = this.sort;
+      // ////////////////////
     })
   }
 

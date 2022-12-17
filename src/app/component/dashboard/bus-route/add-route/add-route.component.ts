@@ -136,7 +136,6 @@ routeRegister !: FormGroup;
   }
 
   registerBusRoute(){
-    console.log(this.routeRegister.value)
     this.dialogRef.close(this.routeRegister.value);
 
   }
