@@ -47,7 +47,7 @@ ngDoCheck(): void {
     if (row.id == null){
       return;
     }
-    console.log(row.id)
+    // console.log(row.id)
   }
 
   registerBusRoute(){
@@ -79,7 +79,7 @@ ngDoCheck(): void {
           arrival: data.arrival
         };
         this.dataApi.addBusRoute(busRouteObj);//data service to add bus route
-        console.log('add', busRouteObj.id, data.busStops);
+        // console.log('add', busRouteObj.id, data.busStops);
             //add bus stops in the bus route
         this.dataApi.addBusStop( busRouteObj.id, data.busStops);
         this.snackBar.open('Bus route is registered successfully.','OK',{
@@ -101,7 +101,7 @@ ngDoCheck(): void {
     dialogConfig.data.title="Edit Bus Route";
     dialogConfig.data.buttonName="Update";
     const dialogRef = this.dialog.open(AddRouteComponent, dialogConfig);
-    dialogRef.afterClosed().subscribe(data=>{
+    dialogRef.afterClosed().subscribe((data)=>{
       if(data){
         //update bus route object
         var busRouteObj = {
@@ -112,7 +112,7 @@ ngDoCheck(): void {
           arrival: data.arrival
        };
         // console.log(this.dataApi.isBusRouteChange(data));
-        console.log(busRouteObj);
+        // console.log(busRouteObj);
         this.dataApi.updateBusRoute(busRouteObj);
         this.snackBar.open('Bus route is updated successfully.','OK',{
           duration: 2000
@@ -125,8 +125,6 @@ ngDoCheck(): void {
 ///////////////////////////////////////////////////////////////////////////////////////////
   ngOnInit(): void {
     this.getAllBusRoutes();
-
-
   }
 
   addBusRoute(){
@@ -141,7 +139,7 @@ ngDoCheck(): void {
     const dialogRef = this.dialog.open(AddBusrouteComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(data=>{
       if(data){
-        console.log(data);
+        // console.log(data);
         this.dataApi.addBusRoute(data); //data service
         this.snackBar.open('Bus route is registered successfully.','OK',{
           duration: 2000
