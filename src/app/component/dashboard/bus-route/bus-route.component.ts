@@ -10,6 +10,9 @@ import { AddBusrouteComponent } from './add-busroute/add-busroute.component';
 import { DeleteBusRouteComponent } from './delete-bus-route/delete-bus-route.component';
 import { Router } from '@angular/router';
 import { AddRouteComponent } from './add-route/add-route.component';
+import { FormArray } from '@angular/forms';
+import { BusStop } from 'src/app/shared/model/bus-stop';
+import { Observable } from 'rxjs/internal/Observable';
 @Component({
   selector: 'app-bus-route',
   templateUrl: './bus-route.component.html',
@@ -39,10 +42,12 @@ ngDoCheck(): void {
       this.islisting=false;
     }
   }
+  busStops: BusStop[]=[];
   displayColumns:string[]=["name", "address", "longitude", "latitude", "action"];
   islisting = true;
   routedata!: MatTableDataSource<BusRoute>;
   allIds=[];
+
   editRoute(row:any){
     if (row.id == null){
       return;
@@ -93,27 +98,38 @@ ngDoCheck(): void {
     if (row.id == null){
       return;
     }
+    // this.dataApi.getBusStopsByRoute(row.id).subscribe(console.log);
+    var busRouteObj = {
+      id:row.id,
+      routeNo:row.routeNo,
+      description: row.description,
+      destination: row.destination,
+      arrival: row.arrival,
+      busStops: null
+   };
+   this.dataApi.getBusStopsByRoute(row.id).subscribe(res=>{
+    this.busRoutesArr=res.map((e:any)=>{
+      const data = e.payload.doc.data();
+      data.id = e.payload.doc.id;
+      return data;
+    })
+    console.log('busStops', this.busRoutesArr);
+  })
 
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
-    dialogConfig.data=row;
+    dialogConfig.data=busRouteObj;
     dialogConfig.data.title="Edit Bus Route";
     dialogConfig.data.buttonName="Update";
-    const dialogRef = this.dialog.open(AddRouteComponent, dialogConfig);
+    const dialogRef = this.dialog.open(AddBusrouteComponent, dialogConfig);
     dialogRef.afterClosed().subscribe((data)=>{
       if(data){
         //update bus route object
-        var busRouteObj = {
-          id:data.id,
-          routeNo:data.routeNo,
-          description: data.description,
-          destination: data.destination,
-          arrival: data.arrival
-       };
+
         // console.log(this.dataApi.isBusRouteChange(data));
         // console.log(busRouteObj);
-        this.dataApi.updateBusRoute(busRouteObj);
+        this.dataApi.updateBusRoute(data);
         this.snackBar.open('Bus route is updated successfully.','OK',{
           duration: 2000
         });

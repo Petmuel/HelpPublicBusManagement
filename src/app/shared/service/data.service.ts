@@ -23,7 +23,17 @@ export class DataService {
   }
 
   updateBusRoute(busRoute : any){
-    return this.afs.doc("BusRoute/"+busRoute.id).update(busRoute);
+    var busRouteObj = {
+      id:busRoute.id,
+      routeNo:busRoute.routeNo,
+      description: busRoute.description,
+      destination: busRoute.destination,
+      arrival: busRoute.arrival
+    };
+    this.afs.doc("BusRoute/"+busRoute.id).update(busRouteObj);
+    for (let route of busRoute.busStops){
+      this.afs.doc("BusRoute/"+busRoute.id).collection('busStopList/').doc(route.id).update(route);
+    }
   }
 
   deleteBusRoute(id: string){
@@ -81,5 +91,9 @@ export class DataService {
     // })
     return this.afs.doc("BusRoute/"+id).collection('busStopList/').snapshotChanges()
 
+  }
+
+  returnBusStop(id:string){
+    return this.afs.doc("BusRoute/"+id).collection('busStopList/').valueChanges()
   }
 }

@@ -12,7 +12,7 @@ import { BusStop } from 'src/app/shared/model/bus-stop';
 export class ViewBusRouteComponent implements OnInit, DoCheck {
   id!: any;
   busRouteObj !: any;
-  busStop !: any;
+  busStops !: any;
   dataSource!: MatTableDataSource<BusStop>;
   displayedColumns: string[] = ['index', 'name', 'address', 'longitude', 'latitude'];
   constructor(
@@ -44,15 +44,14 @@ export class ViewBusRouteComponent implements OnInit, DoCheck {
   }
 
   getBusStops(){
-      this.dataApi.getBusStopsByRoute(this.id)
       this.dataApi.getBusStopsByRoute(this.id).subscribe(res=>{
-        this.busStop=res.map((e:any)=>{
+        this.busStops=res.map((e:any)=>{
           const data = e.payload.doc.data();
           data.id = e.payload.doc.id;
           return data;
         })
-      // console.log(this.busStop);
-      this.dataSource = new MatTableDataSource(this.busStop);
+      console.log(this.busStops);
+      this.dataSource = new MatTableDataSource(this.busStops);
     })
       //console.log('hi',this.busStop.length());
   }
@@ -65,6 +64,8 @@ export class ViewBusRouteComponent implements OnInit, DoCheck {
       this.dataSource.paginator.firstPage();
     }
   }
+
+  
 }
 /*
 import { Component, OnInit } from '@angular/core';

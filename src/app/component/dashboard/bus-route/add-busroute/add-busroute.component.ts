@@ -2,7 +2,9 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
+import { Data } from '@angular/router';
 import { BusStop } from 'src/app/shared/model/bus-stop';
+import { DataService } from 'src/app/shared/service/data.service';
 
 @Component({
   selector: 'app-add-busroute',
@@ -19,13 +21,13 @@ export class AddBusrouteComponent implements OnInit {
   arrival !: string;
   id !: string;
   buttonName!: string;
-  busStop!: FormArray<any>;
-  dataSource!: MatTableDataSource<BusStop>;
-  busStopForm!: FormGroup;
+  busStops!: any;
+  busStopForm!: FormArray<any>;
   displayedColumns: string[] = ['index', 'name', 'address', 'longitude', 'latitude'];
   constructor(
     private fb : FormBuilder,
     @Inject(MAT_DIALOG_DATA) data: any,
+    private dataApi: DataService,
     private dialogRef:  MatDialogRef<AddBusrouteComponent>
     ) {
       this.id = data.id;
@@ -35,26 +37,21 @@ export class AddBusrouteComponent implements OnInit {
       this.destination = data.destination;
       this.arrival = data.arrival;
       this.buttonName = data.buttonName;
-      this.dataSource = new MatTableDataSource(data.busStops);
+      this.busStops = data.busStops;
     }
 
 
   ngOnInit(): void {
+    // console.log(this.dataApi.returnBusStop(this.id))
     this.form = this.fb.group({
       id:[this.id, []],
       routeNo:[this.routeNo, [Validators.required]],
       description: [this.description, [Validators.required]],
       destination: [this.destination, [Validators.required]],
       arrival: [this.arrival, [Validators.required]],
-      busStop: [this.busStop, [Validators.required]]
+      busStops:this.busStops
     })
-
-    this.busStopForm = this.fb.group({
-      name:this.fb.control(''),
-      address:this.fb.control(''),
-      longitude:this.fb.control(''),
-      latitude:this.fb.control(''),
-    })
+    console.log('transfered data',this.id, this.description, this.busStops)
   }
 
   cancelRegistration(){
@@ -65,4 +62,42 @@ export class AddBusrouteComponent implements OnInit {
     // this.dialogRef.close(this.form.value, this.busStopForm.value);
   }
 
+  addBusStops(){
+    this.busStopForm=this.form.get("busStops") as FormArray;
+    this.busStopForm.push(this.generatorRow());
+
+  }
+
+  generatorRow(){
+    return this.fb.group({
+      busRouteNo:this.fb.control(this.form.value.routeNo),
+      name:this.fb.control(''),
+      address:this.fb.control(''),
+      longitude:this.fb.control(''),
+      latitude:this.fb.control(''),
+    });
+  }
+
+  get allBusStops(){
+    return this.form.get("busStops") as FormArray;
+  }
+
+  removeBusStop(index:any){
+    if (confirm('do you want to remove this bus stop?')){
+      this.busStopForm=this.form.get("busStops") as FormArray;
+      this.busStopForm.removeAt(index);
+    }
+  }
+
+  // getBusStops(id:string){
+  //   this.dataApi.getBusStopsByRoute(id).subscribe(res=>{
+  //     const busStops=res.map((e:any)=>{
+  //       const data = e.payload.doc.data();
+  //       data.id = e.payload.doc.id;
+  //       return data;
+  //     })
+  //     console.log(busStops);
+  //   })
+  // }
+  // return this.busStops;
 }
