@@ -21,7 +21,8 @@ export class AddBusrouteComponent implements OnInit {
   arrival !: string;
   id !: string;
   buttonName!: string;
-  busStops!: any;
+  busStops!: any
+  busStopsArr!: any;
   busStopForm!: FormArray<any>;
   displayedColumns: string[] = ['index', 'name', 'address', 'longitude', 'latitude'];
   constructor(
@@ -37,21 +38,25 @@ export class AddBusrouteComponent implements OnInit {
       this.destination = data.destination;
       this.arrival = data.arrival;
       this.buttonName = data.buttonName;
-      this.busStops = data.busStops;
+      this.busStops = data.busStops;  //hard-coded
     }
 
 
   ngOnInit(): void {
-    // console.log(this.dataApi.returnBusStop(this.id))
+    this.getBusStops(this.id);
+
     this.form = this.fb.group({
       id:[this.id, []],
       routeNo:[this.routeNo, [Validators.required]],
       description: [this.description, [Validators.required]],
       destination: [this.destination, [Validators.required]],
       arrival: [this.arrival, [Validators.required]],
-      busStops:this.busStops
+      busStops: this.fb.array([])
     })
-    console.log('transfered data',this.id, this.description, this.busStops)
+    //retrieve bus stop doc and add into the list
+    for(let busStop of this.busStops){
+      this.addStops(busStop);
+    }
   }
 
   cancelRegistration(){
@@ -62,10 +67,24 @@ export class AddBusrouteComponent implements OnInit {
     // this.dialogRef.close(this.form.value, this.busStopForm.value);
   }
 
+  addStops(stop:any){
+    this.busStopForm=this.form.get("busStops") as FormArray;
+    this.busStopForm.push(this.row(stop));
+  }
+
   addBusStops(){
     this.busStopForm=this.form.get("busStops") as FormArray;
     this.busStopForm.push(this.generatorRow());
+  }
 
+  row(stop:any){
+    return this.fb.group({
+      busRouteNo:this.fb.control(stop.routeNo),
+      name:this.fb.control(stop.name),
+      address:this.fb.control(stop.address),
+      longitude:this.fb.control(stop.longitude),
+      latitude:this.fb.control(stop.latitude),
+    });
   }
 
   generatorRow(){
@@ -89,15 +108,14 @@ export class AddBusrouteComponent implements OnInit {
     }
   }
 
-  // getBusStops(id:string){
-  //   this.dataApi.getBusStopsByRoute(id).subscribe(res=>{
-  //     const busStops=res.map((e:any)=>{
-  //       const data = e.payload.doc.data();
-  //       data.id = e.payload.doc.id;
-  //       return data;
-  //     })
-  //     console.log(busStops);
-  //   })
-  // }
-  // return this.busStops;
+  getBusStops(id:string){
+    this.dataApi.getBusStopsByRoute(id).subscribe(res=>{
+      this.busStops=res.map((e:any)=>{
+        const data = e.payload.doc.data();
+        data.id = e.payload.doc.id;
+        return data;
+      })
+       console.log('busStops', this.busStops);
+    })
+  }
 }

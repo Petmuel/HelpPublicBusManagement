@@ -121,57 +121,57 @@
       <mat-divider></mat-divider>
       <br>
       <h3>Add Bus Stops</h3>
-  <div class="overflow">
-    <table formArrayName="busStops" style="margin:2%;width: 96%;" class="mat-table cdk-table">
-        <thead class="">
-            <tr>
-                <td>Name</td>
-                <td>Address</td>
-                <td>Longitude</td>
-                <td>Latitude</td>
-                <td>Action</td>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let item of allBusStops.controls; let i=index" [formGroupName]="i">
-                <td>
-                    <input  class="form-control" formControlName="name">
-                </td>
-                <td>
-                    <input  class="form-control" formControlName="address">
-                </td>
-                <td>
-                    <input  class="form-control" formControlName="longitude">
-                </td>
-                <td>
-                    <input  class="form-control" formControlName="latitude">
-                </td>
-                <td>
-                    <a  mat-raised-button color="accent" (click)="removeBusStop(i)">Remove</a>
-                </td>
-            </tr>
+      <div class="overflow">
+        <table formArrayName="busStops" style="margin:2%;width: 96%;" class="mat-table cdk-table">
+            <thead class="">
+                <tr>
+                    <td>Name</td>
+                    <td>Address</td>
+                    <td>Longitude</td>
+                    <td>Latitude</td>
+                    <td>Action</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of allBusStops.controls; let i=index" [formGroupName]="i">
+                    <td>
+                        <input  class="form-control" formControlName="name">
+                    </td>
+                    <td>
+                        <input  class="form-control" formControlName="address">
+                    </td>
+                    <td>
+                        <input  class="form-control" formControlName="longitude">
+                    </td>
+                    <td>
+                        <input  class="form-control" formControlName="latitude">
+                    </td>
+                    <td>
+                        <a  mat-raised-button color="accent" (click)="removeBusStop(i)">Remove</a>
+                    </td>
+                </tr>
 
-        </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="5">
-                    <a mat-raised-button color="primary" (click)="addBusStops()">Add New (+) </a>
-                </td>
-            </tr>
-        </tfoot>
-    </table>
-</div>
-  <!--mat-form-field>
-    Add a new bus stop
-    <button type="button" mat-raised-button color="accent"><mat-icon matTooltip="Add a new user">add</mat-icon></button>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="5">
+                        <a mat-raised-button color="primary" (click)="addBusStops()">Add New (+) </a>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+      <!--mat-form-field>
+        Add a new bus stop
+        <button type="button" mat-raised-button color="accent"><mat-icon matTooltip="Add a new user">add</mat-icon></button>
 
-  </!--mat-form-field>
-  -->
+      </!--mat-form-field>
+      -->
 
 
-<div mat-dialog-actions>
-  <button mat-raised-button mat-dialog-close (click)="cancelRegistration()">Cancel</button>
-  <button mat-raised-button  color="primary" mat-dialog-close cdkFocusInitial (click)="registerBusRoute()" [disabled]="form.invalid">{{buttonName}}</button>
-</div>
-
+    <div mat-dialog-actions>
+      <button mat-raised-button mat-dialog-close (click)="cancelRegistration()">Cancel</button>
+      <button mat-raised-button  color="primary" mat-dialog-close cdkFocusInitial (click)="registerBusRoute()" [disabled]="form.invalid">{{buttonName}}</button>
+    </div>
+  </mat-dialog-content>
 

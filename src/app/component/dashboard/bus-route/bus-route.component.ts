@@ -105,21 +105,62 @@ ngDoCheck(): void {
       description: row.description,
       destination: row.destination,
       arrival: row.arrival,
-      busStops: null
-   };
-   this.dataApi.getBusStopsByRoute(row.id).subscribe(res=>{
-    this.busRoutesArr=res.map((e:any)=>{
-      const data = e.payload.doc.data();
-      data.id = e.payload.doc.id;
-      return data;
-    })
-    console.log('busStops', this.busRoutesArr);
-  })
+      busStops:[
+        {
+            "busRouteNo": "123",
+            "latitude": "asd",
+            "name": "asd",
+            "address": "asd",
+            "longitude": "asd",
+            "id": "IvH4oyCFXixLO37WOTKy"
+        },
+        {
+            "latitude": "we",
+            "busRouteNo": "123",
+            "longitude": "qweq",
+            "name": "qwe",
+            "address": "qwe",
+            "id": "P2jtu88ACslq03Rojjws"
+        },
+        {
+            "address": "karl i love you",
+            "longitude": "sdf",
+            "busRouteNo": "123",
+            "name": "sdfs",
+            "latitude": "sdf",
+            "id": "UqDkckS9gkfaoelKcmA9"
+        },
+        {
+            "latitude": "123",
+            "name": "3",
+            "busRouteNo": "123",
+            "longitude": "23",
+            "address": "1231",
+            "id": "sNRsfDhucCqFJaZs8hmm"
+        },
+        {
+            "name": "678",
+            "busRouteNo": "123",
+            "latitude": "67",
+            "address": "678",
+            "longitude": "678",
+            "id": "uKm8StqNNKaYc6Tji0c5"
+        },
+        {
+            "latitude": "fgh",
+            "busRouteNo": "123",
+            "longitude": "gfh",
+            "name": "ghfgh",
+            "address": "ffghfgh",
+            "id": "xhpy6rNlZoGKLigax9XQ"
+        }
+    ]
+   }
 
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
-    dialogConfig.data=busRouteObj;
+    dialogConfig.data= busRouteObj;
     dialogConfig.data.title="Edit Bus Route";
     dialogConfig.data.buttonName="Update";
     const dialogRef = this.dialog.open(AddBusrouteComponent, dialogConfig);
