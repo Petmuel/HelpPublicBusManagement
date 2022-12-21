@@ -80,6 +80,7 @@ export class DataService {
     }
   }
   // stops !:FormArray<any>;
+  //retrieving documents from bus stop sub-collection in firebase
   getBusStopsByRoute(id:string){
     // let stops = this.afs.doc("BusRoute/"+id).collection('busStopList/').get();
     // let stops: any;

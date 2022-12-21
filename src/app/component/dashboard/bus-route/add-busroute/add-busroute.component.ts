@@ -38,25 +38,22 @@ export class AddBusrouteComponent implements OnInit {
       this.destination = data.destination;
       this.arrival = data.arrival;
       this.buttonName = data.buttonName;
-      this.busStops = data.busStops;  //hard-coded
+      // this.busStops = data.busStops;  //hard-coded
     }
 
 
-  ngOnInit(): void {
-    this.getBusStops(this.id);
-
+  async ngOnInit(): Promise<void> {
+     this.getBusStops(this.id);
+    console.log('data2', this.busStops)
     this.form = this.fb.group({
       id:[this.id, []],
       routeNo:[this.routeNo, [Validators.required]],
       description: [this.description, [Validators.required]],
       destination: [this.destination, [Validators.required]],
       arrival: [this.arrival, [Validators.required]],
-      busStops: this.fb.array([])
+      busStops: []
     })
-    //retrieve bus stop doc and add into the list
-    for(let busStop of this.busStops){
-      this.addStops(busStop);
-    }
+    console.log('formValue: ', this.form.value)
   }
 
   cancelRegistration(){
@@ -107,15 +104,34 @@ export class AddBusrouteComponent implements OnInit {
       this.busStopForm.removeAt(index);
     }
   }
-
+  //function from Ts file for storing retrieved documents in busStops array
   getBusStops(id:string){
     this.dataApi.getBusStopsByRoute(id).subscribe(res=>{
-      this.busStops=res.map((e:any)=>{
+      this.setBusStopArr(res.map((e:any)=>{
         const data = e.payload.doc.data();
         data.id = e.payload.doc.id;
         return data;
-      })
-       console.log('busStops', this.busStops);
+      }))
     })
   }
+
+  setBusStopArr(data: any[]){
+    this.busStops= data;
+    this.form.value.busStops = data;
+    console.log('data', this.busStops)
+    console.log('new', this.form.value)
+  }
+
+  // getBusStops(id:string){
+  //   this.dataApi.getBusStopsByRoute(id).subscribe((actionArray) => {
+  //     this.busStops = actionArray.map((item) => ({
+  //       id: item.payload.doc.id,
+  //       ...item.payload.doc.data(),
+  //       expanded: false
+
+  //     }));
+  //     console.log('inner',this.busStops)
+  //   });
+  //   console.log(this.busStops)
+  // }
 }
