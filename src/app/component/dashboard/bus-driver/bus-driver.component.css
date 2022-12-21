@@ -1,0 +1,38 @@
+.add-busdriver{
+  color: #3f51b5;
+}
+
+.mat-card  :hover{
+  transform: scale(1.03);
+}
+
+table {
+  width: 100%;
+  text-align: center;
+}
+
+.mat-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+th{
+  font-weight: bold;
+  color: black;
+  font-size: 85%;
+}
+
+.mat-header-row{
+  background-color: rgb(221, 236, 255);
+}
+
+.mat-header-cell{
+  text-align: center;
+}
+
+.overflow{
+  overflow-x: auto;
+}
+
+
+

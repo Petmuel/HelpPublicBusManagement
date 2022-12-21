@@ -111,7 +111,7 @@ routeRegister !: FormGroup;
     private dialogRef:  MatDialogRef<AddRouteComponent>,
     private route:ActivatedRoute
     ) {
-      this.id = data.id;
+      this.id = "BusDriver" + Date.now();
       this.title = data.title;
       this.routeNo = data.routeNo;
       this.description = data.description;
@@ -168,7 +168,7 @@ routeRegister !: FormGroup;
   }
 
   updateRoute(){
-    let word="fuck you"
+    let word="you"
 
     return word;
   }

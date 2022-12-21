@@ -97,4 +97,27 @@ export class DataService {
   returnBusStop(id:string){
     return this.afs.doc("BusRoute/"+id).collection('busStopList/').valueChanges()
   }
+
+  //bus driver
+  addBusDriver(busDriver : any) {
+    return this.afs.collection("BusDriver/").doc(busDriver.id).set(busDriver);
+
+  }
+
+  getAllBusDrivers(){
+    return this.afs.collection("BusDriver/").snapshotChanges();
+  }
+
+  updateBusDriver(busDriver : any){
+    console.log('Busdriver',busDriver)
+    return this.afs.doc("BusDriver/"+busDriver.id).set(busDriver);
+  }
+
+  deleteBusDriver(id: string){
+    this.afs.doc("BusDriver/"+id).delete();
+  }
+
+  getBusDriverById(id: string){
+    return this.afs.doc("BusDriver/"+id).valueChanges();
+  }
 }
