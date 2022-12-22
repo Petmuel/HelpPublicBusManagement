@@ -22,9 +22,7 @@ export class AddBusrouteComponent implements OnInit {
   id !: string;
   buttonName!: string;
   busStops!: any
-  busStopsArr!: any;
   busStopForm!: FormArray<any>;
-  displayedColumns: string[] = ['index', 'name', 'address', 'longitude', 'latitude'];
   constructor(
     private fb : FormBuilder,
     @Inject(MAT_DIALOG_DATA) data: any,
@@ -38,30 +36,28 @@ export class AddBusrouteComponent implements OnInit {
       this.destination = data.destination;
       this.arrival = data.arrival;
       this.buttonName = data.buttonName;
+      this.form = this.fb.group({
+        id:[this.id, []],
+        routeNo:[this.routeNo, [Validators.required]],
+        description: [this.description, [Validators.required]],
+        destination: [this.destination, [Validators.required]],
+        arrival: [this.arrival, [Validators.required]],
+        busStops: this.fb.array([])
+      });
       // this.busStops = data.busStops;  //hard-coded
     }
 
 
-  async ngOnInit(): Promise<void> {
-     this.getBusStops(this.id);
-    console.log('data2', this.busStops)
-    this.form = this.fb.group({
-      id:[this.id, []],
-      routeNo:[this.routeNo, [Validators.required]],
-      description: [this.description, [Validators.required]],
-      destination: [this.destination, [Validators.required]],
-      arrival: [this.arrival, [Validators.required]],
-      busStops: []
-    })
-    console.log('formValue: ', this.form.value)
+  ngOnInit(): void {
+    this.getBusStops(this.id);
   }
 
   cancelRegistration(){
-    this.dialogRef.close()
+    this.dialogRef.close();
   }
 
   registerBusRoute(){
-    // this.dialogRef.close(this.form.value, this.busStopForm.value);
+    this.dialogRef.close(this.form.value);
   }
 
   addStops(stop:any){
@@ -76,35 +72,39 @@ export class AddBusrouteComponent implements OnInit {
 
   row(stop:any){
     return this.fb.group({
+      busStopID: this.fb.control(stop.busStopID),
       busRouteNo:this.fb.control(stop.routeNo),
       name:this.fb.control(stop.name),
       address:this.fb.control(stop.address),
       longitude:this.fb.control(stop.longitude),
-      latitude:this.fb.control(stop.latitude),
+      latitude:this.fb.control(stop.latitude)
     });
   }
 
   generatorRow(){
     return this.fb.group({
+      busStopID: "BusStop"+Math.floor(Math.random() * 1001),
       busRouteNo:this.fb.control(this.form.value.routeNo),
       name:this.fb.control(''),
       address:this.fb.control(''),
       longitude:this.fb.control(''),
-      latitude:this.fb.control(''),
+      latitude:this.fb.control('')
     });
+  }
+
+  removeBusStop(index:any){
+    if (confirm('do you want to remove this bus stop?')){
+      this.busStopForm=this.form.get("busStops") as FormArray;
+      this.dataApi.deleteBusStop(this.busStopForm.at(index).value, this.id)
+      this.busStopForm.removeAt(index);
+    }
   }
 
   get allBusStops(){
     return this.form.get("busStops") as FormArray;
   }
 
-  removeBusStop(index:any){
-    if (confirm('do you want to remove this bus stop?')){
-      this.busStopForm=this.form.get("busStops") as FormArray;
-      this.busStopForm.removeAt(index);
-    }
-  }
-  //function from Ts file for storing retrieved documents in busStops array
+  //storing retrieved documents in busStops array
   getBusStops(id:string){
     this.dataApi.getBusStopsByRoute(id).subscribe(res=>{
       this.setBusStopArr(res.map((e:any)=>{
@@ -112,14 +112,14 @@ export class AddBusrouteComponent implements OnInit {
         data.id = e.payload.doc.id;
         return data;
       }))
-    })
+    });
   }
 
+  //Add the retrieved bus stop to the form.value.busStops
   setBusStopArr(data: any[]){
-    this.busStops= data;
-    this.form.value.busStops = data;
-    console.log('data', this.busStops)
-    console.log('new', this.form.value)
+    for(let busStop of data){
+      this.addStops(busStop);
+    }
   }
 
   // getBusStops(id:string){

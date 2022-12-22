@@ -31,9 +31,13 @@ export class BusRouteComponent implements OnInit, DoCheck {
     private router: Router,
     public snackBar: MatSnackBar) { }
 
+  ngOnInit(): void {
+    this.getAllBusRoutes();
+  }
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
-ngDoCheck(): void {
+  ngDoCheck(): void {
     let currenturl = this.router.url;
     if (currenturl=='/dashboard/busRoute'){
       this.islisting=true;
@@ -87,7 +91,7 @@ ngDoCheck(): void {
         // console.log('add', busRouteObj.id, data.busStops);
             //add bus stops in the bus route
         this.dataApi.addBusStop( busRouteObj.id, data.busStops);
-        this.snackBar.open('Bus route is registered successfully.','OK',{
+        this.snackBar.open('Bus route saved successfully.','OK',{
           duration: 2000
         });
       }
@@ -98,118 +102,6 @@ ngDoCheck(): void {
     if (row.id == null){
       return;
     }
-    // this.dataApi.getBusStopsByRoute(row.id).subscribe(console.log);
-    var busRouteObj = {
-      id:row.id,
-      routeNo:row.routeNo,
-      description: row.description,
-      destination: row.destination,
-      arrival: row.arrival,
-      busStops:[
-        {
-            "busRouteNo": "123",
-            "latitude": "asd",
-            "name": "asd",
-            "address": "asd",
-            "longitude": "asd",
-            "id": "IvH4oyCFXixLO37WOTKy"
-        },
-        {
-            "latitude": "we",
-            "busRouteNo": "123",
-            "longitude": "qweq",
-            "name": "qwe",
-            "address": "qwe",
-            "id": "P2jtu88ACslq03Rojjws"
-        },
-        {
-            "address": "karl i love you",
-            "longitude": "sdf",
-            "busRouteNo": "123",
-            "name": "sdfs",
-            "latitude": "sdf",
-            "id": "UqDkckS9gkfaoelKcmA9"
-        },
-        {
-            "latitude": "123",
-            "name": "3",
-            "busRouteNo": "123",
-            "longitude": "23",
-            "address": "1231",
-            "id": "sNRsfDhucCqFJaZs8hmm"
-        },
-        {
-            "name": "678",
-            "busRouteNo": "123",
-            "latitude": "67",
-            "address": "678",
-            "longitude": "678",
-            "id": "uKm8StqNNKaYc6Tji0c5"
-        },
-        {
-            "latitude": "fgh",
-            "busRouteNo": "123",
-            "longitude": "gfh",
-            "name": "ghfgh",
-            "address": "ffghfgh",
-            "id": "xhpy6rNlZoGKLigax9XQ"
-        }
-    ]
-   }
-
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
-    dialogConfig.data= busRouteObj;
-    dialogConfig.data.title="Edit Bus Route";
-    dialogConfig.data.buttonName="Update";
-    const dialogRef = this.dialog.open(AddBusrouteComponent, dialogConfig);
-    dialogRef.afterClosed().subscribe((data)=>{
-      if(data){
-        //update bus route object
-
-        // console.log(this.dataApi.isBusRouteChange(data));
-        // console.log(busRouteObj);
-        this.dataApi.updateBusRoute(data);
-        this.snackBar.open('Bus route is updated successfully.','OK',{
-          duration: 2000
-        });
-      }
-    })
-
-  }
-///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-  ngOnInit(): void {
-    this.getAllBusRoutes();
-  }
-
-  addBusRoute(){
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
-    dialogConfig.data = {
-      title: 'Register Bus Route',
-      buttonName: 'Register'
-    }
-
-    const dialogRef = this.dialog.open(AddBusrouteComponent, dialogConfig);
-    dialogRef.afterClosed().subscribe(data=>{
-      if(data){
-        // console.log(data);
-        this.dataApi.addBusRoute(data); //data service
-        this.snackBar.open('Bus route is registered successfully.','OK',{
-          duration: 2000
-        });
-      }
-    })
-
-  }
-
-  editBusRoute(row:any){
-    if (row.id == null){
-      return;
-    }
 
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
@@ -217,18 +109,64 @@ ngDoCheck(): void {
     dialogConfig.data= row;
     dialogConfig.data.title="Edit Bus Route";
     dialogConfig.data.buttonName="Update";
-
     const dialogRef = this.dialog.open(AddBusrouteComponent, dialogConfig);
-    dialogRef.afterClosed().subscribe(data=>{
+    dialogRef.afterClosed().subscribe((data)=>{
       if(data){
         this.dataApi.updateBusRoute(data);
-        this.snackBar.open('Bus route is updated successfully.','OK',{
+        this.snackBar.open('Bus route updated successfully.','OK',{
           duration: 2000
         });
       }
     })
-
   }
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+
+  // addBusRoute(){
+  //   const dialogConfig = new MatDialogConfig();
+  //   dialogConfig.disableClose = true;
+  //   dialogConfig.autoFocus = true;
+  //   dialogConfig.data = {
+  //     title: 'Register Bus Route',
+  //     buttonName: 'Register'
+  //   }
+
+  //   const dialogRef = this.dialog.open(AddBusrouteComponent, dialogConfig);
+  //   dialogRef.afterClosed().subscribe(data=>{
+  //     if(data){
+  //       // console.log(data);
+  //       this.dataApi.addBusRoute(data); //data service
+  //       this.snackBar.open('Bus route saved successfully.','OK',{
+  //         duration: 2000
+  //       });
+  //     }
+  //   })
+
+  // }
+
+  // editBusRoute(row:any){
+  //   if (row.id == null){
+  //     return;
+  //   }
+
+  //   const dialogConfig = new MatDialogConfig();
+  //   dialogConfig.disableClose = true;
+  //   dialogConfig.autoFocus = true;
+  //   dialogConfig.data= row;
+  //   dialogConfig.data.title="Edit Bus Route";
+  //   dialogConfig.data.buttonName="Update";
+
+  //   const dialogRef = this.dialog.open(AddBusrouteComponent, dialogConfig);
+  //   dialogRef.afterClosed().subscribe(data=>{
+  //     if(data){
+  //       this.dataApi.updateBusRoute(data);
+  //       this.snackBar.open('Bus route is updated successfully.','OK',{
+  //         duration: 2000
+  //       });
+  //     }
+  //   })
+
+  // }
 
   deleteBusRoute(row: any){
     const dialogConfig = new MatDialogConfig();
@@ -262,12 +200,6 @@ ngDoCheck(): void {
       this.dataSource = new MatTableDataSource(this.busRoutesArr);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
-
-      // /////////////////////
-      // this.routedata = new MatTableDataSource(this.busRoutesArr);
-      // this.routedata.paginator = this.paginator;
-      // this.routedata.sort = this.sort;
-      // ////////////////////
     })
   }
 
@@ -278,6 +210,7 @@ ngDoCheck(): void {
   openSnackBar(message: string, action: string) {
     this._snackBar.open(message, action);
   }
+
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();

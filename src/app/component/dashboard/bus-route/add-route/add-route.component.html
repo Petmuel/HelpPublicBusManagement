@@ -68,7 +68,7 @@
                             <input  class="form-control" formControlName="latitude">
                         </td>
                         <td>
-                            <a  mat-raised-button color="accent" (click)="removeBusStop(i)">Remove</a>
+                            <a  mat-raised-button type="button" color="accent" (click)="removeBusStop(i)">Remove</a>
                         </td>
                     </tr>
 
@@ -76,7 +76,7 @@
                 <tfoot>
                     <tr>
                         <td colspan="5">
-                            <a mat-raised-button color="primary" (click)="addBusStops()">Add New (+) </a>
+                            <a mat-raised-button type="button" color="primary" (click)="addBusStops()">Add New (+) </a>
                         </td>
                     </tr>
                 </tfoot>
@@ -84,8 +84,8 @@
         </div>
 
         <div mat-dialog-actions>
-          <button mat-raised-button mat-dialog-close (click)="cancelRegistration()">Cancel</button>
-          <button mat-raised-button  color="primary" mat-dialog-close cdkFocusInitial (click)="registerBusRoute()" [disabled]="routeRegister.invalid">{{buttonName}}</button>
+          <button type="button" mat-raised-button mat-dialog-close (click)="cancelRegistration()">Cancel</button>
+          <button type="button" mat-raised-button  color="primary" mat-dialog-close cdkFocusInitial (click)="registerBusRoute()" [disabled]="routeRegister.invalid">{{buttonName}}</button>
         </div>
     </mat-dialog-content>
 

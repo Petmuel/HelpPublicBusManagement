@@ -18,6 +18,15 @@ export class DataService {
     });
   }
 
+  //adding each bus stop info into the selected bus route's subcollection busStoplist
+  addBusStop(id: string, busStops:any){
+    let stops = busStops as FormArray;
+    for(let i=0; i<stops.length;i++){
+      busStops.at(i).busStopID="BusStop"+i;
+      this.afs.doc("BusRoute/"+id).collection('busStopList/').doc(busStops.at(i).busStopID).set(busStops.at(i));
+    }
+  }
+
   getAllBusRoutes(){
     return this.afs.collection("BusRoute/").snapshotChanges();
   }
@@ -31,9 +40,11 @@ export class DataService {
       arrival: busRoute.arrival
     };
     this.afs.doc("BusRoute/"+busRoute.id).update(busRouteObj);
+
+    //update busStops
     for (let route of busRoute.busStops){
-      this.afs.doc("BusRoute/"+busRoute.id).collection('busStopList/').doc(route.id).update(route);
-    }
+      this.afs.doc("BusRoute/"+busRoute.id).collection('busStopList/').doc(route.busStopID).set(route);
+    };
   }
 
   deleteBusRoute(id: string){
@@ -43,11 +54,8 @@ export class DataService {
         busStop.ref.delete();
       })
     })
-
     //delete collection busRoute
     this.afs.doc("BusRoute/"+id).delete();
-
-
   }
 
   getBusRouteById(id: string){
@@ -69,16 +77,7 @@ export class DataService {
   //   })
   // }
 
-  //adding each bus stop info into the selected bus route's subcollection busStoplist
-  addBusStop(id: string, busStops:any){
-    // console.log(id);
-    // let i= 0
-    let stops = busStops as FormArray;
-    for(let i=0; i<stops.length;i++){
-      // console.log(busStops.at(i))
-      this.afs.doc("BusRoute/"+id).collection('busStopList/').add(busStops.at(i))
-    }
-  }
+
   // stops !:FormArray<any>;
   //retrieving documents from bus stop sub-collection in firebase
   getBusStopsByRoute(id:string){
@@ -96,6 +95,10 @@ export class DataService {
 
   returnBusStop(id:string){
     return this.afs.doc("BusRoute/"+id).collection('busStopList/').valueChanges()
+  }
+
+  deleteBusStop(busStop:any, id:string) {
+    return this.afs.doc("BusRoute/"+id).collection('busStopList/').doc(busStop.busStopID).delete()
   }
 
   //bus driver

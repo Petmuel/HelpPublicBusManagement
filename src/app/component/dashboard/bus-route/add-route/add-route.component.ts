@@ -111,7 +111,7 @@ routeRegister !: FormGroup;
     private dialogRef:  MatDialogRef<AddRouteComponent>,
     private route:ActivatedRoute
     ) {
-      this.id = "BusDriver" + Date.now();
+      this.id = data.id;
       this.title = data.title;
       this.routeNo = data.routeNo;
       this.description = data.description;
@@ -148,6 +148,7 @@ routeRegister !: FormGroup;
 
   generatorRow(){
     return this.fb.group({
+      busStopID: '',
       busRouteNo:this.fb.control(this.routeRegister.value.routeNo),
       name:this.fb.control(''),
       address:this.fb.control(''),
