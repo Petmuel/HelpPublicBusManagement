@@ -1,24 +1,21 @@
-import { Component, DoCheck, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { BusRoute } from 'src/app/shared/model/bus-route';
 import { DataService } from 'src/app/shared/service/data.service';
-import { AddBusrouteComponent } from './add-busroute/add-busroute.component';
+import { updateBusrouteComponent } from './update-busroute/update-busroute.component';
 import { DeleteBusRouteComponent } from './delete-bus-route/delete-bus-route.component';
 import { Router } from '@angular/router';
 import { AddRouteComponent } from './add-route/add-route.component';
-import { FormArray } from '@angular/forms';
-import { BusStop } from 'src/app/shared/model/bus-stop';
-import { Observable } from 'rxjs/internal/Observable';
 @Component({
   selector: 'app-bus-route',
   templateUrl: './bus-route.component.html',
   styleUrls: ['./bus-route.component.css']
 })
-export class BusRouteComponent implements OnInit, DoCheck {
+export class BusRouteComponent implements OnInit {
   busRoutesArr : BusRoute[] = [];
   displayedColumns: string[] = ['routeNo', 'description', 'destination', 'arrival', 'action'];
   dataSource!: MatTableDataSource<BusRoute>;
@@ -36,37 +33,7 @@ export class BusRouteComponent implements OnInit, DoCheck {
   }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-  ngDoCheck(): void {
-    let currenturl = this.router.url;
-    if (currenturl=='/dashboard/busRoute'){
-      this.islisting=true;
-    }
-    else{
-      this.islisting=false;
-    }
-  }
-  busStops: BusStop[]=[];
-  displayColumns:string[]=["name", "address", "longitude", "latitude", "action"];
-  islisting = true;
-  routedata!: MatTableDataSource<BusRoute>;
-  allIds=[];
-
-  editRoute(row:any){
-    if (row.id == null){
-      return;
-    }
-    // console.log(row.id)
-  }
-
-  registerBusRoute(){
-    this.router.navigateByUrl('/dashboard/multiform')
-  }
-
-  create(){
-    this.router.navigateByUrl('/dashboard/busRoute/create');
-  }
-
+//////////////////////////////////////////////////////////////////////////////////////////
   addBusRoute2(){
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
@@ -102,17 +69,18 @@ export class BusRouteComponent implements OnInit, DoCheck {
     if (row.id == null){
       return;
     }
-
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.data= row;
     dialogConfig.data.title="Edit Bus Route";
     dialogConfig.data.buttonName="Update";
-    const dialogRef = this.dialog.open(AddBusrouteComponent, dialogConfig);
+    const dialogRef = this.dialog.open(updateBusrouteComponent, dialogConfig);
     dialogRef.afterClosed().subscribe((data)=>{
       if(data){
-        this.dataApi.updateBusRoute(data);
+        this.dataApi.deleteBusStop(data);
+        this.dataApi.addBusRoute(data);
+        this.dataApi.updateBusStop(data);
         this.snackBar.open('Bus route updated successfully.','OK',{
           duration: 2000
         });
@@ -204,7 +172,7 @@ export class BusRouteComponent implements OnInit, DoCheck {
   }
 
   viewBusRoute(row:any){
-    this.router.navigateByUrl('/dashboard/busRoute/'+row.id);
+    this.router.navigate(['/dashboard/busRoute/'+row.id]);
   }
 
   openSnackBar(message: string, action: string) {

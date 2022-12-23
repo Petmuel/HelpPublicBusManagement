@@ -12,11 +12,10 @@ import { BusRouteComponent } from './component/dashboard/bus-route/bus-route.com
 import { SidebarComponent } from './component/dashboard/sidebar/sidebar.component';
 import { BusesComponent } from './component/dashboard/buses/buses.component';
 import { BusDriverComponent } from './component/dashboard/bus-driver/bus-driver.component';
-import { AddBusrouteComponent } from './component/dashboard/bus-route/add-busroute/add-busroute.component';
+import { updateBusrouteComponent } from './component/dashboard/bus-route/update-busroute/update-busroute.component';
 import { DashboardComponent } from './component/dashboard/dashboard.component';
 import { ViewBusRouteComponent } from './component/dashboard/bus-route/view-bus-route/view-bus-route.component';
 import { DeleteBusRouteComponent } from './component/dashboard/bus-route/delete-bus-route/delete-bus-route.component';
-import { MultiformsComponent } from './component/dashboard/bus-route/multiforms/multiforms.component';
 import { AddRouteComponent } from './component/dashboard/bus-route/add-route/add-route.component';
 import { AddBusDriverComponent } from './component/dashboard/bus-driver/add-bus-driver/add-bus-driver.component';
 
@@ -39,11 +38,10 @@ import { ReactiveFormsModule } from '@angular/forms';
     SidebarComponent,
     BusesComponent,
     BusDriverComponent,
-    AddBusrouteComponent,
+    updateBusrouteComponent,
     DashboardComponent,
     ViewBusRouteComponent,
     DeleteBusRouteComponent,
-    MultiformsComponent,
     AddRouteComponent,
     AddBusDriverComponent
   ],
@@ -61,6 +59,6 @@ import { ReactiveFormsModule } from '@angular/forms';
   ],
   providers: [],
   bootstrap: [AppComponent],
-  entryComponents: [AddBusrouteComponent]
+  entryComponents: [updateBusrouteComponent]
 })
 export class AppModule { }

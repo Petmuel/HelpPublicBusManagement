@@ -7,8 +7,6 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { BusDriver } from 'src/app/shared/model/bus-driver';
 import { DataService } from 'src/app/shared/service/data.service';
-import { AddBusrouteComponent } from '../bus-route/add-busroute/add-busroute.component';
-import { AddRouteComponent } from '../bus-route/add-route/add-route.component';
 import { DeleteBusRouteComponent } from '../bus-route/delete-bus-route/delete-bus-route.component';
 import { AddBusDriverComponent } from './add-bus-driver/add-bus-driver.component';
 

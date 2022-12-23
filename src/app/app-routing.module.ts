@@ -6,8 +6,6 @@ import { BusesComponent } from './component/dashboard/buses/buses.component';
 import { BusDriverComponent } from './component/dashboard/bus-driver/bus-driver.component';
 import { ViewBusRouteComponent } from './component/dashboard/bus-route/view-bus-route/view-bus-route.component';
 import { DashboardComponent } from './component/dashboard/dashboard.component';
-import { MultiformsComponent } from './component/dashboard/bus-route/multiforms/multiforms.component';
-import { AddBusrouteComponent } from './component/dashboard/bus-route/add-busroute/add-busroute.component';
 import { AddRouteComponent } from './component/dashboard/bus-route/add-route/add-route.component';
 
 const routes: Routes = [
@@ -21,8 +19,7 @@ const routes: Routes = [
     {path:'busRoute/:id', component: ViewBusRouteComponent},
     {path:'buses', component: BusesComponent},
     {path:'busDriver', component: BusDriverComponent},
-    {path: 'busRoute/multiform', redirectTo: 'multiform', pathMatch: 'full'},
-    {path:'multiform', component: MultiformsComponent}
+    {path: 'busRoute/multiform', redirectTo: 'multiform', pathMatch: 'full'}
   ]
   },
   {path: 'login', component: LoginComponent},

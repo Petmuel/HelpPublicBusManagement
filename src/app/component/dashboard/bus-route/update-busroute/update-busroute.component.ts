@@ -1,17 +1,14 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatTableDataSource } from '@angular/material/table';
-import { Data } from '@angular/router';
-import { BusStop } from 'src/app/shared/model/bus-stop';
 import { DataService } from 'src/app/shared/service/data.service';
 
 @Component({
-  selector: 'app-add-busroute',
-  templateUrl: './add-busroute.component.html',
-  styleUrls: ['./add-busroute.component.css']
+  selector: 'app-update-busroute',
+  templateUrl: './update-busroute.component.html',
+  styleUrls: ['./update-busroute.component.css']
 })
-export class AddBusrouteComponent implements OnInit {
+export class updateBusrouteComponent implements OnInit {
 
   form !: FormGroup;
   title!: string;
@@ -23,11 +20,13 @@ export class AddBusrouteComponent implements OnInit {
   buttonName!: string;
   busStops!: any
   busStopForm!: FormArray<any>;
+  busStopArr!: any;
+  deletedbusStopForm!: FormArray<any>;
   constructor(
     private fb : FormBuilder,
     @Inject(MAT_DIALOG_DATA) data: any,
     private dataApi: DataService,
-    private dialogRef:  MatDialogRef<AddBusrouteComponent>
+    private dialogRef:  MatDialogRef<updateBusrouteComponent>
     ) {
       this.id = data.id;
       this.title = data.title;
@@ -36,20 +35,22 @@ export class AddBusrouteComponent implements OnInit {
       this.destination = data.destination;
       this.arrival = data.arrival;
       this.buttonName = data.buttonName;
-      this.form = this.fb.group({
-        id:[this.id, []],
-        routeNo:[this.routeNo, [Validators.required]],
-        description: [this.description, [Validators.required]],
-        destination: [this.destination, [Validators.required]],
-        arrival: [this.arrival, [Validators.required]],
-        busStops: this.fb.array([])
-      });
+
       // this.busStops = data.busStops;  //hard-coded
     }
 
 
   ngOnInit(): void {
     this.getBusStops(this.id);
+    this.form = this.fb.group({
+      id:[this.id, []],
+      routeNo:[this.routeNo, [Validators.required]],
+      description: [this.description, [Validators.required]],
+      destination: [this.destination, [Validators.required]],
+      arrival: [this.arrival, [Validators.required]],
+      busStops: this.fb.array([]),
+      deletedbusStops:this.fb.array([])
+    });
   }
 
   cancelRegistration(){
@@ -77,7 +78,7 @@ export class AddBusrouteComponent implements OnInit {
       name:this.fb.control(stop.name),
       address:this.fb.control(stop.address),
       longitude:this.fb.control(stop.longitude),
-      latitude:this.fb.control(stop.latitude)
+      latitude:this.fb.control(stop.latitude),
     });
   }
 
@@ -95,8 +96,11 @@ export class AddBusrouteComponent implements OnInit {
   removeBusStop(index:any){
     if (confirm('do you want to remove this bus stop?')){
       this.busStopForm=this.form.get("busStops") as FormArray;
-      this.dataApi.deleteBusStop(this.busStopForm.at(index).value, this.id)
-      this.busStopForm.removeAt(index);
+      this.deletedbusStopForm=this.form.get("deletedbusStops") as FormArray;
+      this.deletedbusStopForm.push(this.row(this.busStopForm.at(index).value));
+      this.deleteBusStop(index)
+      //this.dataApi.deleteBusStop(this.busStopForm.at(index).value, this.id)
+      // this.deletedbusStopForm=this.form.get("deletedbusStops") as FormArray
     }
   }
 
@@ -107,20 +111,32 @@ export class AddBusrouteComponent implements OnInit {
   //storing retrieved documents in busStops array
   getBusStops(id:string){
     this.dataApi.getBusStopsByRoute(id).subscribe(res=>{
-      this.setBusStopArr(res.map((e:any)=>{
+      this.busStopArr=res.map((e:any)=>{
         const data = e.payload.doc.data();
         data.id = e.payload.doc.id;
         return data;
-      }))
+      })
+      for(let busStop of this.busStopArr){
+        this.addStops(busStop);
+      }
     });
   }
 
-  //Add the retrieved bus stop to the form.value.busStops
-  setBusStopArr(data: any[]){
-    for(let busStop of data){
-      this.addStops(busStop);
-    }
+  deleteBusStop(index: any){
+    this.busStopForm=this.form.get("busStops") as FormArray;
+    this.busStopForm.removeAt(index);
   }
+
+  // setBusStop(busStop :any){
+  //   this.deletedbusStopForm=this.form.get("deletedbusStops") as FormArray;
+  //   this.deletedbusStopForm.push(busStop);
+  // }
+  // //Add the retrieved bus stop to the form.value.busStops
+  // setBusStopArr(data: any[]){
+  //   for(let busStop of data){
+  //     this.addStops(busStop);
+  //   }
+  // }
 
   // getBusStops(id:string){
   //   this.dataApi.getBusStopsByRoute(id).subscribe((actionArray) => {

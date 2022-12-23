@@ -1,3 +1,4 @@
+import { identifierName } from '@angular/compiler';
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore'
 import { FormArray, FormBuilder } from '@angular/forms';
@@ -31,17 +32,7 @@ export class DataService {
     return this.afs.collection("BusRoute/").snapshotChanges();
   }
 
-  updateBusRoute(busRoute : any){
-    var busRouteObj = {
-      id:busRoute.id,
-      routeNo:busRoute.routeNo,
-      description: busRoute.description,
-      destination: busRoute.destination,
-      arrival: busRoute.arrival
-    };
-    this.afs.doc("BusRoute/"+busRoute.id).update(busRouteObj);
-
-    //update busStops
+  updateBusStop(busRoute:any){
     for (let route of busRoute.busStops){
       this.afs.doc("BusRoute/"+busRoute.id).collection('busStopList/').doc(route.busStopID).set(route);
     };
@@ -97,8 +88,17 @@ export class DataService {
     return this.afs.doc("BusRoute/"+id).collection('busStopList/').valueChanges()
   }
 
-  deleteBusStop(busStop:any, id:string) {
-    return this.afs.doc("BusRoute/"+id).collection('busStopList/').doc(busStop.busStopID).delete()
+  deleteBusStop(busRoute:any) {
+    for (let stops of busRoute.deletedbusStops){
+      this.afs.doc("BusRoute/"+busRoute.id).collection("busStopList/").get().forEach(stopID=>{
+        stopID.forEach(busStop=>{
+          if(busStop.id==stops.busStopID){
+            busStop.ref.delete();
+          }
+        })
+      })
+    }
+    return
   }
 
   //bus driver
@@ -112,7 +112,6 @@ export class DataService {
   }
 
   updateBusDriver(busDriver : any){
-    console.log('Busdriver',busDriver)
     return this.afs.doc("BusDriver/"+busDriver.id).set(busDriver);
   }
 

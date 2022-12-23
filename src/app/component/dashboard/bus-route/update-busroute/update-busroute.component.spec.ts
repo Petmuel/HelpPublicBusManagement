@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MultiformsComponent } from './multiforms.component';
+import { updateBusrouteComponent } from './update-busroute.component';
 
-describe('MultiformsComponent', () => {
-  let component: MultiformsComponent;
-  let fixture: ComponentFixture<MultiformsComponent>;
+describe('updateBusrouteComponent', () => {
+  let component: updateBusrouteComponent;
+  let fixture: ComponentFixture<updateBusrouteComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ MultiformsComponent ]
+      declarations: [ updateBusrouteComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(MultiformsComponent);
+    fixture = TestBed.createComponent(updateBusrouteComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
