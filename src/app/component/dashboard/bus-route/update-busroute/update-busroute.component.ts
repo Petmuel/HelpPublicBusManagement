@@ -36,13 +36,7 @@ export class updateBusrouteComponent implements OnInit {
       this.arrival = data.arrival;
       this.buttonName = data.buttonName;
 
-      // this.busStops = data.busStops;  //hard-coded
-    }
-
-
-  ngOnInit(): void {
-    this.getBusStops(this.id);
-    this.form = this.fb.group({
+      this.form = this.fb.group({
       id:[this.id, []],
       routeNo:[this.routeNo, [Validators.required]],
       description: [this.description, [Validators.required]],
@@ -50,7 +44,13 @@ export class updateBusrouteComponent implements OnInit {
       arrival: [this.arrival, [Validators.required]],
       busStops: this.fb.array([]),
       deletedbusStops:this.fb.array([])
-    });
+      });
+      // this.busStops = data.busStops;  //hard-coded
+    }
+
+
+  ngOnInit(): void {
+    this.getBusStops(this.id);
   }
 
   cancelRegistration(){

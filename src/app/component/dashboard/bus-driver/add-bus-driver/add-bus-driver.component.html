@@ -1,31 +1,35 @@
 <h2 class="text-center" mat-dialog-tile>{{title}}</h2>
 <mat-dialog-content [formGroup]="busDriverRegister">
     <div class="text-center">
-        <mat-form-field appearance="fill">
-          <mat-label>Full Name</mat-label>
-          <input matInput
-              placeholder="fullName"
-              formControlName="fullName"
-              required>
-          <mat-error *ngIf="busDriverRegister.get('fullName')?.invalid || busDriverRegister.get('fullName')?.dirty || busDriverRegister.get('fullName')?.touched">Enter the route number</mat-error>
-        </mat-form-field>
 
         <mat-form-field appearance="fill">
           <mat-label>Email</mat-label>
           <input matInput
               placeholder="Email"
               formControlName="email"
+              type="email"
               required>
-          <mat-error *ngIf="busDriverRegister.get('email')?.invalid || busDriverRegister.get('email')?.dirty || busDriverRegister.get('email')?.touched">Enter the email</mat-error>
+          <mat-error *ngIf="busDriverRegister.get('email')?.invalid || busDriverRegister.get('email')?.dirty || busDriverRegister.get('email')?.touched">Please enter a valid email address</mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="fill">
           <mat-label>Password</mat-label>
           <input matInput
-              placeholder="Password"
+              placeholder="Password must have at least 6 characters"
               formControlName="password"
+              [type]="hide ? 'password' : 'text'"
               required>
-          <mat-error *ngIf="busDriverRegister.get('password')?.invalid || busDriverRegister.get('password')?.dirty || busDriverRegister.get('password')?.touched">Enter the password</mat-error>
+          <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+          <mat-error *ngIf="busDriverRegister.get('password')?.invalid || busDriverRegister.get('password')?.dirty || busDriverRegister.get('password')?.touched">Please enter a valid password</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Full Name</mat-label>
+          <input matInput
+              placeholder="fullName"
+              formControlName="fullName"
+              required>
+          <mat-error *ngIf="busDriverRegister.get('fullName')?.invalid || busDriverRegister.get('fullName')?.dirty || busDriverRegister.get('fullName')?.touched">Please enter the route number</mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="fill">
@@ -34,16 +38,16 @@
               placeholder="DriverNo"
               formControlName="driverNo"
               required>
-          <mat-error *ngIf="busDriverRegister.get('driverNo')?.invalid || busDriverRegister.get('driverNo')?.dirty || busDriverRegister.get('driverNo')?.touched">Enter the driverNo</mat-error>
+          <mat-error *ngIf="busDriverRegister.get('driverNo')?.invalid || busDriverRegister.get('driverNo')?.dirty || busDriverRegister.get('driverNo')?.touched">Please enter the driverNo</mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="fill">
           <mat-label>PhoneNo</mat-label>
           <input matInput
-              placeholder="PhoneNo"
+              placeholder="E.g +6012345679"
               formControlName="phoneNo"
               required>
-          <mat-error *ngIf="busDriverRegister.get('phoneNo')?.invalid || busDriverRegister.get('phoneNo')?.dirty || busDriverRegister.get('phoneNo')?.touched">Enter the driverNo</mat-error>
+          <mat-error *ngIf="busDriverRegister.get('phoneNo')?.invalid || busDriverRegister.get('phoneNo')?.dirty || busDriverRegister.get('phoneNo')?.touched">Please enter a valid phone number</mat-error>
         </mat-form-field>
     </div>
 

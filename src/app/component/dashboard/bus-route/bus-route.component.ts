@@ -164,11 +164,33 @@ export class BusRouteComponent implements OnInit {
         data.id = e.payload.doc.id;
         return data;
       })
-      console.log(this.busRoutesArr);
+      console.log('busRoutes');
       this.dataSource = new MatTableDataSource(this.busRoutesArr);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     })
+    // if(this.dataApi.hasData()){
+    //   // this will get the data which was previously stored in the memory
+    //   // and there will be no HTTP request
+    //   this.busRoutesArr = this.dataApi.getData();
+    //   this.dataSource = new MatTableDataSource(this.busRoutesArr);
+    //   this.dataSource.paginator = this.paginator;
+    //   this.dataSource.sort = this.sort;
+    //   console.log(this.busRoutesArr);
+    // }
+    // else{
+    //   // old code
+    //   this.dataApi.getAllBusRoutes().subscribe(res=>{
+    //     this.dataApi.setData(res.map((e:any)=>{
+    //       const data = e.payload.doc.data();
+    //       data.id = e.payload.doc.id;
+    //       return data;
+    //     }))
+    //   }),
+    //   (error: any) => {
+    //     console.log(error)
+    //   }
+    // }
   }
 
   viewBusRoute(row:any){

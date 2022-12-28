@@ -41,8 +41,8 @@ export class AddBusDriverComponent implements OnInit {
     this.busDriverRegister = this.fb.group({
       id:[this.id, []],
       fullName:[this.fullName, [Validators.required]],
-      email: [this.email, [Validators.required]],
-      password: [this.password, [Validators.required]],
+      email: [this.email, [Validators.required, Validators.email]],
+      password: [this.password, [Validators.required, Validators.minLength(6)]],
       driverNo: [this.driverNo, [Validators.required]],
       phoneNo:[this.phoneNo, [Validators.required]],
       cLong:[''],
@@ -50,6 +50,8 @@ export class AddBusDriverComponent implements OnInit {
       status:['']
     })
   }
+
+  hide = true;
 
   cancelRegistration(){
     this.dialogRef.close()

@@ -22,29 +22,28 @@ export class ViewBusRouteComponent implements OnInit {
     }
 
   ngOnInit(): void {
+    this.getBusRouteData()
+    this.getBusStops()
+  }
+  getBusRouteData(){
     this.dataApi.getBusRouteById(this.id).subscribe(res=>{
       this.busRouteObj=res;
-      // console.log(this.busRouteObj)
-      // console.log(this.id)
     })
+
+  }
+
+  getBusStops(){
     this.dataApi.getBusStopsByRoute(this.id).subscribe(res=>{
       this.busStops=res.map((e:any)=>{
         const data = e.payload.doc.data();
         data.id = e.payload.doc.id;
         return data;
       })
-      console.log(this.busStops);
+      console.log('busStopsView')
       this.dataSource = new MatTableDataSource(this.busStops);
     })
+      //console.log('hi',this.busStop.length());
   }
-  // getBusRouteData(){
-
-  // }
-
-  // getBusStops(){
-
-  //     //console.log('hi',this.busStop.length());
-  // }
 
   // applyFilter(event: Event) {
   //   const filterValue = (event.target as HTMLInputElement).value;

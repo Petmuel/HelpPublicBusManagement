@@ -1,14 +1,34 @@
 import { identifierName } from '@angular/compiler';
 import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/compat/firestore'
+import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/compat/firestore'
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { FormArray, FormBuilder } from '@angular/forms';
 import firebase from 'firebase/compat';
+import { BusRoute } from '../model/bus-route';
+import { BusDriver } from '../model/bus-driver';
+import { Observable, of } from 'rxjs';
+import { off } from 'process';
 @Injectable({
   providedIn: 'root'
 })
 export class DataService {
 
-  constructor(private afs: AngularFirestore) { }
+  constructor(private afs: AngularFirestore, private afa: AngularFireAuth) {
+  }
+  // private data: any;
+
+  // setData(data:any){
+  //   this.data = data;
+  // }
+
+  // getData(){
+  //     return this.data;
+  // }
+
+  // hasData(){
+  //     return this.data && this.data.length;
+  // }
+
 
   addBusRoute(busRoute : any) {
     return this.afs.collection("BusRoute/").doc(busRoute.id).set({
@@ -103,8 +123,18 @@ export class DataService {
 
   //bus driver
   addBusDriver(busDriver : any) {
-    return this.afs.collection("BusDriver/").doc(busDriver.id).set(busDriver);
 
+    this.afa.fetchSignInMethodsForEmail(busDriver.email)
+    .then((result)=> {
+       if(result.length > 0){
+        window.alert("Email has already been used, please try again");
+       }
+       else{
+        this.afa.createUserWithEmailAndPassword(busDriver.email, busDriver.password).then((result)=>{
+          this.SetUserData(result.user, busDriver);
+        })
+       }
+    });
   }
 
   getAllBusDrivers(){
@@ -115,11 +145,40 @@ export class DataService {
     return this.afs.doc("BusDriver/"+busDriver.id).set(busDriver);
   }
 
-  deleteBusDriver(id: string){
-    this.afs.doc("BusDriver/"+id).delete();
+  deleteBusDriver(busDriver: any){
+    this.afa.signInWithEmailAndPassword(busDriver.email, busDriver.password)
+    .then((result)=> {
+       if(result.user){
+        result.user.delete()
+       }
+       else{
+        console.log('null')
+       }
+    });
+
+    this.afs.doc("BusDriver/"+busDriver.id).delete();
   }
 
   getBusDriverById(id: string){
     return this.afs.doc("BusDriver/"+id).valueChanges();
+  }
+
+  //add the created user to firestore (addBusDriver())
+  SetUserData(user: any, busDriver:any) {
+    var busdriverObj={
+      id: user.uid,
+      fullName: busDriver.fullName,
+      email:busDriver.email,
+      password:busDriver.password,
+      phoneNo:busDriver.phoneNo,
+      driverNo:busDriver.driverNo,
+      cLong: busDriver.cLong,
+      cLat:busDriver.cLat,
+      status:busDriver.status
+    }
+    const userRef: AngularFirestoreDocument<any> = this.afs.doc(
+      `BusDriver/${user.uid}`
+    );
+    return userRef.set(busdriverObj)
   }
 }

@@ -55,21 +55,10 @@ export class BusDriverComponent implements OnInit {
       const dialogRef = this.dialog.open(AddBusDriverComponent, dialogConfig);
       dialogRef.afterClosed().subscribe(data=>{
         if(data){
-          var busdriverObj={
-            id: "BusDriver"+Date.now(),
-            fullName: data.fullName,
-            email:data.email,
-            password:data.password,
-            phoneNo:data.phoneNo,
-            driverNo:data.driverNo,
-            cLong: data.cLong,
-            cLat:data.cLat,
-            status:data.status
-          }
-          this.dataApi.addBusDriver(busdriverObj);
+          this.dataApi.addBusDriver(data);
           this.snackBar.open('Bus driver saved successfully.','OK',{
             duration: 2000
-          });
+          })
         }
       })
     }
@@ -88,7 +77,7 @@ export class BusDriverComponent implements OnInit {
       const dialogRef = this.dialog.open(AddBusDriverComponent, dialogConfig);
       dialogRef.afterClosed().subscribe((data)=>{
         if(data){
-          this.dataApi.updateBusDriver(data);
+          this.dataApi.updateBusDriver(data)
           this.snackBar.open('Bus driver updated successfully.','OK',{
             duration: 2000
           });
@@ -108,7 +97,7 @@ export class BusDriverComponent implements OnInit {
       const dialogRef = this.dialog.open(DeleteBusRouteComponent, dialogConfig);
       dialogRef.afterClosed().subscribe(data=>{
         if(data){
-          this.dataApi.deleteBusDriver(row.id);
+          this.dataApi.deleteBusDriver(row);
           this.snackBar.open('Bus driver deleted successfully.','OK',{
             duration: 2000
           });
