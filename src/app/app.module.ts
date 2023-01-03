@@ -30,6 +30,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { AngularFireStorageModule } from '@angular/fire/compat/storage';
 import { AngularFireDatabaseModule } from '@angular/fire/compat/database';
+import { MychartComponent } from './component/dashboard/mychart/mychart.component';
 
 
 @NgModule({
@@ -46,7 +47,8 @@ import { AngularFireDatabaseModule } from '@angular/fire/compat/database';
     ViewBusRouteComponent,
     DeleteBusRouteComponent,
     AddRouteComponent,
-    AddBusDriverComponent
+    AddBusDriverComponent,
+    MychartComponent
   ],
   imports: [
     CommonModule,

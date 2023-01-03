@@ -8,12 +8,13 @@ import { BusRoute } from '../model/bus-route';
 import { BusDriver } from '../model/bus-driver';
 import { Observable, of } from 'rxjs';
 import { off } from 'process';
+import { MatSnackBar } from '@angular/material/snack-bar';
 @Injectable({
   providedIn: 'root'
 })
 export class DataService {
 
-  constructor(private afs: AngularFirestore, private afa: AngularFireAuth) {
+  constructor(private afs: AngularFirestore, private afa: AngularFireAuth, private snackBar: MatSnackBar) {
   }
   // private data: any;
 
@@ -133,6 +134,9 @@ export class DataService {
         this.afa.createUserWithEmailAndPassword(busDriver.email, busDriver.password).then((result)=>{
           this.SetUserData(result.user, busDriver);
         })
+        this.snackBar.open('Bus driver saved successfully.','OK',{
+            duration: 2000
+          })
        }
     });
   }
@@ -146,17 +150,13 @@ export class DataService {
   }
 
   deleteBusDriver(busDriver: any){
+    this.afs.doc("BusDriver/"+busDriver.id).delete();
     this.afa.signInWithEmailAndPassword(busDriver.email, busDriver.password)
     .then((result)=> {
        if(result.user){
-        result.user.delete()
-       }
-       else{
-        console.log('null')
+        result.user.delete();
        }
     });
-
-    this.afs.doc("BusDriver/"+busDriver.id).delete();
   }
 
   getBusDriverById(id: string){
@@ -181,4 +181,8 @@ export class DataService {
     );
     return userRef.set(busdriverObj)
   }
+
+  openSnackBar(message: string, action: string) {
+      this.snackBar.open(message, action);
+    }
 }

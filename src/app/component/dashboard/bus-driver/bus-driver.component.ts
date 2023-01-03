@@ -56,9 +56,6 @@ export class BusDriverComponent implements OnInit {
       dialogRef.afterClosed().subscribe(data=>{
         if(data){
           this.dataApi.addBusDriver(data);
-          this.snackBar.open('Bus driver saved successfully.','OK',{
-            duration: 2000
-          })
         }
       })
     }
