@@ -6,7 +6,7 @@ import { FormArray, FormBuilder } from '@angular/forms';
 import firebase from 'firebase/compat';
 import { BusRoute } from '../model/bus-route';
 import { BusDriver } from '../model/bus-driver';
-import { Observable, of } from 'rxjs';
+import { Observable, of, single, throwIfEmpty } from 'rxjs';
 import { off } from 'process';
 import { MatSnackBar } from '@angular/material/snack-bar';
 @Injectable({
@@ -145,14 +145,20 @@ export class DataService {
     return this.afs.collection("BusDriver/").snapshotChanges();
   }
 
-  updateBusDriver(busDriver : any){
-    return this.afs.doc("BusDriver/"+busDriver.id).set(busDriver);
+  updateBusDriver(busDriver : any, row: any){
+    this.afa.signInWithEmailAndPassword(row.email, row.password).then(credential=>{
+      if(credential.user){
+        credential.user.updateEmail(busDriver.email)
+        credential.user.updatePassword(busDriver.password)
+      }
+    })
+    this.afs.doc("BusDriver/"+busDriver.id).set(busDriver);
   }
 
   deleteBusDriver(busDriver: any){
     this.afs.doc("BusDriver/"+busDriver.id).delete();
     this.afa.signInWithEmailAndPassword(busDriver.email, busDriver.password)
-    .then((result)=> {
+    .then(result=> {
        if(result.user){
         result.user.delete();
        }

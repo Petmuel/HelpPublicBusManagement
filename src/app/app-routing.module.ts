@@ -7,6 +7,7 @@ import { BusDriverComponent } from './component/dashboard/bus-driver/bus-driver.
 import { ViewBusRouteComponent } from './component/dashboard/bus-route/view-bus-route/view-bus-route.component';
 import { DashboardComponent } from './component/dashboard/dashboard.component';
 import { AddRouteComponent } from './component/dashboard/bus-route/add-route/add-route.component';
+import { MychartComponent } from './component/dashboard/mychart/mychart.component';
 
 const routes: Routes = [
   {path: 'dashboard',
@@ -23,7 +24,8 @@ const routes: Routes = [
   ]
   },
   {path: 'login', component: LoginComponent},
-  {path: '**', redirectTo: 'login', pathMatch: 'full'}
+  {path: '**', redirectTo: 'login', pathMatch: 'full'},
+  {path: 'chart', component: MychartComponent}
 ];
 
 @NgModule({

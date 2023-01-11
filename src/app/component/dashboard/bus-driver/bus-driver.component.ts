@@ -74,7 +74,7 @@ export class BusDriverComponent implements OnInit {
       const dialogRef = this.dialog.open(AddBusDriverComponent, dialogConfig);
       dialogRef.afterClosed().subscribe((data)=>{
         if(data){
-          this.dataApi.updateBusDriver(data)
+          this.dataApi.updateBusDriver(data, row )
           this.snackBar.open('Bus driver updated successfully.','OK',{
             duration: 2000
           });
@@ -110,7 +110,7 @@ export class BusDriverComponent implements OnInit {
           data.id = e.payload.doc.id;
           return data;
         })
-        console.log(this.busDriversArr);
+        console.log("busDrivers");
         this.dataSource = new MatTableDataSource(this.busDriversArr);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
