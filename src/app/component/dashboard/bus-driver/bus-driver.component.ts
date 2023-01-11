@@ -74,7 +74,8 @@ export class BusDriverComponent implements OnInit {
       const dialogRef = this.dialog.open(AddBusDriverComponent, dialogConfig);
       dialogRef.afterClosed().subscribe((data)=>{
         if(data){
-          this.dataApi.updateBusDriver(data, row )
+          this.dataApi.updateBusDriverAuth(data, row);
+          this.dataApi.updateBusDriver(data);
           this.snackBar.open('Bus driver updated successfully.','OK',{
             duration: 2000
           });

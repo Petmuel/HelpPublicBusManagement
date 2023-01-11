@@ -145,24 +145,30 @@ export class DataService {
     return this.afs.collection("BusDriver/").snapshotChanges();
   }
 
-  updateBusDriver(busDriver : any, row: any){
+  updateBusDriverAuth(busDriver : any, row: any){
+    console.log(row.email)
+    console.log(busDriver.email)
     this.afa.signInWithEmailAndPassword(row.email, row.password).then(credential=>{
       if(credential.user){
         credential.user.updateEmail(busDriver.email)
         credential.user.updatePassword(busDriver.password)
       }
     })
-    this.afs.doc("BusDriver/"+busDriver.id).set(busDriver);
+    this.afa.signOut()
+  }
+
+  updateBusDriver(busDriver: any){
+    return this.afs.doc("BusDriver/"+busDriver.id).set(busDriver);
   }
 
   deleteBusDriver(busDriver: any){
-    this.afs.doc("BusDriver/"+busDriver.id).delete();
     this.afa.signInWithEmailAndPassword(busDriver.email, busDriver.password)
     .then(result=> {
        if(result.user){
         result.user.delete();
        }
     });
+    this.afs.doc("BusDriver/"+busDriver.id).delete();
   }
 
   getBusDriverById(id: string){
