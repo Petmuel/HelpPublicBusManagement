@@ -18,14 +18,13 @@ const routes: Routes = [
     {path:'busRoute/create', component: AddRouteComponent},
     {path:'edit/:id', component: AddRouteComponent},
     {path:'busRoute/:id', component: ViewBusRouteComponent},
-    {path:'buses', component: BusesComponent},
+    {path: 'chart', component: MychartComponent},
     {path:'busDriver', component: BusDriverComponent},
     {path: 'busRoute/multiform', redirectTo: 'multiform', pathMatch: 'full'}
   ]
   },
   {path: 'login', component: LoginComponent},
   {path: '**', redirectTo: 'login', pathMatch: 'full'},
-  {path: 'chart', component: MychartComponent}
 ];
 
 @NgModule({

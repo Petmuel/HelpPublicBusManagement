@@ -2,6 +2,9 @@
   height: 100%;
 }
 
+.mat-toolbar{
+  background-color: #981010;
+}
 .sidenav {
   width: 200px;
 }
@@ -21,11 +24,11 @@
 }
 
 .mat-list-item{
-  color: #3f51b5
+  color: #b33636
 }
 
 .active{
-  background-color: #3f51b5 !important;
+  background-color: #f05959 !important;
   color: white !important;
   border-radius: 5px;
 }

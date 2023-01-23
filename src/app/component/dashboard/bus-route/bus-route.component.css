@@ -22,7 +22,7 @@ th{
 }
 
 .mat-header-row{
-  background-color: rgb(221, 236, 255);
+  background-color: rgb(251, 228, 224);
   text-align: center;
 }
 
@@ -33,6 +33,11 @@ th{
 .mat-header-cell{
   text-align: center;
 }
+
+.mat-card-content{
+  color: rgb(120, 20, 20);
+}
+
 
 
 

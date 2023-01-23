@@ -6,8 +6,8 @@
     <mat-toolbar>Menu</mat-toolbar>
     <mat-divider></mat-divider>
     <mat-nav-list>
+      <a mat-list-item routerLinkActive="active" routerLink="chart"><mat-icon>leaderboard</mat-icon>Dashboard</a>
       <a mat-list-item routerLinkActive="active" routerLink="busRoute"><mat-icon>route</mat-icon>Bus Route</a>
-      <a mat-list-item routerLinkActive="active" routerLink="Statistic"><mat-icon>directions_bus</mat-icon>Buses</a>
       <a mat-list-item routerLinkActive="active" routerLink="busDriver"><mat-icon>person</mat-icon>Bus Driver</a>
       <a mat-list-item routerLinkActive="active" (click)="logOut()"><mat-icon>logout</mat-icon>Sign Out</a>
     </mat-nav-list>
@@ -22,7 +22,9 @@
         *ngIf="isHandset$ | async">
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
-      <span>HelpPublicBus-Management</span>
+      <img src="assets/HELP_logo.png" alt="helpLogo" width="auto%" height="80%">
+      &nbsp;
+      <span>Help-Public-Bus-Management</span>
     </mat-toolbar>
     <!-- Add Content Here -->
     <router-outlet></router-outlet>

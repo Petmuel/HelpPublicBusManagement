@@ -24,7 +24,7 @@ export class AuthService {
         if(user){
           this.userData = res;
           this.userDataUpdate.next(this.userData);
-          this.router.navigate(["dashboard"]);
+          this.router.navigate(["dashboard/chart"]);
         }
       })
     })
