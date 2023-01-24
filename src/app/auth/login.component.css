@@ -6,16 +6,40 @@
   align-items:center;
 }
 
-
-mat-card {
-  width: 30%;
-  height:fit-content;
-  background-color: rgb(255, 255, 195)
+.mat-form-field{
+  border: 3cm;
+  border-color: black;
 }
+
+@media only screen and (max-width: 700px){
+  mat-card {
+    width: 85%;
+    height:fit-content;
+  }
+
+}
+
+@media only screen and (min-width: 700px){
+  mat-card {
+    width: 50em;
+    height:fit-content;
+  }
+}
+
 
 mat-form-field,
 textarea{
   width: 100%;
+}
+
+body{
+  max-width: 100%;
+  background:linear-gradient(0deg, rgba(175, 46, 46, 0.416), rgba(254, 254, 254, 0.3)),  url("../../assets/bus3.jpg");
+  background-size:cover;
+  background-attachment: fixed;
+  background-position: center center;
+  /* background-color: brown;
+  background-image: url("../../assets/bus.jpg"); */
 }
 
 

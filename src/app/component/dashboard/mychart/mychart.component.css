@@ -1,0 +1,12 @@
+body{
+  background-color: rgb(255, 240, 240);
+}
+
+button{
+  background-color: white;
+}
+
+mat-card{
+  margin:9px
+}
+

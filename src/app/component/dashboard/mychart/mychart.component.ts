@@ -15,6 +15,7 @@ export class MychartComponent implements OnInit {
   }
 
   RenderChart(){
+    console.log("Chart")
     new Chart("piechart", {
     type: 'pie',
     data: {

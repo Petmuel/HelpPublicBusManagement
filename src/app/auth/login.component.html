@@ -1,38 +1,61 @@
-<div class="wrapper">
-  <mat-card>
-    <h3>Admin Login</h3>
-    <form #loginForm="ngForm" (submit)="login(loginForm)">
-      <mat-form-field>
-        <input
-          matInput
-          name="email"
-          type="email"
-          placeholder="E-mail"
-          #emailInput = "ngModel"
-          ngModel
-          required
-          email>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div class="wrapper">
+    <mat-card class="p-4">
+      <h1 class="text-center p-2 text-danger fw-semibold font-monospace">Welcome to HELP Public Bus Management!</h1>
+      <mat-divider></mat-divider>
+      <br>
+      <h3>Sign In</h3>
+
+      <form #loginForm="ngForm">
+        <mat-form-field appearance="outline">
+          <mat-icon class="m-2 opacity-50" matPrefix>mail</mat-icon>
+          <input
+            matInput
+            name="email"
+            type="email"
+            placeholder="E-mail"
+            #emailInput = "ngModel"
+            ngModel
+            required
+            email
+            >
           <mat-error *ngIf="emailInput.invalid">Please enter valid email</mat-error>
-      </mat-form-field>
+        </mat-form-field>
 
-      <mat-form-field>
-        <input
-          matInput
-          name="password"
-          type="password"
-          placeholder="password"
-          ngModel
-          #passwordInput = "ngModel"
-          required>
-          <mat-error *ngIf="passwordInput.invalid">Please enter valid password</mat-error>
-      </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-icon class="m-2 opacity-50" matPrefix>lock</mat-icon>
+          <input
+            matInput
+            matInput [type]="hide ? 'password' : 'text'"
+            name="password"
+            placeholder="password"
+            ngModel
+            #passwordInput = "ngModel"
+            required>
+            <mat-error *ngIf="passwordInput.invalid">Please enter valid password</mat-error>
+            <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+              <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+        </mat-form-field>
 
-      <button
-        mat-raised-button
-        color="accent"
-        type="submit"
-        routerLink="/manage">Login
-      </button>
-    </form>
-  </mat-card>
-</div>
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="login(loginForm)"
+          routerLink="/manage" class="fs-6">Login
+        </button>
+      </form>
+    </mat-card>
+  </div>
+
+</body>
+</html>
+

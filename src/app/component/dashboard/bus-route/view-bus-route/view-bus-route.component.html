@@ -1,47 +1,59 @@
-<div>
-  <h4 class="m-3">Bus Route Information</h4>
-  <mat-card class="m-3">
-    <mat-card-title>{{busRouteObj?.routeNo}}</mat-card-title>
-      <mat-card-subtitle>Destination: {{busRouteObj?.destination}}</mat-card-subtitle>
-      <mat-card-subtitle>Arrival: {{busRouteObj?.arrival}}</mat-card-subtitle>
-      <mat-card-subtitle>Description: {{busRouteObj?.description}}</mat-card-subtitle>
-  </mat-card>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div>
+    <h4 class="m-3">Bus Route Information</h4>
+    <mat-card class="m-3">
+      <mat-card-title>{{busRouteObj?.routeNo}}</mat-card-title>
+        <mat-card-subtitle>Destination: {{busRouteObj?.destination}}</mat-card-subtitle>
+        <mat-card-subtitle>Arrival: {{busRouteObj?.arrival}}</mat-card-subtitle>
+        <mat-card-subtitle>Description: {{busRouteObj?.description}}</mat-card-subtitle>
+    </mat-card>
 
-  <!--  -->
-  <h4 class="p-3">Bus Stop List</h4>
-  <div class="text-center m-3">
-    <table class="mat-elevation-z8" mat-table [dataSource]="dataSource">
-      <ng-container matColumnDef="index">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>BusStop</th>
-        <td mat-cell *matCellDef="let element; let i = index;">{{i+1}}</td>
-      </ng-container>
+    <!--  -->
+    <h4 class="p-3">Bus Stop List</h4>
+    <div class="text-center m-3">
+      <table class="mat-elevation-z8" mat-table [dataSource]="dataSource">
+        <ng-container matColumnDef="index">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>BusStop</th>
+          <td mat-cell *matCellDef="let element; let i = index;">{{i+1}}</td>
+        </ng-container>
 
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
-        <td mat-cell *matCellDef="let row">{{row.name}}</td>
-      </ng-container>
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+          <td mat-cell *matCellDef="let row">{{row.name}}</td>
+        </ng-container>
 
-      <ng-container matColumnDef="address">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Address</th>
-        <td mat-cell *matCellDef="let row">{{row.address}}</td>
-      </ng-container>
+        <ng-container matColumnDef="address">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Address</th>
+          <td mat-cell *matCellDef="let row">{{row.address}}</td>
+        </ng-container>
 
-      <ng-container matColumnDef="longitude">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Longitude</th>
-        <td mat-cell *matCellDef="let row">{{row.longitude}}</td>
-      </ng-container>
+        <ng-container matColumnDef="longitude">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Longitude</th>
+          <td mat-cell *matCellDef="let row">{{row.longitude}}</td>
+        </ng-container>
 
-      <ng-container matColumnDef="latitude">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Latitude</th>
-        <td mat-cell *matCellDef="let row">{{row.latitude}}</td>
-      </ng-container>
+        <ng-container matColumnDef="latitude">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Latitude</th>
+          <td mat-cell *matCellDef="let row">{{row.latitude}}</td>
+        </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns:displayedColumns;"></tr>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns:displayedColumns;"></tr>
 
-    </table>
+      </table>
+    </div>
   </div>
-</div>
+</body>
+</html>
+
 
 
 

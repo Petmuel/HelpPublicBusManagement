@@ -8,7 +8,7 @@ import { AuthService } from './auth.service';
 })
 
 export class LoginComponent{
-
+  hide = true;
   constructor(private authService: AuthService){}
 
   login(form: NgForm){
