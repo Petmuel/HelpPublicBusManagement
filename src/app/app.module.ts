@@ -4,13 +4,15 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CommonModule } from '@angular/common';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+
 //components
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './shared/header/header.component';
 import { LoginComponent } from './auth/login.component';
 import { BusRouteComponent } from './component/dashboard/bus-route/bus-route.component';
 import { SidebarComponent } from './component/dashboard/sidebar/sidebar.component';
-import { BusesComponent } from './component/dashboard/buses/buses.component';
 import { BusDriverComponent } from './component/dashboard/bus-driver/bus-driver.component';
 import { updateBusrouteComponent } from './component/dashboard/bus-route/update-busroute/update-busroute.component';
 import { DashboardComponent } from './component/dashboard/dashboard.component';
@@ -18,6 +20,7 @@ import { ViewBusRouteComponent } from './component/dashboard/bus-route/view-bus-
 import { DeleteBusRouteComponent } from './component/dashboard/bus-route/delete-bus-route/delete-bus-route.component';
 import { AddRouteComponent } from './component/dashboard/bus-route/add-route/add-route.component';
 import { AddBusDriverComponent } from './component/dashboard/bus-driver/add-bus-driver/add-bus-driver.component';
+// import { MychartComponent } from './component/dashboard/mychart/mychart.component';
 
 //angular materials (design & styling)
 import { MaterialModule } from './material/material/material.module';
@@ -30,7 +33,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { AngularFireStorageModule } from '@angular/fire/compat/storage';
 import { AngularFireDatabaseModule } from '@angular/fire/compat/database';
-import { MychartComponent } from './component/dashboard/mychart/mychart.component';
+import { StatisticComponent } from './component/dashboard/statistic/statistic.component';
+
 
 
 @NgModule({
@@ -40,7 +44,6 @@ import { MychartComponent } from './component/dashboard/mychart/mychart.componen
     LoginComponent,
     BusRouteComponent,
     SidebarComponent,
-    BusesComponent,
     BusDriverComponent,
     updateBusrouteComponent,
     DashboardComponent,
@@ -48,7 +51,7 @@ import { MychartComponent } from './component/dashboard/mychart/mychart.componen
     DeleteBusRouteComponent,
     AddRouteComponent,
     AddBusDriverComponent,
-    MychartComponent
+    StatisticComponent
   ],
   imports: [
     CommonModule,
@@ -62,7 +65,8 @@ import { MychartComponent } from './component/dashboard/mychart/mychart.componen
     ReactiveFormsModule,
     FormsModule
   ],
-  providers: [],
+  providers: [MatDatepickerModule,
+    MatNativeDateModule ],
   bootstrap: [AppComponent],
   entryComponents: [updateBusrouteComponent]
 })

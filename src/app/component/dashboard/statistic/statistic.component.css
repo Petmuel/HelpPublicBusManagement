@@ -1,0 +1,26 @@
+body{
+  background-color: rgb(255, 240, 240);
+}
+
+button{
+  background-color: white;
+}
+
+mat-card{
+  margin-top:10px;
+  margin-bottom: 10px;
+}
+
+.circular{
+  padding-left: 28px;
+  padding-right: 28px;
+  border: solid;
+  border-color: rgb(31, 72, 153);
+  border-radius: 50%;
+}
+
+.borderBottom{
+  border-bottom: 4px solid;
+  border-color: rgb(33, 95, 171);
+}
+
