@@ -2,12 +2,14 @@
 import {Chart, registerables} from 'node_modules/chart.js'
 import {Component, OnInit, Injectable} from '@angular/core';
 import {DateAdapter} from '@angular/material/core';
+import { BusDriver } from 'src/app/shared/model/bus-driver';
 import {
   MatDateRangeSelectionStrategy,
   DateRange,
   MAT_DATE_RANGE_SELECTION_STRATEGY,
 } from '@angular/material/datepicker';
 import { FormGroup, FormControl } from '@angular/forms';
+
 Chart.register(...registerables)
 
 @Injectable()
@@ -45,10 +47,20 @@ export class SevenDayRange<D> implements MatDateRangeSelectionStrategy<D> {
   ],
 })
 export class StatisticComponent implements OnInit {
+  selectedValue: string ="";
   range = new FormGroup({
     start: new FormControl<Date | null>(null),
-    end: new FormControl<Date | null>(null),
+    end: new FormControl<Date | null>(null)
   });
+
+  // BusDriver model
+  busDriver: BusDriver[] = [
+    {fullname: 'Samuel', email: '', password: '', phoneNo: 123 , driverNo: '', currentLatitude: '', currentLongitude:'', status:''},
+    {fullname: 'Jonathan', email: '', password: '', phoneNo: 123456 , driverNo: '', currentLatitude: '', currentLongitude:'', status:''},
+    {fullname: 'Tan', email: '', password: '', phoneNo: 123 , driverNo: '', currentLatitude: '', currentLongitude:'', status:''},
+    {fullname: 'Michelle', email: '', password: '', phoneNo: 123 , driverNo: '', currentLatitude: '', currentLongitude:'', status:''}
+  ];
+
   constructor() { }
 
   ngOnInit(): void {

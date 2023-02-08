@@ -1,5 +1,6 @@
 body{
   background-color: rgb(255, 240, 240);
+  height: auto;
 }
 
 button{
@@ -23,4 +24,10 @@ mat-card{
   border-bottom: 4px solid;
   border-color: rgb(33, 95, 171);
 }
+
+.example-additional-selection {
+  opacity: 0.75;
+  font-size: 0.75em;
+}
+
 

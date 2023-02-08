@@ -8,20 +8,29 @@
 </head>
 <body>
   <div class="container pt-3">
-    <div class="row p-2">
-      <div class="col-md-6">
-        <h4 class="font-monospace">Bus Driver Ratings</h4>
-      </div>
-      <div class="col-md-6">
+    <h4 class="font-monospace">Bus Driver Ratings</h4>
+    <div class="row p-2" [formGroup]="range">
+      <div class="col-md-6 row text-center">
+        <!-- bus driver selection dropdown-list -->
+        <mat-form-field appearance="fill">
+          <mat-label>Bus Driver</mat-label>
+          <mat-select [(ngModel)]="selectedValue" name="driver">
+            <mat-option *ngFor="let driver of busDriver" [value]="driver.fullname">
+              {{driver.fullname}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <br>
+
         <!-- 7 days range date picker -->
         <mat-form-field appearance="fill">
           <mat-label>Enter a date range</mat-label>
-          <mat-date-range-input [formGroup]="range" [rangePicker]="picker">
+          <mat-date-range-input [rangePicker]="picker">
             <input matStartDate formControlName="start" placeholder="Start date">
             <input matEndDate formControlName="end" placeholder="End date">
           </mat-date-range-input>
           <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
-          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-date-range-picker #picker></mat-date-range-picker>
 
           <mat-error *ngIf="range.controls.start.hasError('matStartDateInvalid')">Invalid start date</mat-error>
@@ -29,17 +38,29 @@
         </mat-form-field>
         <!-- selected date range label -->
         <p>Selected range: {{range.value | json}}</p>
-        <button mat-stroked-button color="primary" class="float-md-end px-5 py-1">Query</button>
       </div>
+
+      <div class="col-md-6 text-center">
+        <br>
+        <!-- weekly or monthly radio button -->
+        <mat-radio-group aria-label="Select an option">
+          <mat-radio-button class="px-2" value="1">Weekly</mat-radio-button>
+          <mat-radio-button class="px-2" value="2">Monthly</mat-radio-button>
+        </mat-radio-group>
+        <br>
+
+        <button mat-raised-button color="accent" class="px-5 py-2 mt-3 fs-6">Query</button>
+      </div>
+
     </div>
     <mat-divider></mat-divider>
     <!-- bus driver rating data info -->
-    <div class="row">
+    <div class="row pt-3">
       <div class="col-lg-4">
         <mat-card class="borderBottom">
           <mat-card-header class="justify-content-center">
             <mat-card-subtitle>Highest Quantity</mat-card-subtitle>
-            <mat-card-title class="fw-bold">4 Star</mat-card-title>
+            <mat-card-title class="fw-bold">5 Star</mat-card-title>
             <div class="circular py-4">
               30
             </div>

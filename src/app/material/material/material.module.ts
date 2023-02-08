@@ -18,6 +18,8 @@ import {MatTableModule} from '@angular/material/table';
 import {MatStepperModule} from '@angular/material/stepper';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import {MatSelectModule} from '@angular/material/select';
+import {MatRadioModule} from '@angular/material/radio';
 
 @NgModule({
   declarations: [],
@@ -40,7 +42,9 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatExpansionModule,
     MatStepperModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatSelectModule,
+    MatRadioModule
   ],
   exports:[
     MatCardModule,
@@ -61,7 +65,9 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatExpansionModule,
     MatStepperModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatSelectModule,
+    MatRadioModule
   ]
 })
 export class MaterialModule { }
