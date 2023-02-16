@@ -1,12 +1,13 @@
 import { FormArray } from "@angular/forms";
 
 export interface BusDriver {
-  fullname:string,
+  id: string,
+  fullName:string,
   email:string,
   password: string,
   phoneNo: number,
   driverNo:string,
-  currentLongitude:string,
-  currentLatitude: string,
-  status: string
+  status: string,
+  cLat: string,
+  cLong: string
 }

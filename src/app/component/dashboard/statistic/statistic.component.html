@@ -7,51 +7,167 @@
   <title>Document</title>
 </head>
 <body>
-  <div class="container pt-3">
-    <h4 class="font-monospace">Bus Driver Ratings</h4>
-    <div class="row p-2" [formGroup]="range">
-      <div class="col-md-6 row text-center">
-        <!-- bus driver selection dropdown-list -->
-        <mat-form-field appearance="fill">
-          <mat-label>Bus Driver</mat-label>
-          <mat-select [(ngModel)]="selectedValue" name="driver">
-            <mat-option *ngFor="let driver of busDriver" [value]="driver.fullname">
-              {{driver.fullname}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-        <br>
+  <!-- weekly query form -->
+  <div class="container py-3 text-center">
+    <div class="p-2 py-3 bg-white" [formGroup]="range">
+      <h3 class="font-monospace">Weekly Bus Driver Ratings</h3>
+      <!-- bus driver selection dropdown-list -->
+      <mat-form-field appearance="fill">
+        <mat-label>Select a bus driver</mat-label>
+        <mat-select [(ngModel)]="selectedValue" name="driver" formControlName="driver">
+          <mat-option *ngFor="let driver of busDriver" [value]="driver.id">
+            {{driver.fullName}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <br>
 
-        <!-- 7 days range date picker -->
-        <mat-form-field appearance="fill">
-          <mat-label>Enter a date range</mat-label>
-          <mat-date-range-input [rangePicker]="picker">
-            <input matStartDate formControlName="start" placeholder="Start date">
-            <input matEndDate formControlName="end" placeholder="End date">
-          </mat-date-range-input>
-          <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
-          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-date-range-picker #picker></mat-date-range-picker>
+      <!-- <mat-form-field>
+        <input matInput [matDatepicker]="dp2" placeholder="Select a Date" (click)="openDatePicker(dp2)">
+        <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
+        <mat-datepicker #dp2 startView="multi-year" (monthSelected)="closeDatePicker($event, dp2)"></mat-datepicker>
+      </mat-form-field> -->
 
-          <mat-error *ngIf="range.controls.start.hasError('matStartDateInvalid')">Invalid start date</mat-error>
-          <mat-error *ngIf="range.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error>
-        </mat-form-field>
-        <!-- selected date range label -->
-        <p>Selected range: {{range.value | json}}</p>
-      </div>
+      <!-- 7 days range date picker -->
+      <mat-form-field color="accent" appearance="fill">
+        <mat-label>Enter a date range</mat-label>
+        <mat-date-range-input [min]="minDate" [max]="maxDate" [rangePicker]="picker">
+          <input matStartDate formControlName="start" placeholder="Start date">
+          <input matEndDate formControlName="end" placeholder="End date">
+        </mat-date-range-input>
+        <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker>
+            <mat-date-range-picker-actions>
+              <button mat-button matDatepickerCancel>Cancel</button>
+              <button mat-raised-button color="primary" matDatepickerApply>Apply</button>
+          </mat-date-range-picker-actions>
+        </mat-date-range-picker>
 
-      <div class="col-md-6 text-center">
-        <br>
+        <mat-error *ngIf="range.controls.start.hasError('matStartDateInvalid')">Invalid start date</mat-error>
+        <mat-error *ngIf="range.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error>
+      </mat-form-field>
+      <!-- selected date range label -->
+      <p>Selected range: {{range.value | json}}</p>
+
+
+      <!-- <div class="col-md-6 text-center">
+        <br> -->
         <!-- weekly or monthly radio button -->
-        <mat-radio-group aria-label="Select an option">
+        <!-- <mat-radio-group aria-label="Select an option">
           <mat-radio-button class="px-2" value="1">Weekly</mat-radio-button>
           <mat-radio-button class="px-2" value="2">Monthly</mat-radio-button>
         </mat-radio-group>
         <br>
-
-        <button mat-raised-button color="accent" class="px-5 py-2 mt-3 fs-6">Query</button>
+      </div> -->
+      <button mat-raised-button color="accent" class="px-5 py-2 mt-3 fs-6" (click)="ok()">Query</button>
+    </div>
+    <mat-divider></mat-divider>
+    <!-- bus driver rating data info -->
+    <div class="row pt-3">
+      <div class="col-lg-4">
+        <mat-card class="borderBottom">
+          <mat-card-header class="justify-content-center">
+            <mat-card-subtitle>Highest Quantity</mat-card-subtitle>
+            <mat-card-title class="fw-bold">5 Star</mat-card-title>
+            <div class="circular py-4">
+              30
+            </div>
+          </mat-card-header>
+        </mat-card>
       </div>
+      <div class="col-lg-4">
+        <mat-card class="borderBottom">
+          <mat-card-header class="justify-content-center">
+            <mat-card-subtitle>Average Daily Ratings</mat-card-subtitle>
+            <mat-card-title class="fw-bold">4 Star</mat-card-title>
+            <div class="circular py-4">
+              28
+            </div>
+          </mat-card-header>
+        </mat-card>
+      </div>
+      <div class="col-lg-4">
+        <mat-card class="borderBottom">
+          <mat-card-header class="justify-content-center">
+            <mat-card-subtitle>Day with Top Ratings</mat-card-subtitle>
+            <mat-card-title class="fw-bold">Thursday</mat-card-title>
+            <div class="circular py-4">
+              34
+            </div>
+          </mat-card-header>
+        </mat-card>
+      </div>
+    </div>
+    <div class="row text-center">
+      <div class="col-lg-4">
+        <mat-card>
+          <h2>Pie Chart</h2>
+          <canvas id="piechart"></canvas>
+        </mat-card>
 
+      </div>
+      <div class="col-lg-4">
+        <mat-card>
+          <h2>Line Chart</h2>
+        <canvas id="linechart"></canvas>
+        </mat-card>
+
+      </div>
+      <div class="col-lg-4">
+        <mat-card>
+          <h2>Bar Chart</h2>
+          <canvas id="barchart"></canvas>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+
+  <mat-divider></mat-divider>
+  <!-- monthly query form -->
+  <div class="container py-3 text-center">
+    <div class="p-2 py-3 bg-white" [formGroup]="range">
+      <h3 class="font-monospace">Monthly Bus Driver Ratings</h3>
+      <!-- bus driver selection dropdown-list -->
+      <mat-form-field appearance="fill">
+        <mat-label>Bus Driver</mat-label>
+        <mat-select [(ngModel)]="selectedValue" name="driver">
+          <mat-option *ngFor="let driver of busDriver" [value]="driver.fullName">
+            {{driver.fullName}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <br>
+
+      <!-- <mat-form-field>
+        <input matInput [matDatepicker]="dp2" placeholder="Select a Date" (click)="openDatePicker(dp2)">
+        <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
+        <mat-datepicker #dp2 startView="multi-year" (monthSelected)="closeDatePicker($event, dp2)"></mat-datepicker>
+      </mat-form-field> -->
+
+      <!-- 7 days range date picker -->
+      <mat-form-field color="accent" appearance="fill">
+        <mat-label>Enter a date range</mat-label>
+        <mat-date-range-input [min]="minDate" [max]="maxDate" [rangePicker]="picker">
+          <input matStartDate formControlName="start" placeholder="Start date">
+          <input matEndDate formControlName="end" placeholder="End date">
+        </mat-date-range-input>
+        <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker>
+            <mat-date-range-picker-actions>
+              <button mat-button matDatepickerCancel>Cancel</button>
+              <button mat-raised-button color="primary" matDatepickerApply>Apply</button>
+          </mat-date-range-picker-actions>
+        </mat-date-range-picker>
+
+        <mat-error *ngIf="range.controls.start.hasError('matStartDateInvalid')">Invalid start date</mat-error>
+        <mat-error *ngIf="range.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error>
+      </mat-form-field>
+      <!-- selected date range label -->
+      <p>Selected range: {{range.value | json}}</p>
+
+    <button mat-raised-button color="accent" class="px-5 py-2 mt-3 fs-6">Query</button>
     </div>
     <mat-divider></mat-divider>
     <!-- bus driver rating data info -->

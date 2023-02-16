@@ -13,7 +13,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   providedIn: 'root'
 })
 export class DataService {
-  
+
   constructor(private afs: AngularFirestore, private afa: AngularFireAuth, private snackBar: MatSnackBar) {
   }
   // private data: any;
@@ -192,6 +192,36 @@ export class DataService {
       `BusDriver/${user.uid}`
     );
     return userRef.set(busdriverObj)
+  }
+
+
+ //hardcoded the rating list on bus driver
+  // hi(day: any, rate: any, ko: any){
+  //   var obj={
+  //     date: ko
+  //   }
+  //   var c = this.afs.collection("Rating");
+  //   c.doc(day).set(obj);
+  //   c.doc(day).collection("hfRK37clJ8MEc0sPgyW01YyptVg2").doc(rate.ratingId).set(rate);
+  // }
+
+  getRate(){
+    var c = this.afs.collection("Rating");
+    // return c.doc('9-2-2023').collection("RatingList").doc('rate1').get();
+    return new Promise<any>((resolve)=> {
+      c.doc('9-2-2023').collection("hfRK37clJ8MEc0sPgyW01YyptVg2").doc('rate1').valueChanges({ ratingId: 'rate1' }).subscribe(users => resolve(users));
+    })
+  }
+
+  queryRate(startDate: any, endDate: any, driver: any){
+
+  }
+
+  getDrivers(){
+
+    return new Promise<any>((resolve)=> {
+      this.afs.collection('BusDriver/').valueChanges().subscribe(users => resolve(users));
+    })
   }
 
   openSnackBar(message: string, action: string) {
