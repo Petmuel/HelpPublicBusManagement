@@ -46,6 +46,7 @@ export class StatisticComponent implements OnInit {
     }
   ];
 
+
   constructor(private dataApi: DataService) {
     const currentYear = new Date().getFullYear();
     this.minDate = new Date(currentYear - 20, 0, 1);
