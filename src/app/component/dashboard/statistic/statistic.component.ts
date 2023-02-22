@@ -33,17 +33,17 @@ export class StatisticComponent implements OnInit {
 
   // BusDriver model
   busDriver: BusDriver[] = [
-    {
-      "id": "hfRK37clJ8MEc0sPgyW01YyptVg2",
-      "cLat": "",
-      "email": "asd@gmail.com",
-      "fullName": "Hazel Ponet",
-      "password": "asdasd",
-      "status": "",
-      "driverNo": "asd123",
-      "phoneNo": 123123,
-      "cLong": ""
-    }
+    // {
+    //   "id": "hfRK37clJ8MEc0sPgyW01YyptVg2",
+    //   "cLat": "",
+    //   "email": "asd@gmail.com",
+    //   "fullName": "Hazel Ponet",
+    //   "password": "asdasd",
+    //   "status": "",
+    //   "driverNo": "asd123",
+    //   "phoneNo": 123123,
+    //   "cLong": ""
+    // }
   ];
 
 
@@ -55,7 +55,9 @@ export class StatisticComponent implements OnInit {
 
   ngOnInit(): void {
     this.RenderChart()
-    // this.getAllBusDrivers()
+
+    this.getAllBusDrivers()
+    // console.log(this.busDriver)
     // console.log(this.busDriver);
   }
 
@@ -148,20 +150,20 @@ export class StatisticComponent implements OnInit {
 
   getAllBusDrivers(){
     this.dataApi.getAllBusDrivers().subscribe(res=>{
-      this.busDriver=res.map((e:any)=>{
+      var collect : BusDriver[]=[];
+      res.map((e:any)=>{
         const data = e.payload.doc.data();
         data.id = e.payload.doc.id;
-        return data;
+        return collect.push(data);
       })
-      this.add(this.busDriver);
-      console.log("busDrivers");
+      this.busDriver=collect;
     })
   }
 
-  add(hi:any){
-    this.busDriver = hi;
-    console.log(this.busDriver);
-  }
+  // add(hi:any){
+  //   this.busDriver = hi;
+  //   console.log(this.busDriver);
+  // }
   async ok(){
     if(this.range.value.driver==null||this.range.value.driver==""||this.range.value.start==null){
       window.alert('Please fill in the form')
