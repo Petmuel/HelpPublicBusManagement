@@ -205,6 +205,7 @@ export class DataService {
   //   c.doc(day).collection("hfRK37clJ8MEc0sPgyW01YyptVg2").doc(rate.ratingId).set(rate);
   // }
 
+  //testing
   getRate(){
     var c = this.afs.collection("Rating");
     // return c.doc('9-2-2023').collection("RatingList").doc('rate1').get();
@@ -213,18 +214,36 @@ export class DataService {
     })
   }
 
-  queryRate(startDate: any, endDate: any, driver: any){
+  queryRate(fromDate: any, driverId: any){
+    //let rate: any[] = [];
 
+    return this.afs.collection("Rating").doc(fromDate).collection(driverId).snapshotChanges();
+    // return c.doc('9-2-2023').collection("RatingList").doc('rate1').get();
+    // if (fromDate && toDate != null){
+    //   let dates: any[] = [];
+    //   while(fromDate <= toDate){
+    // //     return new Promise<any>((resolve)=> {
+    // //       rate.push(rating.doc(fromDate).collection(driverId).doc('rate1').valueChanges({ ratingId: 'rate1' }).subscribe(users => resolve(users)));
+    // //     })
+    //     var simpleFromDate = this.simpleDate(fromDate);
+    //     rate.push(rating.doc(simpleFromDate).collection(driverId).snapshotChanges)
+    //     dates = [...dates, new Date(fromDate)];
+    //     fromDate.setDate(fromDate.getDate() + 1);
+    //   }
+    // }
   }
 
-  getDrivers(){
-
-    return new Promise<any>((resolve)=> {
-      this.afs.collection('BusDriver/').valueChanges().subscribe(users => resolve(users));
-    })
-  }
+//   getDrivers(){
+//     return new Promise<any>((resolve)=> {
+//       this.afs.collection('BusDriver/').valueChanges().subscribe(users => resolve(users));
+//     })
+//   }
 
   openSnackBar(message: string, action: string) {
       this.snackBar.open(message, action);
-    }
+  }
+
+  simpleDate(date:any){
+    return (date.getDate()+"-"+(date.getMonth()+1)+"-"+date.getFullYear())
+  }
 }
