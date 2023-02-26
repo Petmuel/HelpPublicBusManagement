@@ -206,12 +206,23 @@ export class DataService {
   // }
 
   //testing
-  getRate(){
+  getRate(date:any, driver:any){
     var c = this.afs.collection("Rating");
     // return c.doc('9-2-2023').collection("RatingList").doc('rate1').get();
+//     return new Promise<any>((resolve)=> {
+//       c.doc('9-2-2023').collection("hfRK37clJ8MEc0sPgyW01YyptVg2").doc('rate1').valueChanges({ ratingId: 'rate1' }).subscribe(users => resolve(users));
+//     })
     return new Promise<any>((resolve)=> {
-      c.doc('9-2-2023').collection("hfRK37clJ8MEc0sPgyW01YyptVg2").doc('rate1').valueChanges({ ratingId: 'rate1' }).subscribe(users => resolve(users));
-    })
+      c.doc(date).collection(driver).valueChanges({ idField: 'id' }).subscribe(users => resolve(users));
+    })
+  }
+
+  getRate2(date:any, driver:any, rateId:any){
+    var c = this.afs.collection("Rating");
+
+      return new Promise<any>((resolve)=> {
+        c.doc(date).collection(driver).doc(rateId).valueChanges({ ratingId: 'rate1' }).subscribe(users => resolve(users));
+      })
   }
 
   queryRate(fromDate: any, driverId: any){

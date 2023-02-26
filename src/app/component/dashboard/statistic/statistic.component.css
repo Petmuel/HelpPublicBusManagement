@@ -18,6 +18,7 @@ mat-card{
   border: solid;
   border-color: rgb(31, 72, 153);
   border-radius: 50%;
+  font-size: large;
 }
 
 .borderBottom{

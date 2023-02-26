@@ -60,7 +60,7 @@
         </mat-radio-group>
         <br>
       </div> -->
-      <button mat-raised-button color="accent" class="px-5 py-2 mt-3 fs-6" (click)="ok()">Query</button>
+      <button mat-raised-button color="accent" class="px-5 py-2 mt-3 fs-6" (click)="weeklyQuery()">Query</button>
     </div>
     <mat-divider></mat-divider>
     <!-- bus driver rating data info -->
@@ -69,9 +69,9 @@
         <mat-card class="borderBottom">
           <mat-card-header class="justify-content-center">
             <mat-card-subtitle>Highest Quantity</mat-card-subtitle>
-            <mat-card-title class="fw-bold">5 Star</mat-card-title>
+            <mat-card-title class="fw-bold">{{highestQuantity.rate}}</mat-card-title>
             <div class="circular py-4">
-              30
+               {{highestQuantity.quantity}}
             </div>
           </mat-card-header>
         </mat-card>
@@ -178,7 +178,7 @@
             <mat-card-subtitle>Highest Quantity</mat-card-subtitle>
             <mat-card-title class="fw-bold">5 Star</mat-card-title>
             <div class="circular py-4">
-              30
+              <h1></h1>
             </div>
           </mat-card-header>
         </mat-card>
