@@ -28,6 +28,7 @@ export class StatisticComponent implements OnInit {
   toDate : any = 1;
   driverId= "";
 
+  dateArray:any[]=[];
   highestQuantity={
     quantity: 0,
     rate: ""
@@ -50,6 +51,10 @@ export class StatisticComponent implements OnInit {
   line:any=null;
   bar:any=null;
 
+  busDriver: BusDriver[] = [];  // BusDriver model
+  queryData: Rate[]=[]; //weekly rating data
+  queryResult: any[] = []; //ratings quantity
+
   datas =
   {
     labels: ['1 Star', '2 Star', '3 Star', '4 Star', '5 Star'],
@@ -57,11 +62,11 @@ export class StatisticComponent implements OnInit {
       label: '# of Ratings',
       data: [0,0,0,0,0],
       backgroundColor: [
-        'rgba(255, 26, 104)',
-        'rgba(54, 162, 235)',
-        'rgba(255, 206, 86)',
-        'rgba(75, 192, 192)',
-        'rgba(153, 102, 255)'
+        'rgba(255, 26, 104, 0.6)',
+        'rgba(54, 162, 235, 0.6)',
+        'rgba(255, 206, 86, 0.6)',
+        'rgba(75, 192, 192, 0.6)',
+        'rgba(153, 102, 255, 0.6)'
       ],
       borderColor: [
         'rgba(255, 26, 104, 1)',
@@ -70,13 +75,14 @@ export class StatisticComponent implements OnInit {
         'rgba(75, 192, 192, 1)',
         'rgba(153, 102, 255, 1)'
       ],
-      borderWidth: 1
+      borderWidth: 2,
+      hoverOffset: 4
     }]
   }
 
   lineData =
   {
-    labels: ['0', '0', '0', '0', '0'],
+    labels: [],
     datasets: [{
       label: '# of 1 Stars',
       data: [],
@@ -86,7 +92,7 @@ export class StatisticComponent implements OnInit {
       borderColor: [
         'rgba(255, 26, 104, 1)'
       ],
-      borderWidth: 1
+      borderWidth: 2
     },
     {
       label: '# of 2 Stars',
@@ -97,7 +103,7 @@ export class StatisticComponent implements OnInit {
       borderColor: [
         'rgba(54, 162, 235, 1)'
       ],
-      borderWidth: 1
+      borderWidth: 2
     },
     {
       label: '# of 3 Stars',
@@ -108,7 +114,7 @@ export class StatisticComponent implements OnInit {
       borderColor: [
         'rgba(255, 206, 86, 1)'
       ],
-      borderWidth: 1
+      borderWidth: 2
     },
     {
       label: '# of 4 Stars',
@@ -119,7 +125,7 @@ export class StatisticComponent implements OnInit {
       borderColor: [,
         'rgba(75, 192, 192, 1)'
       ],
-      borderWidth: 1
+      borderWidth: 2
     },
     {
       label: '# of 5 Stars',
@@ -130,7 +136,7 @@ export class StatisticComponent implements OnInit {
       borderColor: [
         'rgba(153, 102, 255, 1)'
       ],
-      borderWidth: 1
+      borderWidth: 2
     }]
   }
 
@@ -139,14 +145,7 @@ export class StatisticComponent implements OnInit {
     start: new FormControl<Date | null>(null),
     end: new FormControl<Date | null>(null),
     driver: new FormControl()
-  });
-
-  // BusDriver model
-  busDriver: BusDriver[] = [];
-  //weekly rating data
-  queryData: Rate[]=[];
-  queryResult: any[] = [];
-  rateListPerDay: any[]=[];
+  })
 
   constructor(private dataApi: DataService) {
     const currentYear = new Date().getFullYear();
@@ -156,22 +155,10 @@ export class StatisticComponent implements OnInit {
 
   ngOnInit(): void {
     this.RenderChart()
-
     this.getAllBusDrivers()
-    // console.log(this.busDriver)
-    // console.log(this.busDriver);
   }
 
   RenderChart(){
-    // if(dataSet.length>0){
-    //   let chartData= dataSet;
-    //   this.renderChart(chartData)
-    // }
-    // else{
-    //   let chartData= [12, 19, 3, 5, 2];
-    //   this.renderChart(chartData)
-    // }
-
     console.log("Chart")
     let options={
       scales: {
@@ -190,7 +177,32 @@ export class StatisticComponent implements OnInit {
     this.line = new Chart("linechart", {
       type: 'line',
       data:this.lineData,
-      options: options
+      options: {
+        responsive: true,
+        plugins: {
+          tooltip: {
+            mode: 'index',
+            intersect: false
+          }
+        },
+        hover: {
+          mode: 'index',
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Day'
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Number of Ratings'
+            }
+          }
+        }
+      }
     });
 
     this.bar = new Chart("barchart", {
@@ -198,8 +210,17 @@ export class StatisticComponent implements OnInit {
       data: this.datas,
       options: {
         scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Types of Rating'
+            }
+          },
           y: {
-            beginAtZero: true
+            title: {
+              display: true,
+              text: 'Number of Ratings'
+            }
           }
         }
       }
@@ -213,207 +234,18 @@ export class StatisticComponent implements OnInit {
     this.pie.update();
     this.bar.update();
   }
-  updateLineChart(allRatings:any){
-    [
-      [
-          {
-              "date": "7-2-2023",
-              "rate": "1 Star",
-              "quantity": 2
-          },
-          {
-              "date": "8-2-2023",
-              "rate": "1 Star",
-              "quantity": 2
-          },
-          {
-              "date": "9-2-2023",
-              "rate": "1 Star",
-              "quantity": 1
-          },
-          {
-              "date": "10-2-2023",
-              "rate": "1 Star",
-              "quantity": 1
-          },
-          {
-              "date": "11-2-2023",
-              "rate": "1 Star",
-              "quantity": 3
-          },
-          {
-              "date": "12-2-2023",
-              "rate": "1 Star",
-              "quantity": 2
-          },
-          {
-              "date": "13-2-2023",
-              "rate": "1 Star",
-              "quantity": 1
-          }
-      ],
-      [
-          {
-              "date": "7-2-2023",
-              "rate": "2 Star",
-              "quantity": 4
-          },
-          {
-              "date": "8-2-2023",
-              "rate": "2 Star",
-              "quantity": 2
-          },
-          {
-              "date": "9-2-2023",
-              "rate": "2 Star",
-              "quantity": 0
-          },
-          {
-              "date": "10-2-2023",
-              "rate": "2 Star",
-              "quantity": 0
-          },
-          {
-              "date": "11-2-2023",
-              "rate": "2 Star",
-              "quantity": 0
-          },
-          {
-              "date": "12-2-2023",
-              "rate": "2 Star",
-              "quantity": 2
-          },
-          {
-              "date": "13-2-2023",
-              "rate": "2 Star",
-              "quantity": 2
-          }
-      ],
-      [
-          {
-              "date": "7-2-2023",
-              "rate": "3 Star",
-              "quantity": 1
-          },
-          {
-              "date": "8-2-2023",
-              "rate": "3 Star",
-              "quantity": 2
-          },
-          {
-              "date": "9-2-2023",
-              "rate": "3 Star",
-              "quantity": 1
-          },
-          {
-              "date": "10-2-2023",
-              "rate": "3 Star",
-              "quantity": 1
-          },
-          {
-              "date": "11-2-2023",
-              "rate": "3 Star",
-              "quantity": 1
-          },
-          {
-              "date": "12-2-2023",
-              "rate": "3 Star",
-              "quantity": 0
-          },
-          {
-              "date": "13-2-2023",
-              "rate": "3 Star",
-              "quantity": 1
-          }
-      ],
-      [
-          {
-              "date": "7-2-2023",
-              "rate": "4 Star",
-              "quantity": 1
-          },
-          {
-              "date": "8-2-2023",
-              "rate": "4 Star",
-              "quantity": 0
-          },
-          {
-              "date": "9-2-2023",
-              "rate": "4 Star",
-              "quantity": 0
-          },
-          {
-              "date": "10-2-2023",
-              "rate": "4 Star",
-              "quantity": 0
-          },
-          {
-              "date": "11-2-2023",
-              "rate": "4 Star",
-              "quantity": 2
-          },
-          {
-              "date": "12-2-2023",
-              "rate": "4 Star",
-              "quantity": 0
-          },
-          {
-              "date": "13-2-2023",
-              "rate": "4 Star",
-              "quantity": 2
-          }
-      ],
-      [
-          {
-              "date": "7-2-2023",
-              "rate": "5 Star",
-              "quantity": 1
-          },
-          {
-              "date": "8-2-2023",
-              "rate": "5 Star",
-              "quantity": 1
-          },
-          {
-              "date": "9-2-2023",
-              "rate": "5 Star",
-              "quantity": 2
-          },
-          {
-              "date": "10-2-2023",
-              "rate": "5 Star",
-              "quantity": 1
-          },
-          {
-              "date": "11-2-2023",
-              "rate": "5 Star",
-              "quantity": 2
-          },
-          {
-              "date": "12-2-2023",
-              "rate": "5 Star",
-              "quantity": 1
-          },
-          {
-              "date": "13-2-2023",
-              "rate": "5 Star",
-              "quantity": 2
-          }
-      ]
-  ]
-    let dates:any[]=[];
-
-    for(var arr of allRatings) {
-      let stars:any[]=[];
-      for(var obj of arr){
-        dates.push(obj.date)
-        stars.push(obj.quantity)
+  updateLineChart(allRatings:any, dateArr:any){
+    for(var i=0;i<allRatings.length;i++) {
+      let starArr:any[]=[];
+      for(var obj of allRatings[i]){
+        starArr.push(obj.quantity)
       }
-
+      this.line.data.datasets[i].data=starArr;
     }
-    // this.line.data.labels=dates
-    // this.line.data.datasets[0].data=allRatings;
-    // this.line.update()
+    console.log(dateArr)
+    console.log(allRatings)
+    this.line.data.labels=dateArr;
+    this.line.update()
   }
   //hardcoded the rating list on bus driver
   // lol(){
@@ -477,7 +309,7 @@ export class StatisticComponent implements OnInit {
         if (this.fromDate && this.toDate != null){
           let dates: any[] = [];
           var collect : Rate[]=[];
-
+          let dateArr:any[]=[];
           while(this.fromDate <= this.toDate){
             var num=0;
             var rateId = 'rate'+num;
@@ -489,21 +321,22 @@ export class StatisticComponent implements OnInit {
             // }
             let dataCollection = await this.dataApi.getRate((this.simpleDate(this.fromDate)), this.driverId)
             collect.push(dataCollection)
+            ;
+            dateArr.push(this.properDateformat(this.fromDate))
             dates = [...dates, new Date(this.fromDate)];
             this.fromDate.setDate(this.fromDate.getDate() + 1);
             num++;
           }
-
           this.queryData=collect;
           this.countRate(this.queryData);
-          this.countPerDay(this.queryData);
+          this.countPerDay(this.queryData, dateArr);
         }
       }
     }
   }
 
-  countPerDay(rateList:any){
-
+  countPerDay(rateList:any, dateArr:any){
+    let rateListPerDay:any[]=[];
     for(var v=1; v<6; v++){
       let ratings:any[]=[];
       for(var i=0; i<rateList.length; i++){
@@ -518,14 +351,13 @@ export class StatisticComponent implements OnInit {
             dateRate.quantity++
           }
         }
-        dateRate.date=this.properDateformat(rateList[i][0].ratingDate);
+        dateRate.date=rateList[i][0].ratingDate;
         dateRate.rate= v+" Star";
         ratings.push(dateRate)
       }
-      this.rateListPerDay.push(ratings)
+      rateListPerDay.push(ratings)
     }
-    this.updateLineChart(this.rateListPerDay);
-    console.log(this.rateListPerDay)
+    this.updateLineChart(rateListPerDay, dateArr);
   }
 
   //convert data format into a simple string format
@@ -535,8 +367,6 @@ export class StatisticComponent implements OnInit {
 
   //count the number of each rating
   countRate(rateList:any){
-  console.log(rateList)
-  console.log(rateList[1][2])
   let rate1Obj={
     rate:"1 Star",
     rateQuantity:0
@@ -606,11 +436,9 @@ highQuantity(rateObjs:any[]){
 
 //find the day with the most amount of the highest ratings quantity
 dayTopRate(rate: any){
-  console.log(rate.rate)
   let rateList:any[]= this.queryData;
   let specificDayRate:any[]=[];
   for(var v=1; v<6; v++){
-
     let ratenum=v+" Star"
     if(rate.rate==ratenum){
       for(var i=0; i<rateList.length; i++){
@@ -642,49 +470,15 @@ dayTopRate(rate: any){
   this.topDayRate.day=days[date.getDay()];
   this.topDayRate.rate="("+max.rate+")";
   this.topDayRate.quantity=max.quantity;
-  this.topDayRate.date=str
+  this.topDayRate.date=this.properDateformat(date);
 }
 
 properDateformat(date:any){
-  const [day, month, year] = date.split('-');
-  const date1 = new Date(+year, +month - 1, +day);
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  const m = monthNames[date1.getMonth()]
-  return day+" "+m+" "+year;
+  const m = monthNames[date.getMonth()]
+  return date.getDate()+" "+m+" "+date.getFullYear();
 }
-
-      // console.log(specificDayRate);
-
-      // ok(){
-      //   // if(this.fromDate==this.range.value.start
-      //   //   &&this.toDate== this.range.value.end
-      //   //   &&this.driverId==this.range.value.driver){
-      //   //   window.alert("You have selected the same week, please select a different week.");
-      //   // }
-      //   // else{
-      //     //let queryData: any[] =[]
-      //     this.dummyVal=100;
-      //     this.fromDate= this.range.value.start;
-      //     this.toDate= this.range.value.end;
-      //     this.driverId = this.range.value.driver;
-      //     if(this.range.value.driver==null
-      //       ||this.range.value.driver==""
-      //       ||this.range.value.start==null
-      //       ||this.range.value.end==null){
-      //       window.alert('Please fill in the form')
-      //     }
-      //     else if(this.range.invalid){
-      //       window.alert('Invalid Query, please try again')
-      //     }
-      //     else{
-      //       if (this.fromDate && this.toDate != null){
-      //         let dates: any[] = [];
-      //         var collect : Rate[]=[];
-      //         while(this.fromDate <= this.toDate){
-      //           //console.log(this.simpleDate(fromDate))
-      //           this.dataApi.queryRate((this.simpleDate(this.fromDate)), this.driverId).subscribe(res=>{
-      //             // var collect : Rate[]=[];
       //             res.map((e:any)=>{
       //               const data = e.payload.doc.data();
       //               data.id = e.payload.doc.id;
