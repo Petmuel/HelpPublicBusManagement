@@ -72,7 +72,67 @@ export class StatisticComponent implements OnInit {
       ],
       borderWidth: 1
     }]
-  };
+  }
+
+  lineData =
+  {
+    labels: ['0', '0', '0', '0', '0'],
+    datasets: [{
+      label: '# of 1 Stars',
+      data: [],
+      backgroundColor: [
+        'rgba(255, 26, 104)'
+      ],
+      borderColor: [
+        'rgba(255, 26, 104, 1)'
+      ],
+      borderWidth: 1
+    },
+    {
+      label: '# of 2 Stars',
+      data: [],
+      backgroundColor: [
+        'rgba(54, 162, 235)'
+      ],
+      borderColor: [
+        'rgba(54, 162, 235, 1)'
+      ],
+      borderWidth: 1
+    },
+    {
+      label: '# of 3 Stars',
+      data: [],
+      backgroundColor: [
+        'rgba(255, 206, 86)'
+      ],
+      borderColor: [
+        'rgba(255, 206, 86, 1)'
+      ],
+      borderWidth: 1
+    },
+    {
+      label: '# of 4 Stars',
+      data: [],
+      backgroundColor: [
+        'rgba(75, 192, 192)'
+      ],
+      borderColor: [,
+        'rgba(75, 192, 192, 1)'
+      ],
+      borderWidth: 1
+    },
+    {
+      label: '# of 5 Stars',
+      data: [],
+      backgroundColor: [
+        'rgba(153, 102, 255)'
+      ],
+      borderColor: [
+        'rgba(153, 102, 255, 1)'
+      ],
+      borderWidth: 1
+    }]
+  }
 
   selectedValue: string ="";
   range = new FormGroup({
@@ -85,7 +145,8 @@ export class StatisticComponent implements OnInit {
   busDriver: BusDriver[] = [];
   //weekly rating data
   queryData: Rate[]=[];
-  queryResult: any[] = [12, 19, 3, 5, 2];
+  queryResult: any[] = [];
+  rateListPerDay: any[]=[];
 
   constructor(private dataApi: DataService) {
     const currentYear = new Date().getFullYear();
@@ -128,7 +189,7 @@ export class StatisticComponent implements OnInit {
 
     this.line = new Chart("linechart", {
       type: 'line',
-      data:this.datas,
+      data:this.lineData,
       options: options
     });
 
@@ -147,14 +208,213 @@ export class StatisticComponent implements OnInit {
   }
 
   updateChart(chartData:any){
-    this.pie.data.datasets[0].data=chartData
-    this.bar.data.datasets[0].data=chartData
-    this.line.data.datasets[0].data=chartData
+    this.pie.data.datasets[0].data=chartData;
+    this.bar.data.datasets[0].data=chartData;
     this.pie.update();
     this.bar.update();
-    this.line.update();
   }
+  updateLineChart(allRatings:any){
+    [
+      [
+          {
+              "date": "7-2-2023",
+              "rate": "1 Star",
+              "quantity": 2
+          },
+          {
+              "date": "8-2-2023",
+              "rate": "1 Star",
+              "quantity": 2
+          },
+          {
+              "date": "9-2-2023",
+              "rate": "1 Star",
+              "quantity": 1
+          },
+          {
+              "date": "10-2-2023",
+              "rate": "1 Star",
+              "quantity": 1
+          },
+          {
+              "date": "11-2-2023",
+              "rate": "1 Star",
+              "quantity": 3
+          },
+          {
+              "date": "12-2-2023",
+              "rate": "1 Star",
+              "quantity": 2
+          },
+          {
+              "date": "13-2-2023",
+              "rate": "1 Star",
+              "quantity": 1
+          }
+      ],
+      [
+          {
+              "date": "7-2-2023",
+              "rate": "2 Star",
+              "quantity": 4
+          },
+          {
+              "date": "8-2-2023",
+              "rate": "2 Star",
+              "quantity": 2
+          },
+          {
+              "date": "9-2-2023",
+              "rate": "2 Star",
+              "quantity": 0
+          },
+          {
+              "date": "10-2-2023",
+              "rate": "2 Star",
+              "quantity": 0
+          },
+          {
+              "date": "11-2-2023",
+              "rate": "2 Star",
+              "quantity": 0
+          },
+          {
+              "date": "12-2-2023",
+              "rate": "2 Star",
+              "quantity": 2
+          },
+          {
+              "date": "13-2-2023",
+              "rate": "2 Star",
+              "quantity": 2
+          }
+      ],
+      [
+          {
+              "date": "7-2-2023",
+              "rate": "3 Star",
+              "quantity": 1
+          },
+          {
+              "date": "8-2-2023",
+              "rate": "3 Star",
+              "quantity": 2
+          },
+          {
+              "date": "9-2-2023",
+              "rate": "3 Star",
+              "quantity": 1
+          },
+          {
+              "date": "10-2-2023",
+              "rate": "3 Star",
+              "quantity": 1
+          },
+          {
+              "date": "11-2-2023",
+              "rate": "3 Star",
+              "quantity": 1
+          },
+          {
+              "date": "12-2-2023",
+              "rate": "3 Star",
+              "quantity": 0
+          },
+          {
+              "date": "13-2-2023",
+              "rate": "3 Star",
+              "quantity": 1
+          }
+      ],
+      [
+          {
+              "date": "7-2-2023",
+              "rate": "4 Star",
+              "quantity": 1
+          },
+          {
+              "date": "8-2-2023",
+              "rate": "4 Star",
+              "quantity": 0
+          },
+          {
+              "date": "9-2-2023",
+              "rate": "4 Star",
+              "quantity": 0
+          },
+          {
+              "date": "10-2-2023",
+              "rate": "4 Star",
+              "quantity": 0
+          },
+          {
+              "date": "11-2-2023",
+              "rate": "4 Star",
+              "quantity": 2
+          },
+          {
+              "date": "12-2-2023",
+              "rate": "4 Star",
+              "quantity": 0
+          },
+          {
+              "date": "13-2-2023",
+              "rate": "4 Star",
+              "quantity": 2
+          }
+      ],
+      [
+          {
+              "date": "7-2-2023",
+              "rate": "5 Star",
+              "quantity": 1
+          },
+          {
+              "date": "8-2-2023",
+              "rate": "5 Star",
+              "quantity": 1
+          },
+          {
+              "date": "9-2-2023",
+              "rate": "5 Star",
+              "quantity": 2
+          },
+          {
+              "date": "10-2-2023",
+              "rate": "5 Star",
+              "quantity": 1
+          },
+          {
+              "date": "11-2-2023",
+              "rate": "5 Star",
+              "quantity": 2
+          },
+          {
+              "date": "12-2-2023",
+              "rate": "5 Star",
+              "quantity": 1
+          },
+          {
+              "date": "13-2-2023",
+              "rate": "5 Star",
+              "quantity": 2
+          }
+      ]
+  ]
+    let dates:any[]=[];
 
+    for(var arr of allRatings) {
+      let stars:any[]=[];
+      for(var obj of arr){
+        dates.push(obj.date)
+        stars.push(obj.quantity)
+      }
+
+    }
+    // this.line.data.labels=dates
+    // this.line.data.datasets[0].data=allRatings;
+    // this.line.update()
+  }
   //hardcoded the rating list on bus driver
   // lol(){
   //   var date = new Date()
@@ -236,9 +496,36 @@ export class StatisticComponent implements OnInit {
 
           this.queryData=collect;
           this.countRate(this.queryData);
+          this.countPerDay(this.queryData);
         }
       }
     }
+  }
+
+  countPerDay(rateList:any){
+
+    for(var v=1; v<6; v++){
+      let ratings:any[]=[];
+      for(var i=0; i<rateList.length; i++){
+        let dateRate={
+          date: "",
+          rate:"",
+          quantity: 0
+        };
+
+        for(var obj of rateList[i]){
+          if(obj.ratingLevel==v){
+            dateRate.quantity++
+          }
+        }
+        dateRate.date=this.properDateformat(rateList[i][0].ratingDate);
+        dateRate.rate= v+" Star";
+        ratings.push(dateRate)
+      }
+      this.rateListPerDay.push(ratings)
+    }
+    this.updateLineChart(this.rateListPerDay);
+    console.log(this.rateListPerDay)
   }
 
   //convert data format into a simple string format
@@ -356,6 +643,15 @@ dayTopRate(rate: any){
   this.topDayRate.rate="("+max.rate+")";
   this.topDayRate.quantity=max.quantity;
   this.topDayRate.date=str
+}
+
+properDateformat(date:any){
+  const [day, month, year] = date.split('-');
+  const date1 = new Date(+year, +month - 1, +day);
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const m = monthNames[date1.getMonth()]
+  return day+" "+m+" "+year;
 }
 
       // console.log(specificDayRate);
