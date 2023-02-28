@@ -68,7 +68,7 @@
       <div class="col-lg-4">
         <mat-card class="borderBottom">
           <mat-card-header class="justify-content-center">
-            <mat-card-subtitle>Highest Quantity</mat-card-subtitle>
+            <mat-card-subtitle>Highest Rating Quantity</mat-card-subtitle>
             <mat-card-title class="fw-bold">{{highestQuantity.rate}}</mat-card-title>
             <div class="circular py-4">
                {{highestQuantity.quantity}}
@@ -79,10 +79,10 @@
       <div class="col-lg-4">
         <mat-card class="borderBottom">
           <mat-card-header class="justify-content-center">
-            <mat-card-subtitle>Average Daily Ratings</mat-card-subtitle>
-            <mat-card-title class="fw-bold">4 Star</mat-card-title>
+            <mat-card-subtitle>Average Daily Highest Ratings</mat-card-subtitle>
+            <mat-card-title class="fw-bold">{{averageDaily.rate}}</mat-card-title>
             <div class="circular py-4">
-              28
+              {{averageDaily.quantity}}
             </div>
           </mat-card-header>
         </mat-card>
@@ -90,36 +90,43 @@
       <div class="col-lg-4">
         <mat-card class="borderBottom">
           <mat-card-header class="justify-content-center">
-            <mat-card-subtitle>Day with Top Ratings</mat-card-subtitle>
-            <mat-card-title class="fw-bold">Thursday</mat-card-title>
+            <mat-card-subtitle>Day with Most Ratings {{topDayRate.rate}}</mat-card-subtitle>
+            <mat-card-title class="fw-bold">{{topDayRate.date}}{{topDayRate.day}}</mat-card-title>
             <div class="circular py-4">
-              34
+              {{topDayRate.quantity}}
             </div>
           </mat-card-header>
         </mat-card>
       </div>
     </div>
     <div class="row text-center">
-      <div class="col-lg-4">
+      <div class="col-lg-6 py-5">
         <mat-card>
-          <h2>Pie Chart</h2>
+          <mat-card-header>
+            <mat-card-title>Number of Each Ratings</mat-card-title>
+          </mat-card-header>
+          <mat-divider></mat-divider>
           <canvas id="piechart"></canvas>
         </mat-card>
 
       </div>
-      <div class="col-lg-4">
+      <div class="col-lg-6">
         <mat-card>
-          <h2>Line Chart</h2>
+          <mat-card-header>
+            <mat-card-title>Number of Ratings Per Day</mat-card-title>
+          </mat-card-header>
+          <mat-divider></mat-divider>
         <canvas id="linechart"></canvas>
         </mat-card>
-
-      </div>
-      <div class="col-lg-4">
         <mat-card>
-          <h2>Bar Chart</h2>
+          <mat-card-header>
+            <mat-card-title>Number of Each Ratings</mat-card-title>
+          </mat-card-header>
+          <mat-divider></mat-divider>
           <canvas id="barchart"></canvas>
         </mat-card>
       </div>
+
     </div>
   </div>
 

@@ -33,6 +33,47 @@ export class StatisticComponent implements OnInit {
     rate: ""
   };
 
+  averageDaily={
+    quantity: "0",
+    rate: ""
+  }
+
+  topDayRate={
+    quantity: 0,
+    rate: "",
+    day: "",
+    date: ""
+  }
+
+  //type of charts
+  pie:any=null;
+  line:any=null;
+  bar:any=null;
+
+  datas =
+  {
+    labels: ['1 Star', '2 Star', '3 Star', '4 Star', '5 Star'],
+    datasets: [{
+      label: '# of Ratings',
+      data: [0,0,0,0,0],
+      backgroundColor: [
+        'rgba(255, 26, 104)',
+        'rgba(54, 162, 235)',
+        'rgba(255, 206, 86)',
+        'rgba(75, 192, 192)',
+        'rgba(153, 102, 255)'
+      ],
+      borderColor: [
+        'rgba(255, 26, 104, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)'
+      ],
+      borderWidth: 1
+    }]
+  };
+
   selectedValue: string ="";
   range = new FormGroup({
     start: new FormControl<Date | null>(null),
@@ -42,8 +83,9 @@ export class StatisticComponent implements OnInit {
 
   // BusDriver model
   busDriver: BusDriver[] = [];
+  //weekly rating data
   queryData: Rate[]=[];
-  queryResult: any[] = [];
+  queryResult: any[] = [12, 19, 3, 5, 2];
 
   constructor(private dataApi: DataService) {
     const currentYear = new Date().getFullYear();
@@ -60,63 +102,57 @@ export class StatisticComponent implements OnInit {
   }
 
   RenderChart(){
+    // if(dataSet.length>0){
+    //   let chartData= dataSet;
+    //   this.renderChart(chartData)
+    // }
+    // else{
+    //   let chartData= [12, 19, 3, 5, 2];
+    //   this.renderChart(chartData)
+    // }
+
     console.log("Chart")
-    new Chart("piechart", {
-    type: 'pie',
-    data: {
-      labels: ['5 Star', '4 Star', '3 Star', '2 Star', '1 Star'],
-      datasets: [{
-        label: '# of Votes',
-        data: [12, 19, 3, 5, 2],
-        borderWidth: 1
-      }]
-    },
-    options: {
+    let options={
       scales: {
         y: {
           beginAtZero: true
         }
       }
     }
-  });
 
-  new Chart("linechart", {
-    type: 'line',
-    data: {
-      labels: ['5 Star', '4 Star', '3 Star', '2 Star', '1 Star'],
-      datasets: [{
-        label: '# of Rates',
-        data: [12, 19, 3, 5, 23],
-        borderWidth: 1
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true
-        }
-      }
-    }
-  });
+    this.pie = new Chart("piechart", {
+      type: 'pie',
+      data: this.datas,
+      options: options
+    });
 
-  new Chart("barchart", {
-    type: 'bar',
-    data: {
-      labels: ['5 Star', '4 Star', '3 Star', '2 Star', '1 Star'],
-      datasets: [{
-        label: '# of Rates',
-        data: [12, 19, 3, 5, 23],
-        borderWidth: 1
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true
+    this.line = new Chart("linechart", {
+      type: 'line',
+      data:this.datas,
+      options: options
+    });
+
+    this.bar = new Chart("barchart", {
+      type: 'bar',
+      data: this.datas,
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
         }
       }
-    }
-  });
+    });
+
+  }
+
+  updateChart(chartData:any){
+    this.pie.data.datasets[0].data=chartData
+    this.bar.data.datasets[0].data=chartData
+    this.line.data.datasets[0].data=chartData
+    this.pie.update();
+    this.bar.update();
+    this.line.update();
   }
 
   //hardcoded the rating list on bus driver
@@ -205,74 +241,121 @@ export class StatisticComponent implements OnInit {
     }
   }
 
-  // add(hi:any){
-  //   this.busDriver = hi;
-  //   console.log(this.busDriver);
-  // }
+  //convert data format into a simple string format
   simpleDate(date:any){
     return (date.getDate()+"-"+(date.getMonth()+1)+"-"+date.getFullYear())
   }
 
+  //count the number of each rating
   countRate(rateList:any){
   console.log(rateList)
   console.log(rateList[1][2])
-  var rate1 = 0;
-  var rate2 = 0;
-  var rate3 = 0;
-  var rate4 = 0;
-  var rate5 = 0;
+  let rate1Obj={
+    rate:"1 Star",
+    rateQuantity:0
+  }
+  let rate2Obj={
+    rate:"2 Star",
+    rateQuantity:0
+  }
+  let rate3Obj={
+    rate:"3 Star",
+    rateQuantity:0
+  }
+  let rate4Obj={
+    rate:"4 Star",
+    rateQuantity:0
+  }
+  let rate5Obj={
+    rate:"5 Star",
+    rateQuantity:0
+  }
   for(var i=0; i<rateList.length; i++){
     for(var obj of rateList[i]){
       if(obj.ratingLevel==1){
-        rate1++;
+        rate1Obj.rateQuantity++;
         //specRate1++;
       }
       else if(obj.ratingLevel==2){
-        rate2++;
+        rate2Obj.rateQuantity++;
         //specRate2++;
       }
       else if(obj.ratingLevel==3){
-        rate3++;
+        rate3Obj.rateQuantity++;
         //specRate3++;
       }
       else if(obj.ratingLevel==4){
-        rate4++;
+        rate4Obj.rateQuantity++;
         //specRate4++;
       }
       else if(obj.ratingLevel==5){
-        rate5++;
+        rate5Obj.rateQuantity++;
         //specRate5++;
       }
     }
   }
-  console.log(this.highQuantity(rate1, rate2, rate3, rate4, rate5))
-  var result =[rate1,rate2,rate3,rate4,rate5];
-  console.log(result)
+
+  this.highQuantity([rate1Obj, rate2Obj, rate3Obj, rate4Obj, rate5Obj]);
+  this.queryResult =[rate1Obj.rateQuantity,rate2Obj.rateQuantity,rate3Obj.rateQuantity,
+    rate4Obj.rateQuantity,rate5Obj.rateQuantity];
+  this.updateChart(this.queryResult)
 }
 
-highQuantity(r1:any, r2:any, r3:any, r4:any, r5:any){
+//find the highest quantity of rating
+highQuantity(rateObjs:any[]){
+  const maxRate = rateObjs.reduce(function(prev, current) {
+    return (prev.rateQuantity > current.rateQuantity) ? prev : current
+  });
 
-  if(r1>r2 && r1>r3 && r1>r4 && r1>r5){
-    this.highestQuantity.quantity=r1;
-    this.highestQuantity.rate="1 Star"
+  this.highestQuantity.quantity=maxRate.rateQuantity;
+  this.highestQuantity.rate=maxRate.rate;
+
+  //find the day with top ratings
+  this.dayTopRate(this.highestQuantity);
+  //get average daily amount of the highest rating quantity
+  this.averageDaily.rate=this.highestQuantity.rate;
+  this.averageDaily.quantity=(this.highestQuantity.quantity/7).toPrecision(3);
+}
+
+//find the day with the most amount of the highest ratings quantity
+dayTopRate(rate: any){
+  console.log(rate.rate)
+  let rateList:any[]= this.queryData;
+  let specificDayRate:any[]=[];
+  for(var v=1; v<6; v++){
+
+    let ratenum=v+" Star"
+    if(rate.rate==ratenum){
+      for(var i=0; i<rateList.length; i++){
+        let dateRate={
+          date: "",
+          rate:"",
+          quantity: 0
+        };
+        for(var obj of rateList[i]){
+          if(obj.ratingLevel==v){
+            dateRate.quantity++
+          }
+        }
+        dateRate.date=rateList[i][0].ratingDate;
+        dateRate.rate= ratenum;
+        specificDayRate.push(dateRate)
+      }
+    }
   }
-  else if(r2>r1 && r2>r3 && r2>r4 && r2>r5){
-    this.highestQuantity.quantity=r2;
-    this.highestQuantity.rate="2 Star"
-  }
-  else if(r3>r1 && r3>r2 && r3>r4 && r3>r5){
-    this.highestQuantity.quantity=r3;
-    this.highestQuantity.rate="3 Star"
-  }
-  else if(r4>r1 && r4>r2 && r4>r3 && r4>r5){
-    this.highestQuantity.quantity=r4;
-    this.highestQuantity.rate="4 Star";
-  }
-  else if(r5>r1 && r5>r2 && r5>r3 && r5>r4){
-    this.highestQuantity.quantity=r5;
-    this.highestQuantity.rate="5 Star"
-  }
-  return
+  //Find the day object whose property "rate" has the greatest value in the array specificDayRate
+  const max = specificDayRate.reduce(function(prev, current) {
+    return (prev.quantity > current.quantity) ? prev : current
+  }) //returns object
+
+  var days = [' (Sunday)', ' (Monday)', ' (Tuesday)', ' (Wednesday)', ' (Thursday)', ' (Friday)', ' (Saturday)'];
+  const str = max.date;
+  const [day, month, year] = str.split('-');
+  const date = new Date(+year, +month - 1, +day);
+  this.topDayRate.day=days[date.getDay()];
+  this.topDayRate.rate="("+max.rate+")";
+  this.topDayRate.quantity=max.quantity;
+  this.topDayRate.date=str
 }
 
       // console.log(specificDayRate);
