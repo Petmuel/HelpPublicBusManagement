@@ -47,9 +47,10 @@
         <mat-error *ngIf="range.controls.start.hasError('matStartDateInvalid')">Invalid start date</mat-error>
         <mat-error *ngIf="range.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error>
       </mat-form-field>
-      <!-- selected date range label -->
+      <!-- selected date range label
       <p>Selected range: {{range.value | json}}</p>
-
+      -->
+      <br>
 
       <!-- <div class="col-md-6 text-center">
         <br> -->
@@ -103,7 +104,7 @@
       <div class="col-lg-6 py-5">
         <mat-card>
           <mat-card-header>
-            <mat-card-title>Number of Each Ratings</mat-card-title>
+            <mat-card-title>Ratings Quantity</mat-card-title>
           </mat-card-header>
           <mat-divider></mat-divider>
           <canvas id="piechart"></canvas>
@@ -144,6 +145,7 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
+      
       <br>
 
       <!-- <mat-form-field>
