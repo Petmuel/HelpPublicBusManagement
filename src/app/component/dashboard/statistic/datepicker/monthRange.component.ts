@@ -1,53 +1,30 @@
-// import {Component, ViewEncapsulation} from '@angular/core';
-// import {FormControl} from '@angular/forms';
-// import {MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS} from '@angular/material-moment-adapter';
-// import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
-// import {MatDatepicker} from '@angular/material/datepicker';
+import { Platform } from "@angular/cdk/platform";
+import { MAT_DATE_LOCALE, NativeDateAdapter } from "@angular/material/core";
+import { MatDatepickerInputEvent } from "@angular/material/datepicker";
+import { DateAdapter } from "@angular/material/core";
 
-// // Depending on whether rollup is used, moment needs to be imported differently.
-// // Since Moment.js doesn't have a default export, we normally need to import using the `* as`
-// // syntax. However, rollup creates a synthetic default module and we thus need to import it using
-// // the `default as` syntax.
-// import * as _moment from 'moment';
-// // tslint:disable-next-line:no-duplicate-imports
-// import {default as _rollupMoment, Moment} from 'moment';
+export class MonthpickerDateAdapter extends NativeDateAdapter {
+  constructor(matDateLocale: string, platform: Platform) {
+    super(matDateLocale, platform);
+  }
 
-// const moment = _rollupMoment || _moment;
+  override parse(value: string): Date | null {
+    const monthAndYearRegex = /(10|11|12|0\d|\d)\/[\d]{4}/;
+    if (value?.match(monthAndYearRegex)) {
+      const parts = value.split('/');
+      const month = Number(parts[0]);
+      const year = Number(parts[1]);
+      if (month > 0 && month <= 12) {
+        return new Date(year, month - 1);
+      }
+    }
+    return null;
+  }
 
-// // See the Moment.js docs for the meaning of these formats:
-// // https://momentjs.com/docs/#/displaying/format/
-// export const MY_FORMATS = {
-//   parse: {
-//     dateInput: 'YYYY',
-//   },
-//   display: {
-//     dateInput: 'YYYY',
-//     monthYearLabel: 'YYYY',
-//     monthYearA11yLabel: 'YYYY',
-//   },
-// };
-
-// @Component({
-//     providers: [
-//     {
-//       provide: DateAdapter,
-//       useClass: MomentDateAdapter,
-//       deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS]
-//     },
-//     {
-//      provide: MAT_DATE_FORMATS, useValue: MY_FORMATS
-//     },
-//    ]
-// })
-
-// export class MainFormComponent implements OnInit {
-
-//     @ViewChild('picker', { static: false })
-//     private picker!: MatDatepicker<Date>;
-
-//     chosenYearHandler(ev, input){
-//       let { _d } = ev;
-//       this.selectYear = _d;
-//       this.picker.close()
-//     }
-// }
+  override format(date: Date, displayFormat: any): string {
+    const month = date.getMonth() + 1;
+    const monthAsString = ('0' + month).slice(-2);
+    const year = date.getFullYear();
+    return monthAsString + '/' + year;
+  }
+}

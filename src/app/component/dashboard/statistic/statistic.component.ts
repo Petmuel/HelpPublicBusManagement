@@ -28,6 +28,10 @@ export class StatisticComponent implements OnInit {
   toDate : any = 1;
   driverId= "";
 
+  //monthly query data
+  monthYear="";
+  mDriverId= "";
+
   dateArray:any[]=[];
   highestQuantity={
     quantity: 0,
@@ -46,14 +50,40 @@ export class StatisticComponent implements OnInit {
     date: ""
   }
 
-  //type of charts
+   //monthly data result
+   mHighestQuantity={
+    quantity: 0,
+    rate: ""
+  };
+
+  mAverageDaily={
+    quantity: "0",
+    rate: ""
+  }
+
+  mTopDayRate={
+    quantity: 0,
+    rate: "",
+    day: "",
+    date: ""
+  }
+
+  //type of weekly charts
   pie:any=null;
   line:any=null;
   bar:any=null;
 
+  //type of monthly charts
+  pie2:any=null;
+  line2:any=null;
+  bar2:any=null;
+
   busDriver: BusDriver[] = [];  // BusDriver model
   queryData: Rate[]=[]; //weekly rating data
   queryResult: any[] = []; //ratings quantity
+
+  mQueryData: Rate[]=[]; //monthly rating data
+  mQueryResult: any[] = []; //monthly ratings quantity
 
   datas =
   {
@@ -147,6 +177,11 @@ export class StatisticComponent implements OnInit {
     driver: new FormControl()
   })
 
+  monthRange = new FormGroup({
+    monthYear: new FormControl(),
+    driver: new FormControl()
+  })
+
   constructor(private dataApi: DataService) {
     const currentYear = new Date().getFullYear();
     this.minDate = new Date(currentYear - 20, 0, 1);
@@ -226,6 +261,64 @@ export class StatisticComponent implements OnInit {
       }
     });
 
+    //month charts
+    this.pie2 = new Chart("piechart2", {
+      type: 'pie',
+      data: this.datas,
+      options: options
+    });
+
+    this.line2 = new Chart("linechart2", {
+      type: 'line',
+      data:this.lineData,
+      options: {
+        responsive: true,
+        plugins: {
+          tooltip: {
+            mode: 'index',
+            intersect: false
+          }
+        },
+        hover: {
+          mode: 'index',
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Day'
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Number of Ratings'
+            }
+          }
+        }
+      }
+    });
+
+    this.bar2 = new Chart("barchart2", {
+      type: 'bar',
+      data: this.datas,
+      options: {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Types of Rating'
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Number of Ratings'
+            }
+          }
+        }
+      }
+    });
   }
 
   updateChart(chartData:any){
@@ -233,6 +326,12 @@ export class StatisticComponent implements OnInit {
     this.bar.data.datasets[0].data=chartData;
     this.pie.update();
     this.bar.update();
+  }
+  updateChart2(chartData:any){
+    this.pie2.data.datasets[0].data=chartData;
+    this.bar2.data.datasets[0].data=chartData;
+    this.pie2.update();
+    this.bar2.update();
   }
   updateLineChart(allRatings:any, dateArr:any){
     for(var i=0;i<allRatings.length;i++) {
@@ -247,13 +346,27 @@ export class StatisticComponent implements OnInit {
     this.line.data.labels=dateArr;
     this.line.update()
   }
+
+  updateLineChart2(allRatings:any, dateArr:any){
+    for(var i=0;i<allRatings.length;i++) {
+      let starArr:any[]=[];
+      for(var obj of allRatings[i]){
+        starArr.push(obj.quantity)
+      }
+      this.line2.data.datasets[i].data=starArr;
+    }
+    console.log(dateArr)
+    console.log(allRatings)
+    this.line2.data.labels=dateArr;
+    this.line2.update()
+  }
   //hardcoded the rating list on bus driver
   // lol(){
   //   var date = new Date()
   //   // var yesterday = new Date(date.getTime());
   //   //   yesterday.setDate(date.getDate() - 1);
   //   // console.log(yesterday.getDate()+"/"+yesterday.getDay()+"/"+yesterday.getFullYear())
-  //   for(var l=1; l<31; l++){
+  //   for(var l=1; l<32; l++){
   //     var yesterday = new Date(date.getTime());
   //     yesterday.setDate(date.getDate() - l);
   //     var currDay = yesterday.getDate()+"-"+(yesterday.getMonth()+1)+"-"+yesterday.getFullYear();
@@ -335,6 +448,63 @@ export class StatisticComponent implements OnInit {
     }
   }
 
+  async monthlyQuery(){
+    console.log("hi")
+    if(this.monthYear==this.monthRange.value.monthYear
+      &&this.mDriverId==this.monthRange.value.driver){
+      window.alert("You have entered the same month, please enter a different month.");
+    }
+    else{
+        this.monthYear= this.monthRange.value.monthYear;
+        this.mDriverId=this.monthRange.value.driver;
+        if(this.monthRange.value.monthYear==null
+          ||this.monthRange.value.monthYear==""
+          ||this.monthRange.value.driver==null
+          ||this.monthRange.value.driver==""){
+          window.alert('Please fill in the form')
+        }
+        else if(this.monthRange.invalid){
+          window.alert('Invalid Query, please try again')
+        }
+        else{
+          if (this.monthYear=="February"){
+            console.log("hi")
+            let dates: any[] = [];
+            var collect : Rate[]=[];
+            let dateArr:any[]=[];
+            const str = "1-2-2023";
+            const str2 = "28-2-2023"
+            const [day, month, year] = str.split('-');
+            const [day2, month2, year2] = str2.split('-');
+            const fromDate = new Date(+year, +month - 1, +day);
+            const toDate = new Date(+year2, +month2 - 1, +day2);
+            while(fromDate <= toDate){
+              var num=0;
+              var rateId = 'rate'+num;
+              //console.log(this.simpleDate(fromDate))
+              // while((await this.dataApi.getRate2((this.simpleDate(this.fromDate)), this.driverId, rateId))!=null){
+              //   collect.push(await this.dataApi.getRate2((this.simpleDate(this.fromDate)), this.driverId, rateId))
+              //   num++;
+              //   rateId='rate'+num;
+              // }
+              let dataCollection = await this.dataApi.getRate((this.simpleDate(fromDate)), this.mDriverId)
+              collect.push(dataCollection)
+              ;
+              dateArr.push(this.properDateformat(fromDate))
+              dates = [...dates, new Date(fromDate)];
+              fromDate.setDate(fromDate.getDate() + 1);
+              num++;
+            }
+            this.mQueryData=collect;
+            console.log(this.mQueryData)
+            this.countRate(this.mQueryData);
+            this.countPerDay(this.mQueryData, dateArr);
+          }
+        }
+
+    }
+  }
+
   countPerDay(rateList:any, dateArr:any){
     let rateListPerDay:any[]=[];
     for(var v=1; v<6; v++){
@@ -357,7 +527,12 @@ export class StatisticComponent implements OnInit {
       }
       rateListPerDay.push(ratings)
     }
-    this.updateLineChart(rateListPerDay, dateArr);
+    if(rateList.length>7){
+      this.updateLineChart2(rateListPerDay, dateArr);
+    }
+    else{
+      this.updateLineChart(rateListPerDay, dateArr);
+    }
   }
 
   //convert data format into a simple string format
@@ -367,56 +542,64 @@ export class StatisticComponent implements OnInit {
 
   //count the number of each rating
   countRate(rateList:any){
-  let rate1Obj={
-    rate:"1 Star",
-    rateQuantity:0
-  }
-  let rate2Obj={
-    rate:"2 Star",
-    rateQuantity:0
-  }
-  let rate3Obj={
-    rate:"3 Star",
-    rateQuantity:0
-  }
-  let rate4Obj={
-    rate:"4 Star",
-    rateQuantity:0
-  }
-  let rate5Obj={
-    rate:"5 Star",
-    rateQuantity:0
-  }
-  for(var i=0; i<rateList.length; i++){
-    for(var obj of rateList[i]){
-      if(obj.ratingLevel==1){
-        rate1Obj.rateQuantity++;
-        //specRate1++;
-      }
-      else if(obj.ratingLevel==2){
-        rate2Obj.rateQuantity++;
-        //specRate2++;
-      }
-      else if(obj.ratingLevel==3){
-        rate3Obj.rateQuantity++;
-        //specRate3++;
-      }
-      else if(obj.ratingLevel==4){
-        rate4Obj.rateQuantity++;
-        //specRate4++;
-      }
-      else if(obj.ratingLevel==5){
-        rate5Obj.rateQuantity++;
-        //specRate5++;
+    let rate1Obj={
+      rate:"1 Star",
+      rateQuantity:0
+    }
+    let rate2Obj={
+      rate:"2 Star",
+      rateQuantity:0
+    }
+    let rate3Obj={
+      rate:"3 Star",
+      rateQuantity:0
+    }
+    let rate4Obj={
+      rate:"4 Star",
+      rateQuantity:0
+    }
+    let rate5Obj={
+      rate:"5 Star",
+      rateQuantity:0
+    }
+    for(var i=0; i<rateList.length; i++){
+      for(var obj of rateList[i]){
+        if(obj.ratingLevel==1){
+          rate1Obj.rateQuantity++;
+          //specRate1++;
+        }
+        else if(obj.ratingLevel==2){
+          rate2Obj.rateQuantity++;
+          //specRate2++;
+        }
+        else if(obj.ratingLevel==3){
+          rate3Obj.rateQuantity++;
+          //specRate3++;
+        }
+        else if(obj.ratingLevel==4){
+          rate4Obj.rateQuantity++;
+          //specRate4++;
+        }
+        else if(obj.ratingLevel==5){
+          rate5Obj.rateQuantity++;
+          //specRate5++;
+        }
       }
     }
-  }
+    if(rateList.length>7){
+      this.monthlyhighQuantity([rate1Obj, rate2Obj, rate3Obj, rate4Obj, rate5Obj]);
+      this.mQueryResult =[rate1Obj.rateQuantity,rate2Obj.rateQuantity,rate3Obj.rateQuantity,
+        rate4Obj.rateQuantity,rate5Obj.rateQuantity];
+      this.updateChart2(this.mQueryResult)
+    }
+    else{
+      this.highQuantity([rate1Obj, rate2Obj, rate3Obj, rate4Obj, rate5Obj]);
+      this.queryResult =[rate1Obj.rateQuantity,rate2Obj.rateQuantity,rate3Obj.rateQuantity,
+        rate4Obj.rateQuantity,rate5Obj.rateQuantity];
+      this.updateChart(this.queryResult)
+    }
 
-  this.highQuantity([rate1Obj, rate2Obj, rate3Obj, rate4Obj, rate5Obj]);
-  this.queryResult =[rate1Obj.rateQuantity,rate2Obj.rateQuantity,rate3Obj.rateQuantity,
-    rate4Obj.rateQuantity,rate5Obj.rateQuantity];
-  this.updateChart(this.queryResult)
-}
+  }
 
 //find the highest quantity of rating
 highQuantity(rateObjs:any[]){
@@ -432,6 +615,22 @@ highQuantity(rateObjs:any[]){
   //get average daily amount of the highest rating quantity
   this.averageDaily.rate=this.highestQuantity.rate;
   this.averageDaily.quantity=(this.highestQuantity.quantity/7).toPrecision(3);
+}
+
+monthlyhighQuantity(rateObjs:any[]){
+  console.log(rateObjs)
+  const maxRate = rateObjs.reduce(function(prev, current) {
+    return (prev.rateQuantity > current.rateQuantity) ? prev : current
+  });
+
+  this.mHighestQuantity.quantity=maxRate.rateQuantity;
+  this.mHighestQuantity.rate=maxRate.rate;
+
+  //find the day with top ratings
+  this.monthdayTopRate(this.mHighestQuantity);
+  //get average daily amount of the highest rating quantity
+  this.mAverageDaily.rate=this.mHighestQuantity.rate;
+  this.mAverageDaily.quantity=(this.mHighestQuantity.quantity/30).toPrecision(3);
 }
 
 //find the day with the most amount of the highest ratings quantity
@@ -471,6 +670,44 @@ dayTopRate(rate: any){
   this.topDayRate.rate="("+max.rate+")";
   this.topDayRate.quantity=max.quantity;
   this.topDayRate.date=this.properDateformat(date);
+}
+
+monthdayTopRate(rate: any){
+  let rateList:any[]= this.mQueryData;
+  let specificDayRate:any[]=[];
+  for(var v=1; v<6; v++){
+    let ratenum=v+" Star"
+    if(rate.rate==ratenum){
+      for(var i=0; i<rateList.length; i++){
+        let dateRate={
+          date: "",
+          rate:"",
+          quantity: 0
+        };
+        for(var obj of rateList[i]){
+          if(obj.ratingLevel==v){
+            dateRate.quantity++
+          }
+        }
+        dateRate.date=rateList[i][0].ratingDate;
+        dateRate.rate= ratenum;
+        specificDayRate.push(dateRate)
+      }
+    }
+  }
+  //Find the day object whose property "rate" has the greatest value in the array specificDayRate
+  const max = specificDayRate.reduce(function(prev, current) {
+    return (prev.quantity > current.quantity) ? prev : current
+  }) //returns object
+
+  var days = [' (Sunday)', ' (Monday)', ' (Tuesday)', ' (Wednesday)', ' (Thursday)', ' (Friday)', ' (Saturday)'];
+  const str = max.date;
+  const [day, month, year] = str.split('-');
+  const date = new Date(+year, +month - 1, +day);
+  this.mTopDayRate.day=days[date.getDay()];
+  this.mTopDayRate.rate="("+max.rate+")";
+  this.mTopDayRate.quantity=max.quantity;
+  this.mTopDayRate.date=this.properDateformat(date);
 }
 
 properDateformat(date:any){

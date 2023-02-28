@@ -9,7 +9,7 @@
 <body>
   <!-- weekly query form -->
   <div class="container py-3 text-center">
-    <div class="p-2 py-3 bg-white" [formGroup]="range">
+    <div class="p-2 py-4 bg-white" [formGroup]="range">
       <h3 class="font-monospace">Weekly Bus Driver Ratings</h3>
       <!-- bus driver selection dropdown-list -->
       <mat-form-field appearance="fill">
@@ -134,13 +134,13 @@
   <mat-divider></mat-divider>
   <!-- monthly query form -->
   <div class="container py-3 text-center">
-    <div class="p-2 py-3 bg-white" [formGroup]="range">
+    <div class="p-2 py-4 bg-white" [formGroup]="monthRange">
       <h3 class="font-monospace">Monthly Bus Driver Ratings</h3>
       <!-- bus driver selection dropdown-list -->
       <mat-form-field appearance="fill">
-        <mat-label>Bus Driver</mat-label>
-        <mat-select [(ngModel)]="selectedValue" name="driver">
-          <mat-option *ngFor="let driver of busDriver" [value]="driver.fullName">
+        <mat-label>Select a bus driver</mat-label>
+        <mat-select [(ngModel)]="selectedValue" name="driver" formControlName="driver">
+          <mat-option *ngFor="let driver of busDriver" [value]="driver.id">
             {{driver.fullName}}
           </mat-option>
         </mat-select>
@@ -153,29 +153,19 @@
         <mat-datepicker #dp2 startView="multi-year" (monthSelected)="closeDatePicker($event, dp2)"></mat-datepicker>
       </mat-form-field> -->
 
-      <!-- 7 days range date picker -->
-      <mat-form-field color="accent" appearance="fill">
-        <mat-label>Enter a date range</mat-label>
-        <mat-date-range-input [min]="minDate" [max]="maxDate" [rangePicker]="picker">
-          <input matStartDate formControlName="start" placeholder="Start date">
-          <input matEndDate formControlName="end" placeholder="End date">
-        </mat-date-range-input>
-        <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-date-range-picker #picker>
-            <mat-date-range-picker-actions>
-              <button mat-button matDatepickerCancel>Cancel</button>
-              <button mat-raised-button color="primary" matDatepickerApply>Apply</button>
-          </mat-date-range-picker-actions>
-        </mat-date-range-picker>
-
-        <mat-error *ngIf="range.controls.start.hasError('matStartDateInvalid')">Invalid start date</mat-error>
-        <mat-error *ngIf="range.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error>
+      <!-- Month range date picker -->
+      <mat-form-field appearance="fill">
+        <mat-label>Enter a Month</mat-label>
+        <input matInput
+            placeholder=""
+            formControlName="monthYear"
+            required>
       </mat-form-field>
-      <!-- selected date range label -->
-      <p>Selected range: {{range.value | json}}</p>
-
-    <button mat-raised-button color="accent" class="px-5 py-2 mt-3 fs-6">Query</button>
+      <!-- selected date range label
+      <p>Selected range: {{monthRange.value | json}}</p>
+      -->
+      <br>
+    <button mat-raised-button color="accent" class="px-5 py-2 mt-3 fs-6" (click)="monthlyQuery()">Query</button>
     </div>
     <mat-divider></mat-divider>
     <!-- bus driver rating data info -->
@@ -183,10 +173,10 @@
       <div class="col-lg-4">
         <mat-card class="borderBottom">
           <mat-card-header class="justify-content-center">
-            <mat-card-subtitle>Highest Quantity</mat-card-subtitle>
-            <mat-card-title class="fw-bold">5 Star</mat-card-title>
+            <mat-card-subtitle>Highest Rating Quantity</mat-card-subtitle>
+            <mat-card-title class="fw-bold">{{mHighestQuantity.rate}}</mat-card-title>
             <div class="circular py-4">
-              <h1></h1>
+               {{mHighestQuantity.quantity}}
             </div>
           </mat-card-header>
         </mat-card>
@@ -194,10 +184,10 @@
       <div class="col-lg-4">
         <mat-card class="borderBottom">
           <mat-card-header class="justify-content-center">
-            <mat-card-subtitle>Average Daily Ratings</mat-card-subtitle>
-            <mat-card-title class="fw-bold">4 Star</mat-card-title>
+            <mat-card-subtitle>Average Daily Highest Ratings</mat-card-subtitle>
+            <mat-card-title class="fw-bold">{{mAverageDaily.rate}}</mat-card-title>
             <div class="circular py-4">
-              28
+              {{mAverageDaily.quantity}}
             </div>
           </mat-card-header>
         </mat-card>
@@ -205,36 +195,43 @@
       <div class="col-lg-4">
         <mat-card class="borderBottom">
           <mat-card-header class="justify-content-center">
-            <mat-card-subtitle>Day with Top Ratings</mat-card-subtitle>
-            <mat-card-title class="fw-bold">Thursday</mat-card-title>
+            <mat-card-subtitle>Day with Most Ratings {{mTopDayRate.rate}}</mat-card-subtitle>
+            <mat-card-title class="fw-bold">{{mTopDayRate.date}}{{mTopDayRate.day}}</mat-card-title>
             <div class="circular py-4">
-              34
+              {{mTopDayRate.quantity}}
             </div>
           </mat-card-header>
         </mat-card>
       </div>
     </div>
     <div class="row text-center">
-      <div class="col-lg-4">
+      <div class="col-lg-6 py-5">
         <mat-card>
-          <h2>Pie Chart</h2>
-          <canvas id="piechart"></canvas>
+          <mat-card-header>
+            <mat-card-title>Ratings Quantity</mat-card-title>
+          </mat-card-header>
+          <mat-divider></mat-divider>
+          <canvas id="piechart2"></canvas>
         </mat-card>
 
       </div>
-      <div class="col-lg-4">
+      <div class="col-lg-6">
         <mat-card>
-          <h2>Line Chart</h2>
-        <canvas id="linechart"></canvas>
+          <mat-card-header>
+            <mat-card-title>Number of Ratings Per Day</mat-card-title>
+          </mat-card-header>
+          <mat-divider></mat-divider>
+        <canvas id="linechart2"></canvas>
         </mat-card>
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Number of Each Ratings</mat-card-title>
+          </mat-card-header>
+          <mat-divider></mat-divider>
+          <canvas id="barchart2"></canvas>
+        </mat-card>
+      </div>
 
-      </div>
-      <div class="col-lg-4">
-        <mat-card>
-          <h2>Bar Chart</h2>
-          <canvas id="barchart"></canvas>
-        </mat-card>
-      </div>
     </div>
   </div>
 </body>

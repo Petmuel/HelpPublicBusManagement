@@ -63,7 +63,7 @@ import { StatisticComponent } from './component/dashboard/statistic/statistic.co
     AngularFirestoreModule,
     MaterialModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
   ],
   providers: [MatDatepickerModule,
     MatNativeDateModule ],
