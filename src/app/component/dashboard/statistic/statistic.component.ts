@@ -564,26 +564,12 @@ export class StatisticComponent implements OnInit {
     }
     for(var i=0; i<rateList.length; i++){
       for(var obj of rateList[i]){
-        if(obj.ratingLevel==1){
-          rate1Obj.rateQuantity++;
-          //specRate1++;
-        }
-        else if(obj.ratingLevel==2){
-          rate2Obj.rateQuantity++;
-          //specRate2++;
-        }
-        else if(obj.ratingLevel==3){
-          rate3Obj.rateQuantity++;
-          //specRate3++;
-        }
-        else if(obj.ratingLevel==4){
-          rate4Obj.rateQuantity++;
-          //specRate4++;
-        }
-        else if(obj.ratingLevel==5){
-          rate5Obj.rateQuantity++;
-          //specRate5++;
-        }
+        obj.ratingLevel==1?rate1Obj.rateQuantity++:
+        obj.ratingLevel==2?rate2Obj.rateQuantity++:
+        obj.ratingLevel==3?rate3Obj.rateQuantity++:
+        obj.ratingLevel==4?rate4Obj.rateQuantity++:
+        obj.ratingLevel==5?rate5Obj.rateQuantity++:
+        ""
       }
     }
     if(rateList.length>7){
