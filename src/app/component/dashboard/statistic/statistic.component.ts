@@ -341,6 +341,7 @@ export class StatisticComponent implements OnInit {
       }
       this.line.data.datasets[i].data=starArr;
     }
+
     console.log(dateArr)
     console.log(allRatings)
     this.line.data.labels=dateArr;
@@ -563,14 +564,36 @@ export class StatisticComponent implements OnInit {
       rateQuantity:0
     }
     for(var i=0; i<rateList.length; i++){
-      for(var obj of rateList[i]){
-        obj.ratingLevel==1?rate1Obj.rateQuantity++:
-        obj.ratingLevel==2?rate2Obj.rateQuantity++:
-        obj.ratingLevel==3?rate3Obj.rateQuantity++:
-        obj.ratingLevel==4?rate4Obj.rateQuantity++:
-        obj.ratingLevel==5?rate5Obj.rateQuantity++:
-        ""
-      }
+      rateList[i].forEach((obj:any) => {
+        switch(obj.ratingLevel){
+          case 1:
+            rate1Obj.rateQuantity++;
+            break;
+          case 2:
+            rate2Obj.rateQuantity++;
+            break;
+          case 3:
+            rate3Obj.rateQuantity++;
+            break;
+          case 4:
+            rate4Obj.rateQuantity++;
+            break;
+          case 5:
+            rate5Obj.rateQuantity++;
+            break
+          default:
+            break;
+        }
+
+      });
+      // for(var obj of rateList[i]){
+      //   obj.ratingLevel==1?rate1Obj.rateQuantity++:
+      //   obj.ratingLevel==2?rate2Obj.rateQuantity++:
+      //   obj.ratingLevel==3?rate3Obj.rateQuantity++:
+      //   obj.ratingLevel==4?rate4Obj.rateQuantity++:
+      //   obj.ratingLevel==5?rate5Obj.rateQuantity++:
+      //   ""
+      // }
     }
     if(rateList.length>7){
       this.monthlyhighQuantity([rate1Obj, rate2Obj, rate3Obj, rate4Obj, rate5Obj]);
