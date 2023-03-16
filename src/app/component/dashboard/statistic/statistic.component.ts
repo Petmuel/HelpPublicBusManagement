@@ -321,46 +321,40 @@ export class StatisticComponent implements OnInit {
     });
   }
 
-  updateChart(chartData:any){
-    this.pie.data.datasets[0].data=chartData;
-    this.bar.data.datasets[0].data=chartData;
-    this.pie.update();
-    this.bar.update();
+  updateChart(chartData:any, isMonthly: boolean){
+    if(isMonthly){
+      this.pie2.data.datasets[0].data=chartData;
+      this.bar2.data.datasets[0].data=chartData;
+      this.pie2.update();
+      this.bar2.update();
+    }
+    else{
+      this.pie.data.datasets[0].data=chartData;
+      this.bar.data.datasets[0].data=chartData;
+      this.pie.update();
+      this.bar.update();
+    }
   }
-  updateChart2(chartData:any){
-    this.pie2.data.datasets[0].data=chartData;
-    this.bar2.data.datasets[0].data=chartData;
-    this.pie2.update();
-    this.bar2.update();
-  }
-  updateLineChart(allRatings:any, dateArr:any){
+
+  updateLineChart(allRatings:any, dateArr:any, periodic: string){
+    //weekly line chart as default
+    var selectedLine = this.line;
+    //replace to monthly line chart
+    if(periodic=="month"){
+      selectedLine=this.line2;
+    }
     for(var i=0;i<allRatings.length;i++) {
-      let starArr:any[]=[];
+      let starArr=[];
       for(var obj of allRatings[i]){
         starArr.push(obj.quantity)
       }
-      this.line.data.datasets[i].data=starArr;
+      //to update and overwrite each data
+      selectedLine.data.datasets[i].data=starArr;
     }
-
-    console.log(dateArr)
-    console.log(allRatings)
-    this.line.data.labels=dateArr;
-    this.line.update()
+    selectedLine.data.labels=dateArr;
+    selectedLine.update()
   }
 
-  updateLineChart2(allRatings:any, dateArr:any){
-    for(var i=0;i<allRatings.length;i++) {
-      let starArr:any[]=[];
-      for(var obj of allRatings[i]){
-        starArr.push(obj.quantity)
-      }
-      this.line2.data.datasets[i].data=starArr;
-    }
-    console.log(dateArr)
-    console.log(allRatings)
-    this.line2.data.labels=dateArr;
-    this.line2.update()
-  }
   //hardcoded the rating list on bus driver
   // lol(){
   //   var date = new Date()
@@ -421,12 +415,9 @@ export class StatisticComponent implements OnInit {
       }
       else{
         if (this.fromDate && this.toDate != null){
-          let dates: any[] = [];
           var collect : Rate[]=[];
           let dateArr:any[]=[];
           while(this.fromDate <= this.toDate){
-            var num=0;
-            var rateId = 'rate'+num;
             //console.log(this.simpleDate(fromDate))
             // while((await this.dataApi.getRate2((this.simpleDate(this.fromDate)), this.driverId, rateId))!=null){
             //   collect.push(await this.dataApi.getRate2((this.simpleDate(this.fromDate)), this.driverId, rateId))
@@ -434,12 +425,9 @@ export class StatisticComponent implements OnInit {
             //   rateId='rate'+num;
             // }
             let dataCollection = await this.dataApi.getRate((this.simpleDate(this.fromDate)), this.driverId)
-            collect.push(dataCollection)
-            ;
-            dateArr.push(this.properDateformat(this.fromDate))
-            dates = [...dates, new Date(this.fromDate)];
+            collect.push(dataCollection);
+            dateArr.push(this.properDateformat(this.fromDate));
             this.fromDate.setDate(this.fromDate.getDate() + 1);
-            num++;
           }
           this.queryData=collect;
           this.countRate(this.queryData);
@@ -529,10 +517,10 @@ export class StatisticComponent implements OnInit {
       rateListPerDay.push(ratings)
     }
     if(rateList.length>7){
-      this.updateLineChart2(rateListPerDay, dateArr);
+      this.updateLineChart(rateListPerDay, dateArr, "month");
     }
     else{
-      this.updateLineChart(rateListPerDay, dateArr);
+      this.updateLineChart(rateListPerDay, dateArr, "week");
     }
   }
 
@@ -584,147 +572,103 @@ export class StatisticComponent implements OnInit {
           default:
             break;
         }
-
       });
-      // for(var obj of rateList[i]){
-      //   obj.ratingLevel==1?rate1Obj.rateQuantity++:
-      //   obj.ratingLevel==2?rate2Obj.rateQuantity++:
-      //   obj.ratingLevel==3?rate3Obj.rateQuantity++:
-      //   obj.ratingLevel==4?rate4Obj.rateQuantity++:
-      //   obj.ratingLevel==5?rate5Obj.rateQuantity++:
-      //   ""
-      // }
     }
+    var isMonthly = true;
     if(rateList.length>7){
-      this.monthlyhighQuantity([rate1Obj, rate2Obj, rate3Obj, rate4Obj, rate5Obj]);
+      this.highQuantity([rate1Obj, rate2Obj, rate3Obj, rate4Obj, rate5Obj], isMonthly, rateList.length);
       this.mQueryResult =[rate1Obj.rateQuantity,rate2Obj.rateQuantity,rate3Obj.rateQuantity,
         rate4Obj.rateQuantity,rate5Obj.rateQuantity];
-      this.updateChart2(this.mQueryResult)
+      this.updateChart(this.mQueryResult, isMonthly);
     }
     else{
-      this.highQuantity([rate1Obj, rate2Obj, rate3Obj, rate4Obj, rate5Obj]);
+      this.highQuantity([rate1Obj, rate2Obj, rate3Obj, rate4Obj, rate5Obj], !isMonthly, 7);
       this.queryResult =[rate1Obj.rateQuantity,rate2Obj.rateQuantity,rate3Obj.rateQuantity,
         rate4Obj.rateQuantity,rate5Obj.rateQuantity];
-      this.updateChart(this.queryResult)
+      this.updateChart(this.queryResult, !isMonthly)
     }
 
   }
 
-//find the highest quantity of rating
-highQuantity(rateObjs:any[]){
-  const maxRate = rateObjs.reduce(function(prev, current) {
-    return (prev.rateQuantity > current.rateQuantity) ? prev : current
-  });
+  //find the highest quantity of rating
+  highQuantity(rateObjs:any[], isMonthly: boolean, days: number){
+    const maxRate = rateObjs.reduce(function(prev, current) {
+      return (prev.rateQuantity > current.rateQuantity) ? prev : current
+    });
 
-  this.highestQuantity.quantity=maxRate.rateQuantity;
-  this.highestQuantity.rate=maxRate.rate;
+    if(isMonthly) {
+      this.mHighestQuantity.quantity=maxRate.rateQuantity;
+      this.mHighestQuantity.rate=maxRate.rate;
+      //find the day with top ratings
+      var max = this.dayTopRate(this.mHighestQuantity, this.mQueryData);
+      this.mTopDayRate= this.getHighestRateObj(max);
+      //get average daily amount of the highest rating quantity
+      this.mAverageDaily.rate=this.mHighestQuantity.rate;
+      this.mAverageDaily.quantity=(this.mHighestQuantity.quantity/days).toPrecision(3);
+    }
+    else{
+      this.highestQuantity.quantity=maxRate.rateQuantity;
+      this.highestQuantity.rate=maxRate.rate;
+      //find the day with top ratings
+      var max=this.dayTopRate(this.highestQuantity, this.queryData);
+      this.topDayRate= this.getHighestRateObj(max);
+      //get average daily amount of the highest rating quantity
+      this.averageDaily.rate=this.highestQuantity.rate;
+      this.averageDaily.quantity=(this.highestQuantity.quantity/days).toPrecision(3);
+    }
+  }
 
-  //find the day with top ratings
-  this.dayTopRate(this.highestQuantity);
-  //get average daily amount of the highest rating quantity
-  this.averageDaily.rate=this.highestQuantity.rate;
-  this.averageDaily.quantity=(this.highestQuantity.quantity/7).toPrecision(3);
-}
-
-monthlyhighQuantity(rateObjs:any[]){
-  console.log(rateObjs)
-  const maxRate = rateObjs.reduce(function(prev, current) {
-    return (prev.rateQuantity > current.rateQuantity) ? prev : current
-  });
-
-  this.mHighestQuantity.quantity=maxRate.rateQuantity;
-  this.mHighestQuantity.rate=maxRate.rate;
-
-  //find the day with top ratings
-  this.monthdayTopRate(this.mHighestQuantity);
-  //get average daily amount of the highest rating quantity
-  this.mAverageDaily.rate=this.mHighestQuantity.rate;
-  this.mAverageDaily.quantity=(this.mHighestQuantity.quantity/30).toPrecision(3);
-}
-
-//find the day with the most amount of the highest ratings quantity
-dayTopRate(rate: any){
-  let rateList:any[]= this.queryData;
-  let specificDayRate:any[]=[];
-  for(var v=1; v<6; v++){
-    let ratenum=v+" Star"
-    if(rate.rate==ratenum){
-      for(var i=0; i<rateList.length; i++){
-        let dateRate={
-          date: "",
-          rate:"",
-          quantity: 0
-        };
-        for(var obj of rateList[i]){
-          if(obj.ratingLevel==v){
-            dateRate.quantity++
+  //find the day with the most amount of the highest ratings quantity
+  dayTopRate(rate: any, rateList:any[]){
+    let specificDayRate:any[]=[];
+    for(var v=1; v<6; v++){
+      let ratenum=v+" Star"
+      if(rate.rate==ratenum){
+        for(var i=0; i<rateList.length; i++){
+          let dateRate={
+            date: "",
+            rate:"",
+            quantity: 0
+          };
+          for(var obj of rateList[i]){
+            if(obj.ratingLevel==v){
+              dateRate.quantity++
+            }
           }
+          dateRate.date=rateList[i][0].ratingDate;
+          dateRate.rate= ratenum;
+          specificDayRate.push(dateRate)
         }
-        dateRate.date=rateList[i][0].ratingDate;
-        dateRate.rate= ratenum;
-        specificDayRate.push(dateRate)
       }
     }
+    //Find the day object whose property "rate" has the greatest value in the array specificDayRate
+    const max = specificDayRate.reduce(function(prev, current) {
+      return (prev.quantity > current.quantity) ? prev : current
+    }) //returns object
+
+    return max;
   }
-  //Find the day object whose property "rate" has the greatest value in the array specificDayRate
-  const max = specificDayRate.reduce(function(prev, current) {
-    return (prev.quantity > current.quantity) ? prev : current
-  }) //returns object
 
-  var days = [' (Sunday)', ' (Monday)', ' (Tuesday)', ' (Wednesday)', ' (Thursday)', ' (Friday)', ' (Saturday)'];
-  const str = max.date;
-  const [day, month, year] = str.split('-');
-  const date = new Date(+year, +month - 1, +day);
-  this.topDayRate.day=days[date.getDay()];
-  this.topDayRate.rate="("+max.rate+")";
-  this.topDayRate.quantity=max.quantity;
-  this.topDayRate.date=this.properDateformat(date);
-}
-
-monthdayTopRate(rate: any){
-  let rateList:any[]= this.mQueryData;
-  let specificDayRate:any[]=[];
-  for(var v=1; v<6; v++){
-    let ratenum=v+" Star"
-    if(rate.rate==ratenum){
-      for(var i=0; i<rateList.length; i++){
-        let dateRate={
-          date: "",
-          rate:"",
-          quantity: 0
-        };
-        for(var obj of rateList[i]){
-          if(obj.ratingLevel==v){
-            dateRate.quantity++
-          }
-        }
-        dateRate.date=rateList[i][0].ratingDate;
-        dateRate.rate= ratenum;
-        specificDayRate.push(dateRate)
-      }
+  getHighestRateObj(maxRateObj: any){
+    var days = [' (Sunday)', ' (Monday)', ' (Tuesday)', ' (Wednesday)', ' (Thursday)', ' (Friday)', ' (Saturday)'];
+    const str = maxRateObj.date;
+    const [day, month, year] = str.split('-');
+    const date = new Date(+year, +month - 1, +day);
+    var topDayRate ={
+      day: days[date.getDay()],
+      rate: "("+maxRateObj.rate+")",
+      quantity: maxRateObj.quantity,
+      date: this.properDateformat(date)
     }
+    return topDayRate;
   }
-  //Find the day object whose property "rate" has the greatest value in the array specificDayRate
-  const max = specificDayRate.reduce(function(prev, current) {
-    return (prev.quantity > current.quantity) ? prev : current
-  }) //returns object
 
-  var days = [' (Sunday)', ' (Monday)', ' (Tuesday)', ' (Wednesday)', ' (Thursday)', ' (Friday)', ' (Saturday)'];
-  const str = max.date;
-  const [day, month, year] = str.split('-');
-  const date = new Date(+year, +month - 1, +day);
-  this.mTopDayRate.day=days[date.getDay()];
-  this.mTopDayRate.rate="("+max.rate+")";
-  this.mTopDayRate.quantity=max.quantity;
-  this.mTopDayRate.date=this.properDateformat(date);
-}
-
-properDateformat(date:any){
-  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  const m = monthNames[date.getMonth()]
-  return date.getDate()+" "+m+" "+date.getFullYear();
-}
+  properDateformat(date:any){
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const m = monthNames[date.getMonth()]
+    return date.getDate()+" "+m+" "+date.getFullYear();
+  }
       //             res.map((e:any)=>{
       //               const data = e.payload.doc.data();
       //               data.id = e.payload.doc.id;
