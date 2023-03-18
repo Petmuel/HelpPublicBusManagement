@@ -10,7 +10,7 @@
   <!-- weekly query form -->
   <div class="container py-3 text-center">
     <div class="p-2 py-4 bg-white" [formGroup]="range">
-      <h3 class="font-monospace">Weekly Bus Driver Ratings</h3>
+      <h2 class="font-monospace fw-bold">Weekly Bus Driver Ratings</h2>
       <!-- bus driver selection dropdown-list -->
       <mat-form-field appearance="fill">
         <mat-label>Select a bus driver</mat-label>
@@ -134,8 +134,8 @@
   <mat-divider></mat-divider>
   <!-- monthly query form -->
   <div class="container py-3 text-center">
-    <div class="p-2 py-4 bg-white" [formGroup]="monthRange">
-      <h3 class="font-monospace">Monthly Bus Driver Ratings</h3>
+    <div class="p-2 py-4 bg-white text-center" [formGroup]="monthRange">
+      <h2 class="font-monospace fw-bold">Monthly Bus Driver Ratings</h2>
       <!-- bus driver selection dropdown-list -->
       <mat-form-field appearance="fill">
         <mat-label>Select a bus driver</mat-label>
@@ -147,20 +147,25 @@
       </mat-form-field>
       <br>
 
-      <!-- <mat-form-field>
-        <input matInput [matDatepicker]="dp2" placeholder="Select a Date" (click)="openDatePicker(dp2)">
-        <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
-        <mat-datepicker #dp2 startView="multi-year" (monthSelected)="closeDatePicker($event, dp2)"></mat-datepicker>
-      </mat-form-field> -->
+      <div class="pb-2">
+        <b>Select year: </b>
+        <mat-radio-group formControlName="selectedYear">
+          <mat-radio-button *ngFor="let year of yearList" [value]="year" (change)="updateMonthList($event)">
+            {{year}}
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
 
-      <!-- Month range date picker -->
+      <!-- month selection dropdown-list -->
       <mat-form-field appearance="fill">
         <mat-label>Enter a Month</mat-label>
-        <input matInput
-            placeholder=""
-            formControlName="monthYear"
-            required>
+        <mat-select formControlName="monthYear">
+          <mat-option *ngFor="let month of monthNames" [value]="month">
+            {{month}}
+          </mat-option>
+        </mat-select>
       </mat-form-field>
+
       <!-- selected date range label
       <p>Selected range: {{monthRange.value | json}}</p>
       -->

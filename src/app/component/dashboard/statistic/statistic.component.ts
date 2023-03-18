@@ -7,6 +7,7 @@ import { SevenDayRange } from './datepicker/sevenDayRange.component';
 import { FormGroup, FormControl } from '@angular/forms';
 import { MAT_DATE_RANGE_SELECTION_STRATEGY } from '@angular/material/datepicker';
 import { Rate } from 'src/app/shared/model/rate';
+import { MatRadioChange } from '@angular/material/radio';
 
 Chart.register(...registerables)
 
@@ -28,9 +29,15 @@ export class StatisticComponent implements OnInit {
   toDate : any = 1;
   driverId= "";
 
+  //monthly selection data
+  yearList: number[]=[];
+  monthNames = ["January", "February", "March", "April", "March", "June",
+    "July", "August", "September", "October", "November", "December"];
+
   //monthly query data
   monthYear="";
   mDriverId= "";
+  selectedYear=0;
 
   dateArray:any[]=[];
   highestQuantity={
@@ -178,6 +185,7 @@ export class StatisticComponent implements OnInit {
   })
 
   monthRange = new FormGroup({
+    selectedYear: new FormControl(),
     monthYear: new FormControl(),
     driver: new FormControl()
   })
@@ -186,11 +194,14 @@ export class StatisticComponent implements OnInit {
     const currentYear = new Date().getFullYear();
     this.minDate = new Date(currentYear - 20, 0, 1);
     this.maxDate = new Date();
+    this.yearList.push(currentYear);
+    this.yearList.push(currentYear-1);
+    this.yearList.push(currentYear-2);
    }
 
   ngOnInit(): void {
-    this.RenderChart()
-    this.getAllBusDrivers()
+    this.RenderChart();
+    this.getAllBusDrivers();
   }
 
   RenderChart(){
@@ -342,14 +353,34 @@ export class StatisticComponent implements OnInit {
     //replace to monthly line chart
     if(periodic=="month"){
       selectedLine=this.line2;
-    }
-    for(var i=0;i<allRatings.length;i++) {
-      let starArr=[];
-      for(var obj of allRatings[i]){
-        starArr.push(obj.quantity)
+      for(var i=0;i<allRatings.length;i++) {
+        let weekArr=[];
+        let totalQuantity=0;
+        let k ={
+          week:"",
+          q:0
+        }
+        for(var week of allRatings[i]){
+          // week.array.forEach((day: { quantity: number }) => {
+          //   k.q+=day.quantity;
+          // });
+          // k.week="week "+i
+          // weekArr.push(k);
+          console.log(week)
+        }
+        //to update and overwrite each data
+        // selectedLine.data.datasets[i].data=weekArr;
       }
-      //to update and overwrite each data
-      selectedLine.data.datasets[i].data=starArr;
+    }
+    else{
+      for(var i=0;i<allRatings.length;i++) {
+        let starArr=[];
+        for(var obj of allRatings[i]){
+          starArr.push(obj.quantity)
+        }
+        //to update and overwrite each data
+        selectedLine.data.datasets[i].data=starArr;
+      }
     }
     selectedLine.data.labels=dateArr;
     selectedLine.update()
@@ -438,60 +469,105 @@ export class StatisticComponent implements OnInit {
   }
 
   async monthlyQuery(){
-    console.log("hi")
     if(this.monthYear==this.monthRange.value.monthYear
-      &&this.mDriverId==this.monthRange.value.driver){
-      window.alert("You have entered the same month, please enter a different month.");
+      &&this.mDriverId==this.monthRange.value.driver
+      &&this.selectedYear==this.monthRange.value.selectedYear){
+      window.alert("You have selected the same month and year, please enter a different month.");
     }
     else{
-        this.monthYear= this.monthRange.value.monthYear;
-        this.mDriverId=this.monthRange.value.driver;
-        if(this.monthRange.value.monthYear==null
-          ||this.monthRange.value.monthYear==""
-          ||this.monthRange.value.driver==null
-          ||this.monthRange.value.driver==""){
-          window.alert('Please fill in the form')
-        }
-        else if(this.monthRange.invalid){
-          window.alert('Invalid Query, please try again')
+      this.monthYear= this.monthRange.value.monthYear;
+      this.mDriverId=this.monthRange.value.driver;
+      this.selectedYear=this.monthRange.value.selectedYear;
+      if(this.monthYear==null
+        ||this.monthYear==""
+        ||this.mDriverId==null
+        ||this.mDriverId==""
+        ||this.selectedYear==0
+        ||this.selectedYear==null){
+        window.alert('Please fill in the form')
+      }
+      else if(this.monthRange.invalid){
+        window.alert('Invalid Query, please try again')
+      }
+      else{
+        console.log(this.selectedYear)
+        let dates: any[] = [];
+        var collect : Rate[]=[];
+        let dateArr:any[]=[];
+        const fromDate = new Date(this.selectedYear, this.monthNames.indexOf(this.monthYear),1);
+        const toDate = new Date(this.selectedYear, this.monthNames.indexOf(this.monthYear)+1,0);
+
+        let checkData= await this.dataApi.getRate((this.simpleDate(fromDate)), this.mDriverId)
+        if(checkData.length==0){
+          window.alert("Please select another month as the chosen month's data is incomplete.")
         }
         else{
-          if (this.monthYear=="February"){
-            console.log("hi")
-            let dates: any[] = [];
-            var collect : Rate[]=[];
-            let dateArr:any[]=[];
-            const str = "1-2-2023";
-            const str2 = "28-2-2023"
-            const [day, month, year] = str.split('-');
-            const [day2, month2, year2] = str2.split('-');
-            const fromDate = new Date(+year, +month - 1, +day);
-            const toDate = new Date(+year2, +month2 - 1, +day2);
-            while(fromDate <= toDate){
-              var num=0;
-              var rateId = 'rate'+num;
-              //console.log(this.simpleDate(fromDate))
-              // while((await this.dataApi.getRate2((this.simpleDate(this.fromDate)), this.driverId, rateId))!=null){
-              //   collect.push(await this.dataApi.getRate2((this.simpleDate(this.fromDate)), this.driverId, rateId))
-              //   num++;
-              //   rateId='rate'+num;
-              // }
-              let dataCollection = await this.dataApi.getRate((this.simpleDate(fromDate)), this.mDriverId)
-              collect.push(dataCollection)
-              ;
-              dateArr.push(this.properDateformat(fromDate))
-              dates = [...dates, new Date(fromDate)];
-              fromDate.setDate(fromDate.getDate() + 1);
-              num++;
-            }
-            this.mQueryData=collect;
-            console.log(this.mQueryData)
-            this.countRate(this.mQueryData);
-            this.countPerDay(this.mQueryData, dateArr);
+          while(fromDate <= toDate){
+            var num=0;
+            var rateId = 'rate'+num;
+            //console.log(this.simpleDate(fromDate))
+            // while((await this.dataApi.getRate2((this.simpleDate(this.fromDate)), this.driverId, rateId))!=null){
+            //   collect.push(await this.dataApi.getRate2((this.simpleDate(this.fromDate)), this.driverId, rateId))
+            //   num++;
+            //   rateId='rate'+num;
+            // }
+            let dataCollection = await this.dataApi.getRate((this.simpleDate(fromDate)), this.mDriverId)
+            collect.push(dataCollection)
+            ;
+            dateArr.push(this.properDateformat(fromDate))
+            dates = [...dates, new Date(fromDate)];
+            fromDate.setDate(fromDate.getDate() + 1);
+            num++;
           }
+          this.mQueryData=collect;
+          this.countRate(this.mQueryData);
+          this.countPerWeek(this.mQueryData, dateArr);
+        }
+      }
+    }
+  }
+
+  //count ratings quantity per week for each rate star
+  countPerWeek(rateList:any, dateArr:any){
+    let week=7;
+    let monthEachStarRate:any[]=[];
+    for(var v=1; v<6; v++){
+      let weeklyRatings:any[]=[];
+      let countingRates:any[]=[];
+      for(var day=0; day<rateList.length; day++){
+        let ratingPerDay={
+          quantity:0,
+          level:"",
+          date:""
+        }
+        //if day has already reached to the end of week
+        if(day==week){
+          weeklyRatings.push(countingRates);
+          countingRates=[];  //week1=[day1,day2,dy3,dy4,dy5,dy6,dy7], week2=[],
+          week+=7
         }
 
+        //each rate object from the same day
+        for(var obj of rateList[day]){
+          //if the rate is same as the selected rate level
+          if(obj.ratingLevel==v){
+            ratingPerDay.quantity++
+          }
+        }
+        ratingPerDay.date=rateList[day][0].ratingDate;
+        ratingPerDay.level= v+" Stars";
+        //push the total same rate quantity from the same day into the week arr
+        countingRates.push(ratingPerDay); //week1:day1.quantity, day2.quantity
+
+        if(rateList.length-day==1){
+          weeklyRatings.push(countingRates);
+          countingRates=[];
+          week=7;
+        }
+      }
+      monthEachStarRate.push(weeklyRatings); //1 Star=[wk1[],wk2[],wk3[],wk4[],wk5[]]
     }
+    this.updateLineChart(monthEachStarRate, dateArr, "month");
   }
 
   countPerDay(rateList:any, dateArr:any){
@@ -516,12 +592,7 @@ export class StatisticComponent implements OnInit {
       }
       rateListPerDay.push(ratings)
     }
-    if(rateList.length>7){
-      this.updateLineChart(rateListPerDay, dateArr, "month");
-    }
-    else{
-      this.updateLineChart(rateListPerDay, dateArr, "week");
-    }
+    this.updateLineChart(rateListPerDay, dateArr, "week");
   }
 
   //convert data format into a simple string format
@@ -668,6 +739,23 @@ export class StatisticComponent implements OnInit {
     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const m = monthNames[date.getMonth()]
     return date.getDate()+" "+m+" "+date.getFullYear();
+  }
+
+  //update month select dropdown list values
+  updateMonthList(yearRadio: MatRadioChange){
+    let monthArr=[];
+    if(yearRadio.value == new Date().getFullYear()){
+      var i=0;
+      while(i!=new Date().getMonth()){
+        monthArr.push(this.monthNames[i]);
+        i++;
+      }
+    }
+    else{
+      monthArr=["January", "February", "March", "April", "March", "June",
+      "July", "August", "September", "October", "November", "December"];
+    }
+    this.monthNames=monthArr;
   }
       //             res.map((e:any)=>{
       //               const data = e.payload.doc.data();

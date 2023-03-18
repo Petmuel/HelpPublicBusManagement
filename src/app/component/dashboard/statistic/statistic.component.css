@@ -12,6 +12,10 @@ mat-card{
   margin-bottom: 10px;
 }
 
+.mat-radio-button{
+  margin-left: 15px;
+}
+
 .circular{
 
   padding: 8%;
