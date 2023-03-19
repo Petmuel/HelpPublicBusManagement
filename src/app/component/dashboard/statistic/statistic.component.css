@@ -1,5 +1,5 @@
 body{
-  background-color: rgb(255, 240, 240);
+  background-color: rgb(230, 250, 255);
   height: auto;
 }
 
@@ -7,9 +7,10 @@ button{
   background-color: white;
 }
 
-mat-card{
+.mat-card{
   margin-top:10px;
   margin-bottom: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2)
 }
 
 .mat-radio-button{
@@ -36,7 +37,7 @@ mat-card{
 }
 
 mat-form-field{
- width: 60%;
+  width: 60%;
 }
 
 

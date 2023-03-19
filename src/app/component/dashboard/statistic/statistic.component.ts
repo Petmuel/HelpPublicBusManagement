@@ -23,6 +23,7 @@ Chart.register(...registerables)
   ],
 })
 export class StatisticComponent implements OnInit {
+  isProgressBarVisible=false;
   minDate: Date;
   maxDate: Date;
   fromDate : any = 1;
@@ -121,10 +122,10 @@ export class StatisticComponent implements OnInit {
   {
     labels: [],
     datasets: [{
-      label: '# of 1 Stars',
+      label: '1 Star',
       data: [],
       backgroundColor: [
-        'rgba(255, 26, 104)'
+        'rgba(255, 26, 104, 0.6)'
       ],
       borderColor: [
         'rgba(255, 26, 104, 1)'
@@ -132,10 +133,10 @@ export class StatisticComponent implements OnInit {
       borderWidth: 2
     },
     {
-      label: '# of 2 Stars',
+      label: '2 Star',
       data: [],
       backgroundColor: [
-        'rgba(54, 162, 235)'
+        'rgba(54, 162, 235, 0.6)'
       ],
       borderColor: [
         'rgba(54, 162, 235, 1)'
@@ -143,10 +144,10 @@ export class StatisticComponent implements OnInit {
       borderWidth: 2
     },
     {
-      label: '# of 3 Stars',
+      label: '3 Star',
       data: [],
       backgroundColor: [
-        'rgba(255, 206, 86)'
+        'rgba(255, 206, 86, 0.6)'
       ],
       borderColor: [
         'rgba(255, 206, 86, 1)'
@@ -154,10 +155,10 @@ export class StatisticComponent implements OnInit {
       borderWidth: 2
     },
     {
-      label: '# of 4 Stars',
+      label: '4 Star',
       data: [],
       backgroundColor: [
-        'rgba(75, 192, 192)'
+        'rgba(75, 192, 192, 0.6)'
       ],
       borderColor: [,
         'rgba(75, 192, 192, 1)'
@@ -165,10 +166,10 @@ export class StatisticComponent implements OnInit {
       borderWidth: 2
     },
     {
-      label: '# of 5 Stars',
+      label: '5 Star',
       data: [],
       backgroundColor: [
-        'rgba(153, 102, 255)'
+        'rgba(153, 102, 255, 0.6)'
       ],
       borderColor: [
         'rgba(153, 102, 255, 1)'
@@ -213,7 +214,7 @@ export class StatisticComponent implements OnInit {
         }
       }
     }
-
+    //weekly chart
     this.pie = new Chart("piechart", {
       type: 'pie',
       data: this.datas,
@@ -272,13 +273,7 @@ export class StatisticComponent implements OnInit {
       }
     });
 
-    //month charts
-    this.pie2 = new Chart("piechart2", {
-      type: 'pie',
-      data: this.datas,
-      options: options
-    });
-
+    //monthly chart
     this.line2 = new Chart("linechart2", {
       type: 'line',
       data:this.lineData,
@@ -334,9 +329,7 @@ export class StatisticComponent implements OnInit {
 
   updateChart(chartData:any, isMonthly: boolean){
     if(isMonthly){
-      this.pie2.data.datasets[0].data=chartData;
       this.bar2.data.datasets[0].data=chartData;
-      this.pie2.update();
       this.bar2.update();
     }
     else{
@@ -345,32 +338,42 @@ export class StatisticComponent implements OnInit {
       this.pie.update();
       this.bar.update();
     }
+    this.isProgressBarVisible=false;
   }
 
   updateLineChart(allRatings:any, dateArr:any, periodic: string){
+    let weekLabel=[];
+
     //weekly line chart as default
     var selectedLine = this.line;
     //replace to monthly line chart
     if(periodic=="month"){
       selectedLine=this.line2;
+
       for(var i=0;i<allRatings.length;i++) {
-        let weekArr=[];
-        let totalQuantity=0;
-        let k ={
-          week:"",
-          q:0
+        let allWeeksRating=[];
+        for(var v=1; v<6; v++) {
+          for(var weekArr of allRatings[i]){
+            let count=0;
+            switch(weekArr[0].level){
+              case (v+" Star"):
+                weekArr.forEach((day: { quantity: number; }) => {
+                  count+=day.quantity;
+                });
+                allWeeksRating.push(count);
+                break;
+              default:
+                break;
+            }
+          }
+
         }
-        for(var week of allRatings[i]){
-          // week.array.forEach((day: { quantity: number }) => {
-          //   k.q+=day.quantity;
-          // });
-          // k.week="week "+i
-          // weekArr.push(k);
-          console.log(week)
-        }
-        //to update and overwrite each data
-        // selectedLine.data.datasets[i].data=weekArr;
+        selectedLine.data.datasets[i].data=allWeeksRating;
       }
+      for(var i=0; i<allRatings[0].length; i++){
+        weekLabel.push("Week "+(i+1))
+      }
+      selectedLine.data.labels=weekLabel;
     }
     else{
       for(var i=0;i<allRatings.length;i++) {
@@ -381,37 +384,10 @@ export class StatisticComponent implements OnInit {
         //to update and overwrite each data
         selectedLine.data.datasets[i].data=starArr;
       }
+      selectedLine.data.labels=dateArr;
     }
-    selectedLine.data.labels=dateArr;
     selectedLine.update()
   }
-
-  //hardcoded the rating list on bus driver
-  // lol(){
-  //   var date = new Date()
-  //   // var yesterday = new Date(date.getTime());
-  //   //   yesterday.setDate(date.getDate() - 1);
-  //   // console.log(yesterday.getDate()+"/"+yesterday.getDay()+"/"+yesterday.getFullYear())
-  //   for(var l=1; l<32; l++){
-  //     var yesterday = new Date(date.getTime());
-  //     yesterday.setDate(date.getDate() - l);
-  //     var currDay = yesterday.getDate()+"-"+(yesterday.getMonth()+1)+"-"+yesterday.getFullYear();
-  //     var currDat2 = yesterday.getTime();
-  //     var ran = Math.random() * 10;
-  //     for(var i=0; i<ran; i++){
-  //       var date = new Date();
-  //       var num = Math.floor(Math.random() * (5 - 1 + 1) + 1);
-  //       var busDriverRate = {
-  //         ratingId:"rate"+i,
-  //         ratingDate: currDay,
-  //         ratingLevel: num,
-  //         comment: "I have added " + num+" Stars to this driver on "+currDay,
-  //         busDriverId:'hfRK37clJ8MEc0sPgyW01YyptVg2'
-  //       };
-  //       this.dataApi.hi(currDay, busDriverRate, currDat2);
-  //     }
-  //   }
-  // }
 
   getAllBusDrivers(){
     this.dataApi.getAllBusDrivers().subscribe(res=>{
@@ -445,24 +421,28 @@ export class StatisticComponent implements OnInit {
         window.alert('Invalid Query, please try again')
       }
       else{
+        this.isProgressBarVisible=true;
+
         if (this.fromDate && this.toDate != null){
           var collect : Rate[]=[];
           let dateArr:any[]=[];
-          while(this.fromDate <= this.toDate){
-            //console.log(this.simpleDate(fromDate))
-            // while((await this.dataApi.getRate2((this.simpleDate(this.fromDate)), this.driverId, rateId))!=null){
-            //   collect.push(await this.dataApi.getRate2((this.simpleDate(this.fromDate)), this.driverId, rateId))
-            //   num++;
-            //   rateId='rate'+num;
-            // }
-            let dataCollection = await this.dataApi.getRate((this.simpleDate(this.fromDate)), this.driverId)
-            collect.push(dataCollection);
-            dateArr.push(this.properDateformat(this.fromDate));
-            this.fromDate.setDate(this.fromDate.getDate() + 1);
+          let checkData= await this.dataApi.getRate((this.simpleDate(this.fromDate)), this.driverId);
+          let checkData2= await this.dataApi.getRate((this.simpleDate(this.toDate)), this.driverId);
+          if(checkData.length==0||checkData2.length==0){
+            this.isProgressBarVisible=false;
+            window.alert("Please select other week as the chosen week's data is incomplete.")
           }
-          this.queryData=collect;
-          this.countRate(this.queryData);
-          this.countPerDay(this.queryData, dateArr);
+          else{
+            while(this.fromDate <= this.toDate){
+              let dataCollection = await this.dataApi.getRate((this.simpleDate(this.fromDate)), this.driverId)
+              collect.push(dataCollection);
+              dateArr.push(this.properDateformat(this.fromDate));
+              this.fromDate.setDate(this.fromDate.getDate() + 1);
+            }
+            this.queryData=collect;
+            this.countRate(this.queryData);
+            this.countPerDay(this.queryData, dateArr);
+          }
         }
       }
     }
@@ -490,6 +470,7 @@ export class StatisticComponent implements OnInit {
         window.alert('Invalid Query, please try again')
       }
       else{
+        this.isProgressBarVisible=true;
         console.log(this.selectedYear)
         let dates: any[] = [];
         var collect : Rate[]=[];
@@ -499,18 +480,12 @@ export class StatisticComponent implements OnInit {
 
         let checkData= await this.dataApi.getRate((this.simpleDate(fromDate)), this.mDriverId)
         if(checkData.length==0){
+          this.isProgressBarVisible=false;
           window.alert("Please select another month as the chosen month's data is incomplete.")
         }
         else{
           while(fromDate <= toDate){
             var num=0;
-            var rateId = 'rate'+num;
-            //console.log(this.simpleDate(fromDate))
-            // while((await this.dataApi.getRate2((this.simpleDate(this.fromDate)), this.driverId, rateId))!=null){
-            //   collect.push(await this.dataApi.getRate2((this.simpleDate(this.fromDate)), this.driverId, rateId))
-            //   num++;
-            //   rateId='rate'+num;
-            // }
             let dataCollection = await this.dataApi.getRate((this.simpleDate(fromDate)), this.mDriverId)
             collect.push(dataCollection)
             ;
@@ -555,7 +530,7 @@ export class StatisticComponent implements OnInit {
           }
         }
         ratingPerDay.date=rateList[day][0].ratingDate;
-        ratingPerDay.level= v+" Stars";
+        ratingPerDay.level= v+" Star";
         //push the total same rate quantity from the same day into the week arr
         countingRates.push(ratingPerDay); //week1:day1.quantity, day2.quantity
 
@@ -757,100 +732,31 @@ export class StatisticComponent implements OnInit {
     }
     this.monthNames=monthArr;
   }
-      //             res.map((e:any)=>{
-      //               const data = e.payload.doc.data();
-      //               data.id = e.payload.doc.id;
-      //               return collect.push(data);
-      //             })
-      //             // this.queryData.push(collect);
-      //             // console.log(this.queryData[0])
-      //           })
-      //           dates = [...dates, new Date(this.fromDate)];
-      //           this.fromDate.setDate(this.fromDate.getDate() + 1);
-      //         }
-      //         this.queryData=collect;
-      //         this.amount(this.queryData);
 
-      //       }
-
-      //       //console.log(this.simpleDate(this.range.value.start),this.simpleDate(this.range.value.end),this.range.value.driver)
-      //       // this.dataApi.queryRate(this.simpleDate(this.range.value.start),this.simpleDate(this.range.value.end),this.range.value.driver)
-      //       //console.log(await this.dataApi.getRate())
-      //       // console.log(this.queryData);
-      //       // console.log(this.queryData.length);
-
-
-      //       // if(queryData.length>0){
-      //       //   setTimeout(this.countRate(queryData),3000);
-      //       // }
-      //       //this.countRate(this.queryData);
-      //   }
-      // }
-
-      // countRate(rateList:any){
-      //   // console.log(rateList)
-      //   // console.log(rateList.length)
-      //   // console.log("length"+ rateList.length);
-
-      //   var rate1 = 0;
-      //   var rate2 = 0;
-      //   var rate3 = 0;
-      //   var rate4 = 0;
-      //   var rate5 = 0;
-      //   var specificDayRate: any[] = [];
-
-      //   // if(typeof rateList == "undefined"
-      //   // || rateList == null
-      //   // || rateList.length == null
-      //   // || rateList.length > 0) {
-      //   //   window.alert("You have selected the same week, please select a different week.");
-      //   // }
-      //   // else {
-
-
-
-      //     for(var i=0; i<rateList.length; i++){
-      //       // var specRate1=0;
-      //       // var specRate2=0;
-      //       // var specRate3=0;
-      //       // var specRate4=0;
-      //       // var specRate5=0;
-      //       //console.log(rateList.length)
-      //       for(var j=0; j<rateList[i].length; j++) {
-      //         console.log(rateList[i][j].ratingLevel)
-      //         if(rateList[i][j].ratingLevel==1){
-      //           rate1++;
-      //           //specRate1++;
-      //         }
-      //         else if(rateList[i][j].ratingLevel==2){
-      //           rate2++;
-      //           //specRate2++;
-      //         }
-      //         else if(rateList[i][j].ratingLevel==3){
-      //           rate3++;
-      //           //specRate3++;
-      //         }
-      //         else if(rateList[i][j].ratingLevel==4){
-      //           rate4++;
-      //           //specRate4++;
-      //         }
-      //         else if(rateList[i][j].ratingLevel==5){
-      //           rate5++;
-      //           //specRate5++;
-      //         }
-
-      //       }
-      //       // var dayRate ={
-      //       //   ratingDate:rate.ratingDate,
-      //       //   rate1:specRate1,
-      //       //   rate2:specRate2,
-      //       //   rate3:specRate3,
-      //       //   rate4:specRate4,
-      //       //   rate5:specRate5
-      //       // }
-      //       // specificDayRate.push(dayRate);
-      //     }
-      //     this.queryResult=[rate1,rate2,rate3,rate4,rate5];
-      //     console.log(rateList)
-      //   }
+    //hardcoded the rating list on bus driver
+  // lol(){
+  //   var date = new Date()
+  //   // var yesterday = new Date(date.getTime());
+  //   //   yesterday.setDate(date.getDate() - 1);
+  //   // console.log(yesterday.getDate()+"/"+yesterday.getDay()+"/"+yesterday.getFullYear())
+  //   for(var l=1; l<60; l++){
+  //     var yesterday = new Date(date.getTime());
+  //     yesterday.setDate(date.getDate() + l );
+  //     var currDay = yesterday.getDate()+"-"+(yesterday.getMonth()+1)+"-"+yesterday.getFullYear();
+  //     var currDat2 = yesterday.getTime();
+  //     var ran = Math.random() * 10;
+  //     for(var i=0; i<ran; i++){
+  //       var date = new Date();
+  //       var num = Math.floor(Math.random() * (5 - 1 + 1) + 1);
+  //       var busDriverRate = {
+  //         ratingId:"rate"+i,
+  //         ratingDate: currDay,
+  //         ratingLevel: num,
+  //         comment: "I have added " + num+" Stars to this driver on "+currDay,
+  //         busDriverId:'hfRK37clJ8MEc0sPgyW01YyptVg2'
+  //       };
+  //       this.dataApi.hi(currDay, busDriverRate, currDat2);
+  //     }
+  //   }
+  // }
 }
