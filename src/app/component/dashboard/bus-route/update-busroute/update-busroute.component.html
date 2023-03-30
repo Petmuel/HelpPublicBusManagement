@@ -121,6 +121,24 @@
       <mat-divider></mat-divider>
       <br>
       <h3>Add Bus Stops</h3>
+      <google-map
+        height="400px"
+        width="100%"
+        [center]="center"
+        [zoom]="zoom"
+        (mapClick)="addMarker($event)"
+        (mapMousemove)="move($event)">
+        <map-marker
+          #marker="mapMarker"
+          *ngFor="let markerPosition of markerPositions"
+          [position]="markerPosition"
+          [options]="markerOptions"
+          (mapClick)="openInfoWindow(marker)"></map-marker>
+        <map-info-window>{{markerLocation}}</map-info-window>
+        <map-polyline [path]="markerPositions"></map-polyline>
+      </google-map>
+      <div>Latitude: {{display?.lat}}</div>
+      <div>Longitude: {{display?.lng}}</div>
       <div class="overflow">
         <table formArrayName="busStops" style="margin:2%;width: 96%;" class="mat-table cdk-table">
             <thead class="">
@@ -155,7 +173,7 @@
             <tfoot>
                 <tr>
                     <td colspan="5">
-                        <a mat-raised-button type="button" color="primary" (click)="addBusStops()">Add New (+) </a>
+                        <a mat-raised-button type="button" color="primary">Add New (+) </a>
                     </td>
                 </tr>
             </tfoot>

@@ -79,16 +79,19 @@
 // }
 
 import { Component, DoCheck, Inject, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { MapInfoWindow, MapMarker } from '@angular/google-maps';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from 'src/app/shared/service/data.service';
+import { ViewChild } from '@angular/core'
 @Component({
   selector: 'app-add-route',
   templateUrl: './add-route.component.html',
   styleUrls: ['./add-route.component.css']
 })
+
 export class AddRouteComponent implements OnInit{
 
 
@@ -120,7 +123,66 @@ routeRegister !: FormGroup;
       this.buttonName = data.buttonName;
     }
 
+  //google maps
+  map !:google.maps.Map;
+  mcenter!: google.maps.LatLngLiteral;
+  options:google.maps.MapOptions={
+    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    scrollwheel:true,
+    disableDefaultUI:true,
+    disableDoubleClickZoom:true,
+    zoom:10
+  }
+  @ViewChild(MapInfoWindow) infoWindow: MapInfoWindow|undefined;
+  markerLocation:string="";
+  display:any;
+  center: google.maps.LatLngLiteral={lat:3.068  , lng: 101.60};
+  zoom=10;
+  markerOptions: google.maps.MarkerOptions={draggable: false};
+  markerPositions: google.maps.LatLngLiteral[]=[]
+
+
+  moveMap(event: google.maps.MapMouseEvent){
+    if(event.latLng!= null){
+      this.center = (event.latLng.toJSON());
+    }
+  }
+
+  addMarker(event: google.maps.MapMouseEvent){
+    if(event.latLng!= null){
+      this.markerPositions.push(event.latLng.toJSON());
+    }
+    this.addBusStops(event.latLng?.lat().toFixed(3), event.latLng?.lng().toFixed(3));
+  }
+
+  openInfoWindow(marker: MapMarker){
+    if(this.infoWindow!=undefined){
+      this.infoWindow.open(marker);
+      this.markerLocation=
+        "Lat: "+ marker.getPosition()?.lat().toFixed(3)+
+        ", Long: "+ marker.getPosition()?.lng().toFixed(3);
+    }
+  }
+
+  move(event: google.maps.MapMouseEvent){
+    if(event.latLng!= null){
+      this.display = (event.latLng.toJSON());
+    }
+  }
+  autocomplete!: google.maps.places.Autocomplete;
+  initAutocomplete(){
+
+    const input = document.getElementById("ship-address") as HTMLInputElement;
+    const options = {
+      componentRestrictions: { country: "MY" },
+      fields: ["address_components", "geometry", "icon", "name"],
+      types: ["establishment"],
+    };
+
+    this.autocomplete = new google.maps.places.Autocomplete(input, options);
+  }
   ngOnInit(): void {
+
     this.routeRegister = this.fb.group({
       id:[this.id, []],
       routeNo:[this.routeNo, [Validators.required]],
@@ -129,6 +191,16 @@ routeRegister !: FormGroup;
       arrival: [this.arrival, [Validators.required]],
       busStops:this.fb.array([])
     })
+
+    const portalDiv = document.getElementById('map_canvas')!;
+    navigator.geolocation.getCurrentPosition(position=>{
+      this.center;
+    })
+
+    this.map=new google.maps.Map(portalDiv,{
+      ...this.options,
+      center: this.center
+    })
   }
 
   cancelRegistration(){
@@ -136,24 +208,28 @@ routeRegister !: FormGroup;
   }
 
   registerBusRoute(){
-    this.dialogRef.close(this.routeRegister.value);
-
+    this.dialogRef.close(this.routeRegister.getRawValue());
   }
 
-    addBusStops(){
+    addBusStops(lat:any, lng:any){
     this.formBusStop=this.routeRegister.get("busStops") as FormArray;
-    this.formBusStop.push(this.generatorRow());
-
+    this.formBusStop.push(this.generatorRow(Number(lat), Number(lng)));
   }
 
-  generatorRow(){
+  generatorRow(lat: any, lng:any){
     return this.fb.group({
       busStopID: '',
       busRouteNo:this.fb.control(this.routeRegister.value.routeNo),
       name:this.fb.control(''),
       address:this.fb.control(''),
-      longitude:this.fb.control(''),
-      latitude:this.fb.control(''),
+      longitude:new FormControl({
+        value: lat,
+        disabled: true
+      }),
+      latitude:new FormControl({
+        value: lng,
+        disabled: true
+      })
     });
   }
 
@@ -166,6 +242,7 @@ routeRegister !: FormGroup;
       this.formBusStop=this.routeRegister.get("busStops") as FormArray;
       this.formBusStop.removeAt(index);
     }
+    this.markerPositions.splice(index,1)
   }
 
   updateRoute(){

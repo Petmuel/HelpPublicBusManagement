@@ -6,6 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CommonModule } from '@angular/common';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { GoogleMapsModule } from '@angular/google-maps';
 
 //components
 import { AppComponent } from './app.component';
@@ -64,6 +65,7 @@ import { StatisticComponent } from './component/dashboard/statistic/statistic.co
     MaterialModule,
     ReactiveFormsModule,
     FormsModule,
+    GoogleMapsModule
   ],
   providers: [MatDatepickerModule,
     MatNativeDateModule ],

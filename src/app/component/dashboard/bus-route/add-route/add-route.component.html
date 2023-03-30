@@ -13,7 +13,7 @@
             <mat-form-field appearance="fill">
               <mat-label>Description</mat-label>
               <input matInput
-                  placeholder="Description"          
+                  placeholder="Description"
                   formControlName="description"
                   required>
               <mat-error *ngIf="routeRegister.get('description')?.invalid || routeRegister.get('description')?.dirty || routeRegister.get('description')?.touched">Enter the description</mat-error>
@@ -42,6 +42,32 @@
         <mat-divider></mat-divider>
         <br>
         <h3>Add Bus Stops</h3>
+        <div #map id='map_canvas'></div>
+
+        <google-map
+          height="400px"
+          width="100%"
+          [center]="center"
+          [zoom]="zoom"
+          (mapClick)="addMarker($event)"
+          (mapMousemove)="move($event)">
+          <map-marker
+            #marker="mapMarker"
+            *ngFor="let markerPosition of markerPositions"
+            [position]="markerPosition"
+            [options]="markerOptions"
+            (mapClick)="openInfoWindow(marker)"></map-marker>
+          <map-info-window>{{markerLocation}}</map-info-window>
+          <map-polyline [path]="markerPositions"></map-polyline>
+        </google-map>
+        <div>Latitude: {{display?.lat}}</div>
+        <div>Longitude: {{display?.lng}}</div>
+        <input
+          id="ship-address"
+          name="ship-address"
+          required
+          autocomplete="off"
+        />
         <div class="overflow">
             <table formArrayName="busStops" style="margin:2%;width: 96%;" class="mat-table cdk-table">
                 <thead class="">
@@ -62,7 +88,7 @@
                             <input  class="form-control" formControlName="address">
                         </td>
                         <td>
-                            <input  class="form-control" formControlName="longitude">
+                            <input class="form-control" formControlName="longitude">
                         </td>
                         <td>
                             <input  class="form-control" formControlName="latitude">
@@ -76,7 +102,7 @@
                 <tfoot>
                     <tr>
                         <td colspan="5">
-                            <a mat-raised-button type="button" color="primary" (click)="addBusStops()">Add New (+) </a>
+                            <a mat-raised-button type="button" color="primary" >Add New (+) </a>
                         </td>
                     </tr>
                 </tfoot>
