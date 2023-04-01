@@ -80,7 +80,7 @@
 
 import { Component, DoCheck, Inject, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MapInfoWindow, MapMarker } from '@angular/google-maps';
+import { GoogleMap, MapInfoWindow, MapMarker } from '@angular/google-maps';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -94,6 +94,83 @@ import { ViewChild } from '@angular/core'
 
 export class AddRouteComponent implements OnInit{
 
+  @ViewChild('myGoogleMap', { static: false })
+  map!: GoogleMap;
+  @ViewChild(MapInfoWindow, { static: false })
+  info!: MapInfoWindow;
+  geocoder!: google.maps.Geocoder;
+  display:any;
+  zoom = 11;
+  center: google.maps.LatLngLiteral={lat:3.0907  , lng: 101.59651};
+  options: google.maps.MapOptions = {
+    zoomControl: true,
+    scrollwheel: true,
+    disableDoubleClickZoom: true,
+    mapTypeId: google.maps.MapTypeId.ROADMAP,
+  }
+  markers = []  as  any;
+  infoContent = ''
+
+  //Mouse move in map
+  move(event: google.maps.MapMouseEvent){
+    if(event.latLng!= null){
+      this.display = (event.latLng.toJSON());
+    }
+  }
+
+  // Markers
+  dropMarker(event:any) {
+    var lat = event.latLng.lat();
+    var lng = event.latLng.lng();
+
+    var title = 'Bus Stop ' + (this.markers.length + 1);
+    this.markers.push({
+      position: {
+        lat: lat,
+        lng: lng
+      },
+      label: {
+        color: 'blue',
+        text: title,
+      },
+      title: title,
+      info: title,
+      options: {
+        animation: google.maps.Animation.DROP,
+      },
+    })
+    this.addBusStops(lat, lng, title);
+
+  }
+
+  //update markers when removing one of them
+  updateMarkers(index:number, markers:Array<any>){
+    this.markers= this.markers.slice(0, index)
+    let i =index;
+    while(markers[i+1]!=null){
+      this.markers.push({
+        position: markers[i+1].position,
+        label: {
+          color: 'blue',
+          text: 'Bus Stop ' + (i+ 1),
+        },
+        title: 'Bus Stop ' + (i + 1),
+        info: 'Bus Stop ' + (i + 1),
+        options: {
+          animation: google.maps.Animation.DROP,
+        },
+      })
+      if(markers.length-this.markers.length==1) {
+        markers[i+1]= null;
+      }
+      i++
+    }
+  }
+
+  openInfo(marker: MapMarker, content: string) {
+    this.infoContent = content;
+    this.info.open(marker)
+  }
 
 routeRegister !: FormGroup;
   title!: string;
@@ -123,7 +200,7 @@ routeRegister !: FormGroup;
       this.buttonName = data.buttonName;
     }
 
-  //google maps
+  /*google maps
   map !:google.maps.Map;
   mcenter!: google.maps.LatLngLiteral;
   options:google.maps.MapOptions={
@@ -149,8 +226,16 @@ routeRegister !: FormGroup;
   }
 
   addMarker(event: google.maps.MapMouseEvent){
+    var LAT = event.latLng?.lat().toFixed(3);
+    var LNG = event.latLng?.lng().toFixed(3)
     if(event.latLng!= null){
+      let url=`https://maps.googleapis.com/maps/api/geocode/json?latlng=${LAT},${LNG}`;
       this.markerPositions.push(event.latLng.toJSON());
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+        })
     }
     this.addBusStops(event.latLng?.lat().toFixed(3), event.latLng?.lng().toFixed(3));
   }
@@ -181,8 +266,14 @@ routeRegister !: FormGroup;
 
     this.autocomplete = new google.maps.places.Autocomplete(input, options);
   }
+*/
   ngOnInit(): void {
-
+    // navigator.geolocation.getCurrentPosition((position) => {
+    //   this.center = {
+    //     lat: position.coords.latitude,
+    //     lng: position.coords.longitude,
+    //   }
+    // })
     this.routeRegister = this.fb.group({
       id:[this.id, []],
       routeNo:[this.routeNo, [Validators.required]],
@@ -192,15 +283,15 @@ routeRegister !: FormGroup;
       busStops:this.fb.array([])
     })
 
-    const portalDiv = document.getElementById('map_canvas')!;
-    navigator.geolocation.getCurrentPosition(position=>{
-      this.center;
-    })
+    // const portalDiv = document.getElementById('map_canvas')!;
+    // navigator.geolocation.getCurrentPosition(position=>{
+    //   this.center;
+    // })
 
-    this.map=new google.maps.Map(portalDiv,{
-      ...this.options,
-      center: this.center
-    })
+    // this.map=new google.maps.Map(portalDiv,{
+    //   ...this.options,
+    //   center: this.center
+    // })
   }
 
   cancelRegistration(){
@@ -211,16 +302,19 @@ routeRegister !: FormGroup;
     this.dialogRef.close(this.routeRegister.getRawValue());
   }
 
-    addBusStops(lat:any, lng:any){
+    addBusStops(lat:any, lng:any, title:String){
     this.formBusStop=this.routeRegister.get("busStops") as FormArray;
-    this.formBusStop.push(this.generatorRow(Number(lat), Number(lng)));
+    this.formBusStop.push(this.generatorRow(Number(lat), Number(lng),title));
   }
 
-  generatorRow(lat: any, lng:any){
+  generatorRow(lat: any, lng:any, title: String){
     return this.fb.group({
       busStopID: '',
       busRouteNo:this.fb.control(this.routeRegister.value.routeNo),
-      name:this.fb.control(''),
+      name:new FormControl({
+        value: title,
+        disabled: true
+      }),
       address:this.fb.control(''),
       longitude:new FormControl({
         value: lat,
@@ -241,8 +335,21 @@ routeRegister !: FormGroup;
     if (confirm('do you want to remove this bus stop?')){
       this.formBusStop=this.routeRegister.get("busStops") as FormArray;
       this.formBusStop.removeAt(index);
+      this.updateMarkers(index, this.markers)
+      this.updateFormBusStop(this.formBusStop, index);
     }
-    this.markerPositions.splice(index,1)
+
+    // var num=0;
+    // for(var mark of this.markers){
+    //   mark.label.text = 'Bus Stop ' + (++num);
+    //   console.log(mark.label)
+    // }
+  }
+
+  updateFormBusStop(formBusStop: FormArray<any>, index: any) {
+    for(var i = index; i < formBusStop.length; i++) {
+      formBusStop.at(i).patchValue({name:this.markers[i].title})
+    }
   }
 
   updateRoute(){
