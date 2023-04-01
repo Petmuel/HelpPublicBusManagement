@@ -83,10 +83,13 @@
           <mat-form-field appearance="fill">
             <mat-label>Route No.</mat-label>
             <input matInput
-                placeholder="RouteNo"
-                formControlName="routeNo"
-                required>
-            <mat-error *ngIf="form.get('routeNo')?.invalid || form.get('routeNo')?.dirty || form.get('routeNo')?.touched">Enter the route number</mat-error>
+            placeholder="RouteNo"
+            formControlName="routeNo"
+            required>
+            <mat-error *ngIf="form.get('routeNo')?.invalid
+            || form.get('routeNo')?.dirty
+            || form.get('routeNo')?.touched">
+            Enter the route number</mat-error>
           </mat-form-field>
 
           <mat-form-field appearance="fill">
@@ -95,25 +98,34 @@
                 placeholder="Description"
                 formControlName="description"
                 required>
-            <mat-error *ngIf="form.get('description')?.invalid || form.get('description')?.dirty || form.get('description')?.touched">Enter the description</mat-error>
+            <mat-error *ngIf="form.get('description')?.invalid
+            || form.get('description')?.dirty
+            || form.get('description')?.touched">
+            Enter the description</mat-error>
           </mat-form-field>
 
           <mat-form-field appearance="fill">
-            <mat-label>Destination</mat-label>
+            <mat-label>Departure</mat-label>
             <input matInput
-                placeholder="Destination"
-                formControlName="destination"
-                required>
-            <mat-error *ngIf="form.get('destination')?.invalid || form.get('destination')?.dirty || form.get('destination')?.touched">Enter the destination</mat-error>
+                formControlName="departure"
+                required
+                [readonly]="true">
+            <mat-error *ngIf="form.get('departure')?.invalid
+            || form.get('departure')?.dirty
+            || form.get('departure')?.touched">
+            Add pin in the map below</mat-error>
           </mat-form-field>
 
           <mat-form-field appearance="fill">
             <mat-label>Arrival</mat-label>
             <input matInput
-                placeholder="Arrival"
                 formControlName="arrival"
-                required>
-            <mat-error *ngIf="form.get('arrival')?.invalid || form.get('arrival')?.dirty || form.get('arrival')?.touched">Enter the arrival</mat-error>
+                required
+                [readonly]="true">
+            <mat-error *ngIf="form.get('arrival')?.invalid
+            || form.get('arrival')?.dirty
+            || form.get('arrival')?.touched">
+            Add pin in the map below</mat-error>
           </mat-form-field>
       </div>
 
@@ -122,19 +134,25 @@
       <br>
       <h3>Add Bus Stops</h3>
       <google-map
-        height="400px"
+        #myGoogleMap
+        height="350px"
         width="100%"
-        [center]="center"
         [zoom]="zoom"
-        (mapClick)="addMarker($event)"
+        [center]="center"
+        [options]="options"
+        (mapClick)="dropMarker($event)"
         (mapMousemove)="move($event)">
         <map-marker
-          #marker="mapMarker"
-          *ngFor="let markerPosition of markerPositions"
-          [position]="markerPosition"
-          [options]="markerOptions"
-          (mapClick)="openInfoWindow(marker)"></map-marker>
-        <map-info-window>{{markerLocation}}</map-info-window>
+          #markerElem="mapMarker"
+          *ngFor="let marker of markers"
+          [position]="marker.position"
+          [label]="marker.label"
+          [title]="marker.title"
+          [options]="marker.options"
+          (mapClick)="openInfo(markerElem, marker.info)">
+        </map-marker>
+
+        <map-info-window>{{ infoContent }}</map-info-window>
       </google-map>
       <div>Latitude: {{display?.lat}}</div>
       <div>Longitude: {{display?.lng}}</div>
@@ -142,15 +160,19 @@
         <table formArrayName="busStops" style="margin:2%;width: 96%;" class="mat-table cdk-table">
             <thead class="">
                 <tr>
-                    <td>Name</td>
-                    <td>Address</td>
-                    <td>Longitude</td>
-                    <td>Latitude</td>
-                    <td>Action</td>
+                  <td>BusStop</td>
+                  <td>Name</td>
+                  <td>Address</td>
+                  <td>Longitude</td>
+                  <td>Latitude</td>
+                  <td>Action</td>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let item of allBusStops.controls; let i=index" [formGroupName]="i">
+                    <td class="shortBox">
+                      <input  class="form-control" formControlName="busStop">
+                    </td>
                     <td>
                         <input  class="form-control" formControlName="name">
                     </td>
@@ -169,13 +191,6 @@
                 </tr>
 
             </tbody>
-            <tfoot>
-                <tr>
-                    <td colspan="5">
-                        <a mat-raised-button type="button" color="primary">Add New (+) </a>
-                    </td>
-                </tr>
-            </tfoot>
         </table>
     </div>
       <!--mat-form-field>

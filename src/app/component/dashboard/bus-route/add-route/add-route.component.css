@@ -1,43 +1,37 @@
-  .mat-form-field{
-    width: 50%;
-    padding: 1%;
-    margin-top: 10px;
-  }
-
-  .form-control{
-    width: 100%;
-    border-radius: 8px;
-    padding: 5px;
-  }
-
-  td{
-    padding: 3px;
-    border: 1px solid gray;
-  }
-
-  .overflow{
-    overflow-x: auto
-  }
+.mat-form-field{
+  width: 50%;
+  padding: 1%;
+  margin-top: 10px;
+}
 
 .form-control{
-    width: 100%;
-  }
+  width: 300px;
+  border-radius: 8px;
+  padding: 5px;
+}
 
-  mat-dialog-content{
-    max-width: 1200px;
-    text-align: center;
-  }
+td{
+  padding: 3px;
+  border: 1px solid gray;
+}
 
-  .mat-grid-list{
-    overflow:hidden;
-  }
+.overflow{
+  overflow-x: auto
+}
 
-  #map_canvas{
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    height: 350px;
-  }
+.form-control{
+  width: 100%;
+}
 
+mat-dialog-content{
+  max-width: 1200px;
+  text-align: center;
+}
+
+.mat-grid-list{
+  overflow:hidden;
+}
+
+.shortBox{
+  width: 12%;
+}

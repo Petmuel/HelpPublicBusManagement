@@ -17,7 +17,7 @@ import { AddRouteComponent } from './add-route/add-route.component';
 })
 export class BusRouteComponent implements OnInit {
   busRoutesArr : BusRoute[] = [];
-  displayedColumns: string[] = ['routeNo', 'description', 'destination', 'arrival', 'action'];
+  displayedColumns: string[] = ['routeNo', 'description', 'departure', 'arrival', 'action'];
   dataSource!: MatTableDataSource<BusRoute>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -51,7 +51,7 @@ export class BusRouteComponent implements OnInit {
           id:"BusRoute"+Date.now(),
           routeNo:data.routeNo,
           description: data.description,
-          destination: data.destination,
+          departure: data.departure,
           arrival: data.arrival
         };
         this.dataApi.addBusRoute(busRouteObj);//data service to add bus route

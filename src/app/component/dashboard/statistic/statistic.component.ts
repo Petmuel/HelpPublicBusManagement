@@ -178,6 +178,66 @@ export class StatisticComponent implements OnInit {
     }]
   }
 
+  lineData2 =
+  {
+    labels: [],
+    datasets: [{
+      label: '1 Star',
+      data: [],
+      backgroundColor: [
+        'rgba(255, 26, 104, 0.6)'
+      ],
+      borderColor: [
+        'rgba(255, 26, 104, 1)'
+      ],
+      borderWidth: 2
+    },
+    {
+      label: '2 Star',
+      data: [],
+      backgroundColor: [
+        'rgba(54, 162, 235, 0.6)'
+      ],
+      borderColor: [
+        'rgba(54, 162, 235, 1)'
+      ],
+      borderWidth: 2
+    },
+    {
+      label: '3 Star',
+      data: [],
+      backgroundColor: [
+        'rgba(255, 206, 86, 0.6)'
+      ],
+      borderColor: [
+        'rgba(255, 206, 86, 1)'
+      ],
+      borderWidth: 2
+    },
+    {
+      label: '4 Star',
+      data: [],
+      backgroundColor: [
+        'rgba(75, 192, 192, 0.6)'
+      ],
+      borderColor: [,
+        'rgba(75, 192, 192, 1)'
+      ],
+      borderWidth: 2
+    },
+    {
+      label: '5 Star',
+      data: [],
+      backgroundColor: [
+        'rgba(153, 102, 255, 0.6)'
+      ],
+      borderColor: [
+        'rgba(153, 102, 255, 1)'
+      ],
+      borderWidth: 2
+    }]
+  }
+
   selectedValue: string ="";
   range = new FormGroup({
     start: new FormControl<Date | null>(null),
@@ -276,7 +336,7 @@ export class StatisticComponent implements OnInit {
     //monthly chart
     this.line2 = new Chart("linechart2", {
       type: 'line',
-      data:this.lineData,
+      data:this.lineData2,
       options: {
         responsive: true,
         plugins: {
@@ -368,6 +428,7 @@ export class StatisticComponent implements OnInit {
           }
 
         }
+        console.log(allWeeksRating)
         selectedLine.data.datasets[i].data=allWeeksRating;
       }
       for(var i=0; i<allRatings[0].length; i++){

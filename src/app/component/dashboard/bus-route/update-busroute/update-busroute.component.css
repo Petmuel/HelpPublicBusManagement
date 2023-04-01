@@ -24,10 +24,14 @@ td{
 }
 
 mat-dialog-content{
-  max-width: 800px;
+  max-width: 1200px;
   text-align: center;
 }
 
 .mat-grid-list{
   overflow:hidden;
+}
+
+.shortBox{
+  width: 12%;
 }

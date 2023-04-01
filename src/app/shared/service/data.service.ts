@@ -35,7 +35,7 @@ export class DataService {
     return this.afs.collection("BusRoute/").doc(busRoute.id).set({
       routeNo:busRoute.routeNo,
       description:busRoute.description,
-      destination:busRoute.destination,
+      departure:busRoute.departure,
       arrival:busRoute.arrival,
     });
   }
@@ -55,6 +55,7 @@ export class DataService {
 
   updateBusStop(busRoute:any){
     for (let route of busRoute.busStops){
+      console.log(route.busStopID);
       this.afs.doc("BusRoute/"+busRoute.id).collection('busStopList/').doc(route.busStopID).set(route);
     };
   }

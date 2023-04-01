@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MapInfoWindow, MapMarker } from '@angular/google-maps';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { GoogleMap, MapInfoWindow, MapMarker } from '@angular/google-maps';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DataService } from 'src/app/shared/service/data.service';
 
@@ -14,7 +14,7 @@ export class updateBusrouteComponent implements OnInit {
   title!: string;
   routeNo !: string;
   description !: string;
-  destination !: string;
+  departure !: string;
   arrival !: string;
   id !: string;
   buttonName!: string;
@@ -22,6 +22,25 @@ export class updateBusrouteComponent implements OnInit {
   busStopForm!: FormArray<any>;
   busStopArr!: any;
   deletedbusStopForm!: FormArray<any>;
+
+  //google maps
+  @ViewChild('myGoogleMap', { static: false })
+  map!: GoogleMap;
+  @ViewChild(MapInfoWindow, { static: false })
+  info!: MapInfoWindow;
+  geocoder!: google.maps.Geocoder;
+  display:any;
+  zoom = 11;
+  center: google.maps.LatLngLiteral={lat:3.0907  , lng: 101.59651};
+  options: google.maps.MapOptions = {
+    zoomControl: true,
+    scrollwheel: true,
+    disableDoubleClickZoom: true,
+    mapTypeId: google.maps.MapTypeId.ROADMAP,
+  }
+  markers = []  as  any;
+  infoContent = ''
+
   constructor(
     private fb : FormBuilder,
     @Inject(MAT_DIALOG_DATA) data: any,
@@ -32,7 +51,7 @@ export class updateBusrouteComponent implements OnInit {
       this.title = data.title;
       this.routeNo = data.routeNo;
       this.description = data.description;
-      this.destination = data.destination;
+      this.departure = data.departure;
       this.arrival = data.arrival;
       this.buttonName = data.buttonName;
 
@@ -40,64 +59,17 @@ export class updateBusrouteComponent implements OnInit {
       id:[this.id, []],
       routeNo:[this.routeNo, [Validators.required]],
       description: [this.description, [Validators.required]],
-      destination: [this.destination, [Validators.required]],
+      departure: [this.departure, [Validators.required]],
       arrival: [this.arrival, [Validators.required]],
       busStops: this.fb.array([]),
       deletedbusStops:this.fb.array([])
       });
       // this.busStops = data.busStops;  //hard-coded
     }
-  /////////google map////////
-  @ViewChild(MapInfoWindow) infoWindow: MapInfoWindow|undefined;
-  markerLocation:string="";
-  display:any;
-  center: google.maps.LatLngLiteral={lat:3.068  , lng: 101.60};
-  zoom=10;
-  markerOptions: google.maps.MarkerOptions={draggable: false};
-  markerPositions: google.maps.LatLngLiteral[]=[
-    {
-        lat: 101.512,
-        lng: 2.957
-    },
-    {
-        lat: 101.561,
-        lng: 3.020
-    }
-]
-
-  moveMap(event: google.maps.MapMouseEvent){
-    if(event.latLng!= null){
-      this.center = (event.latLng.toJSON());
-    }
-  }
-
-  addMarker(event: google.maps.MapMouseEvent){
-    if(event.latLng!= null){
-      this.markerPositions.push(event.latLng.toJSON());
-    }
-    this.addBusStops(event.latLng?.lat().toFixed(3), event.latLng?.lng().toFixed(3));
-  }
-  move(event: google.maps.MapMouseEvent){
-    if(event.latLng!= null){
-      this.display = (event.latLng.toJSON());
-    }
-  }
-
-  openInfoWindow(marker: MapMarker){
-    if(this.infoWindow!=undefined){
-      this.infoWindow.open(marker);
-      this.markerLocation=
-        "Lat: "+ marker.getPosition()?.lat().toFixed(3)+
-        ", Long: "+ marker.getPosition()?.lng().toFixed(3);
-    }
-  }
-
-  /////////google map////////
-
   ngOnInit(): void {
     this.getBusStops(this.id);
-    console.log(this.markerPositions)
   }
+
 
 
   cancelRegistration(){
@@ -105,29 +77,50 @@ export class updateBusrouteComponent implements OnInit {
   }
 
   registerBusRoute(){
-    this.dialogRef.close(this.form.value);
+    console.log(this.form.getRawValue())
+    this.dialogRef.close(this.form.getRawValue());
   }
 
   addStops(stop:any){
     this.busStopForm=this.form.get("busStops") as FormArray;
     this.busStopForm.push(this.row(stop));
-
+    this.dropAddedMarkers(stop.longitude, stop.latitude, stop.address, stop.busStop)
     //this.markerPositions.push(new google.maps.LatLng(stop.latitude, stop.longitude))
   }
 
-  addBusStops(lat:any, lng:any){
+  addBusStops(lat:any, lng:any, busStop:String, address: String, sublocal:String){
     this.busStopForm=this.form.get("busStops") as FormArray;
-    this.busStopForm.push(this.generatorRow(lat, lng));
+    if(sublocal==undefined||sublocal==""){
+      sublocal=address.split(/\s/)[0];
+    }
+    this.busStopForm.push(this.generatorRow(Number(lat), Number(lng),busStop,address,sublocal));
+    this.updateDepartureAndArrival();
   }
 
-  generatorRow(lat: any, lng:any){
+  generatorRow(lat: any, lng:any, busStop: String, address:String, sublocal:String){
     return this.fb.group({
-      busStopID: '',
+      busStopID: "BusStop"+Date.now(),
       busRouteNo:this.fb.control(this.form.value.routeNo),
-      name:this.fb.control(''),
-      address:this.fb.control(''),
-      longitude:this.fb.control(lat),
-      latitude:this.fb.control(lng),
+      busStop:new FormControl({
+        value: busStop,
+        disabled: true
+      }),
+      name:new FormControl({
+        value: sublocal,
+        disabled: true
+      }),
+      address:new FormControl({
+        value: address,
+        disabled: true
+      }),
+      longitude:new FormControl({
+        value: lng,
+        disabled: true
+      }),
+      latitude:new FormControl({
+        value: lat,
+        disabled: true
+      })
     });
   }
 
@@ -135,21 +128,38 @@ export class updateBusrouteComponent implements OnInit {
     return this.fb.group({
       busStopID: this.fb.control(stop.busStopID),
       busRouteNo:this.fb.control(stop.routeNo),
-      name:this.fb.control(stop.name),
-      address:this.fb.control(stop.address),
-      longitude:this.fb.control(stop.longitude),
-      latitude:this.fb.control(stop.latitude),
+      busStop:new FormControl({
+        value: stop.busStop,
+        disabled: true
+      }),
+      name:new FormControl({
+        value: stop.name,
+        disabled: true
+      }),
+      address:new FormControl({
+        value: stop.address,
+        disabled: true
+      }),
+      longitude:new FormControl({
+        value: stop.longitude,
+        disabled: true
+      }),
+      latitude:new FormControl({
+        value: stop.latitude,
+        disabled: true
+      }),
     });
   }
 
   removeBusStop(index:any){
     if (confirm('do you want to remove this bus stop?')){
-      this.busStopForm=this.form.get("busStops") as FormArray;
-      this.deletedbusStopForm=this.form.get("deletedbusStops") as FormArray;
+	    this.deletedbusStopForm=this.form.get("deletedbusStops") as FormArray;
       this.deletedbusStopForm.push(this.row(this.busStopForm.at(index).value));
-      this.deleteBusStop(index)
-      //this.dataApi.deleteBusStop(this.busStopForm.at(index).value, this.id)
-      // this.deletedbusStopForm=this.form.get("deletedbusStops") as FormArray
+      this.busStopForm=this.form.get("busStops") as FormArray;
+      this.busStopForm.removeAt(index);
+      this.updateMarkers(index, this.markers)
+      this.updateFormBusStop(this.busStopForm, index);
+      this.updateDepartureAndArrival()
     }
   }
 
@@ -158,45 +168,140 @@ export class updateBusrouteComponent implements OnInit {
   }
 
   //storing retrieved documents in busStops array
-  getBusStops(id:string){
-    this.dataApi.getBusStopsByRoute(id).subscribe(res=>{
+  async getBusStops(id:string){
+    await this.dataApi.getBusStopsByRoute(id).subscribe(res=>{
       this.busStopArr=res.map((e:any)=>{
         const data = e.payload.doc.data();
         data.id = e.payload.doc.id;
         return data;
       })
+      this.busStopArr.sort((a: { busStop: string; }, b: { busStop: any; }) =>
+        a.busStop.localeCompare(b.busStop));
       for(let busStop of this.busStopArr){
+        console.log(busStop.busStop)
         this.addStops(busStop);
       }
     });
+    // this.center = {lat: this.busStopArr[0].latitude, lng: this.busStopArr[0].longitude};
+    // this.zoom = 15;
   }
 
-  deleteBusStop(index: any){
-    this.busStopForm=this.form.get("busStops") as FormArray;
-    this.busStopForm.removeAt(index);
+
+
+  updateFormBusStop(formBusStop: FormArray<any>, index: any) {
+    for(var i = index; i < formBusStop.length; i++) {
+      formBusStop.at(i).patchValue({busStop:this.markers[i].title})
+    }
   }
 
-  // setBusStop(busStop :any){
-  //   this.deletedbusStopForm=this.form.get("deletedbusStops") as FormArray;
-  //   this.deletedbusStopForm.push(busStop);
-  // }
-  // //Add the retrieved bus stop to the form.value.busStops
-  // setBusStopArr(data: any[]){
-  //   for(let busStop of data){
-  //     this.addStops(busStop);
-  //   }
-  // }
+  //set destination to the first bus stop name
+  updateDepartureAndArrival(){
+    this.form.controls['departure'].setValue(this.busStopForm.at(0).getRawValue().name);
+    this.form.controls['arrival'].setValue(this.busStopForm.at(this.busStopForm.length-1).getRawValue().name);
+  }
 
-  // getBusStops(id:string){
-  //   this.dataApi.getBusStopsByRoute(id).subscribe((actionArray) => {
-  //     this.busStops = actionArray.map((item) => ({
-  //       id: item.payload.doc.id,
-  //       ...item.payload.doc.data(),
-  //       expanded: false
+  /////////////////////////// GOOGLE MAP /////////////////////////////////
+  //Add new markers
+  async dropMarker(event:any) {
+    var lat = event.latLng.lat();
+    var lng = event.latLng.lng();
+    var locations = await this.getAddress(lat, lng);
+    var address = locations.address;
+    var busStop = "Bus Stop " + (this.markers.length + 1);
+    this.markers.push({
+      position: {
+        lat: lat,
+        lng: lng
+      },
+      label: {
+        color: 'blue',
+        text:  busStop,
+      },
+      title: busStop,
+      info: address,
+      options: {
+        animation: google.maps.Animation.DROP,
+      },
+    })
+    this.addBusStops(lat, lng, busStop, address, locations.sublocal);
+  }
 
-  //     }));
-  //     console.log('inner',this.busStops)
-  //   });
-  //   console.log(this.busStops)
-  // }
+  //get nearest address from the marker lat and lng
+  async getAddress(lat:any, lng:any){
+    var address="";
+    var locations:any;
+    var sublocal:any;
+    const KEY = "AIzaSyAupM29ityoxRwEKvxC2Z8nZOb9H20-3lo";
+    let url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${KEY}`;
+    await fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      address = data.results[0].formatted_address
+      locations = data.results[0].address_components;
+      // sublocal=locations.find((x:{long_name: any; types: string | string[];})=> x.types==="sublocality_level_1").long_name;
+
+      locations.forEach((a: {long_name: any; types: string | string[];}) => {
+        if (a.types.includes("sublocality_level_1")) {
+          sublocal= a.long_name;
+        }
+      })
+    })
+    return {address:address, sublocal: sublocal};
+  }
+
+  //drop the retrieved markers
+  dropAddedMarkers(lng:any, lat:any, address:String, busStop:String){
+    this.markers.push({
+      position: {
+        lat: lat,
+        lng: lng
+      },
+      label: {
+        color: 'blue',
+        text:  busStop,
+      },
+      title: busStop,
+      info: address,
+      options: {
+        animation: google.maps.Animation.DROP,
+      },
+    })
+  }
+
+  move(event: google.maps.MapMouseEvent){
+    if(event.latLng!= null){
+      this.display = (event.latLng.toJSON());
+    }
+  }
+
+   //update markers when removing one of them
+   updateMarkers(index:number, markers:Array<any>){
+    this.markers= this.markers.slice(0, index)
+    let i =index;
+    while(markers[i+1]!=null){
+      this.markers.push({
+        position: markers[i+1].position,
+        label: {
+          color: 'blue',
+          text: 'Bus Stop ' + (i+ 1),
+        },
+        title: 'Bus Stop ' + (i + 1),
+        info: markers[i+1].info,
+        options: {
+          animation: google.maps.Animation.DROP,
+        },
+      })
+      if(markers.length-this.markers.length==1) {
+        markers[i+1]= null;
+      }
+      i++
+    }
+  }
+
+  //display marker info
+  openInfo(marker: MapMarker, content: string) {
+    this.infoContent = content;
+    this.info.open(marker)
+  }
+  /////////////////////////// End of GOOGLE MAP /////////////////////////////////
 }
