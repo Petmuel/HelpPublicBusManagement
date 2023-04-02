@@ -11,10 +11,10 @@
   <div class="container py-3 text-center">
     <div class="bg-white mat-elevation-z5" [formGroup]="range">
       <div class="p-2 py-4">
-        <h2 class="font-monospace fw-bold">Weekly Bus Driver Ratings</h2>
+        <h2 class="font-monospace fw-bold">Weekly Number of Passengers</h2>
         <!-- bus driver selection dropdown-list -->
         <mat-form-field appearance="fill">
-          <mat-label>Select a bus driver</mat-label>
+          <mat-label>Select a bus route</mat-label>
           <mat-select [(ngModel)]="selectedValue" name="driver" formControlName="driver">
             <mat-option *ngFor="let driver of busDriver" [value]="driver.id">
               {{driver.fullName}}

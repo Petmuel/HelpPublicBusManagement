@@ -21,6 +21,8 @@ import { ViewBusRouteComponent } from './component/dashboard/bus-route/view-bus-
 import { DeleteBusRouteComponent } from './component/dashboard/bus-route/delete-bus-route/delete-bus-route.component';
 import { AddRouteComponent } from './component/dashboard/bus-route/add-route/add-route.component';
 import { AddBusDriverComponent } from './component/dashboard/bus-driver/add-bus-driver/add-bus-driver.component';
+import { noOfPassengersComponent } from './component/dashboard/noOfPassengers/noOfPassengers.component';
+import { StatisticComponent } from './component/dashboard/statistic/statistic.component';
 // import { MychartComponent } from './component/dashboard/mychart/mychart.component';
 
 //angular materials (design & styling)
@@ -34,7 +36,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { AngularFireStorageModule } from '@angular/fire/compat/storage';
 import { AngularFireDatabaseModule } from '@angular/fire/compat/database';
-import { StatisticComponent } from './component/dashboard/statistic/statistic.component';
+
 
 
 
@@ -52,7 +54,8 @@ import { StatisticComponent } from './component/dashboard/statistic/statistic.co
     DeleteBusRouteComponent,
     AddRouteComponent,
     AddBusDriverComponent,
-    StatisticComponent
+    StatisticComponent,
+    noOfPassengersComponent
   ],
   imports: [
     CommonModule,

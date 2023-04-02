@@ -1,7 +1,7 @@
 
 import {Chart, registerables} from 'node_modules/chart.js'
 import {Component, OnInit, Injectable} from '@angular/core';
-import { DataService } from 'src/app/shared/service/data.service';
+import { noOfPassengersService } from 'src/app/shared/service/noOfPassengers.service';
 import { BusDriver } from 'src/app/shared/model/bus-driver';
 import { SevenDayRange } from './datepicker/sevenDayRange.component';
 import { FormGroup, FormControl } from '@angular/forms';
@@ -12,9 +12,9 @@ import { MatRadioChange } from '@angular/material/radio';
 Chart.register(...registerables)
 
 @Component({
-  selector: 'app-statistic',
-  templateUrl: './statistic.component.html',
-  styleUrls: ['./statistic.component.css'],
+  selector: 'app-noOfPassengers',
+  templateUrl: './noOfPassengers.component.html',
+  styleUrls: ['./noOfPassengers.component.css'],
   providers: [
     {
       provide: MAT_DATE_RANGE_SELECTION_STRATEGY,
@@ -22,7 +22,7 @@ Chart.register(...registerables)
     },
   ],
 })
-export class StatisticComponent implements OnInit {
+export class noOfPassengersComponent implements OnInit {
   isProgressBarVisible=false;
   minDate: Date;
   maxDate: Date;
@@ -251,7 +251,7 @@ export class StatisticComponent implements OnInit {
     driver: new FormControl()
   })
 
-  constructor(private dataApi: DataService) {
+  constructor(private dataApi: noOfPassengersService) {
     const currentYear = new Date().getFullYear();
     this.minDate = new Date(currentYear - 20, 0, 1);
     this.maxDate = new Date();
@@ -785,29 +785,33 @@ export class StatisticComponent implements OnInit {
   }
 
     //hardcoded the rating list on bus driver
-  // lol(){
+  // async lol(){
+
   //   var date = new Date()
+  //   var stops= await this.dataApi.getBusStopsByRoute("BusRoute1680460045688")
   //   // var yesterday = new Date(date.getTime());
   //   //   yesterday.setDate(date.getDate() - 1);
   //   // console.log(yesterday.getDate()+"/"+yesterday.getDay()+"/"+yesterday.getFullYear())
-  //   for(var l=1; l<60; l++){
-  //     var yesterday = new Date(date.getTime());
-  //     yesterday.setDate(date.getDate() + l );
-  //     var currDay = yesterday.getDate()+"-"+(yesterday.getMonth()+1)+"-"+yesterday.getFullYear();
-  //     var currDat2 = yesterday.getTime();
-  //     var ran = Math.random() * 10;
-  //     for(var i=0; i<ran; i++){
-  //       var date = new Date();
-  //       var num = Math.floor(Math.random() * (5 - 1 + 1) + 1);
-  //       var busDriverRate = {
-  //         ratingId:"rate"+i,
-  //         ratingDate: currDay,
-  //         ratingLevel: num,
-  //         comment: "I have added " + num+" Stars to this driver on "+currDay,
-  //         busDriverId:'hfRK37clJ8MEc0sPgyW01YyptVg2'
-  //       };
-  //       this.dataApi.hi(currDay, busDriverRate, currDat2);
+  //   for(var stop of stops) {
+
+  //     for(var l=1; l<8; l++){
+  //       var yesterday = new Date(date.getTime());
+  //       yesterday.setDate(date.getDate() + l );
+  //       var currDay = yesterday.getDate()+"-"+(yesterday.getMonth()+1)+"-"+yesterday.getFullYear();
+  //       var currDat2 = yesterday.getTime();
+  //       var ran = Math.floor(Math.random() * 100);
+
+  //         var date = new Date();
+  //         var num = Math.floor(Math.random() * (5 - 1 + 1) + 1);
+  //         var noOfP = {
+  //           countID:'',
+  //           countedDateTime: yesterday,
+  //           numberOfPassenger: ran,
+  //           busStopID: stop.busStopID,
+  //         };
+  //         this.dataApi.hi(currDay, noOfP);
+
+  //       }
   //     }
   //   }
-  // }
 }

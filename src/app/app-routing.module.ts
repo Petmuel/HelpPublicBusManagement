@@ -9,7 +9,7 @@ import { DashboardComponent } from './component/dashboard/dashboard.component';
 // import { AddRouteComponent } from './component/dashboard/bus-route/add-route/add-route.component';
 // import { MychartComponent } from './component/dashboard/mychart/mychart.component';
 import { StatisticComponent } from './component/dashboard/statistic/statistic.component';
-
+import { noOfPassengersComponent } from './component/dashboard/noOfPassengers/noOfPassengers.component';
 const routes: Routes = [
   {path: 'dashboard',
     component: DashboardComponent,
@@ -20,6 +20,7 @@ const routes: Routes = [
     // {path:'edit/:id', component: AddRouteComponent},
     {path:'busRoute/:id', component: ViewBusRouteComponent},
     {path: 'statistic', component: StatisticComponent},
+    {path: 'noOfPassengers', component: noOfPassengersComponent},
     {path:'busDriver', component: BusDriverComponent}
     // {path: 'busRoute/multiform', redirectTo: 'multiform', pathMatch: 'full'}
   ]
