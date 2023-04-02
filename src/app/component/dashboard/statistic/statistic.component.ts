@@ -275,12 +275,6 @@ export class StatisticComponent implements OnInit {
       }
     }
     //weekly chart
-    this.pie = new Chart("piechart", {
-      type: 'pie',
-      data: this.datas,
-      options: options
-    });
-
     this.line = new Chart("linechart", {
       type: 'line',
       data:this.lineData,
@@ -393,9 +387,7 @@ export class StatisticComponent implements OnInit {
       this.bar2.update();
     }
     else{
-      this.pie.data.datasets[0].data=chartData;
       this.bar.data.datasets[0].data=chartData;
-      this.pie.update();
       this.bar.update();
     }
     this.isProgressBarVisible=false;
@@ -428,7 +420,6 @@ export class StatisticComponent implements OnInit {
           }
 
         }
-        console.log(allWeeksRating)
         selectedLine.data.datasets[i].data=allWeeksRating;
       }
       for(var i=0; i<allRatings[0].length; i++){
@@ -532,7 +523,6 @@ export class StatisticComponent implements OnInit {
       }
       else{
         this.isProgressBarVisible=true;
-        console.log(this.selectedYear)
         let dates: any[] = [];
         var collect : Rate[]=[];
         let dateArr:any[]=[];
