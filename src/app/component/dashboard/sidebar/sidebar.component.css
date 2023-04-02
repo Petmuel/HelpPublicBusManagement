@@ -36,3 +36,18 @@
 span{
   font-size: 95%;
 }
+
+.accordion-button:focus {
+  box-shadow: none;
+  border-color:none;
+}
+
+.accordion-button {
+  color: #b33636;
+}
+
+.accordion-button:not(.collapsed) {
+  color: rgb(136, 19, 19);
+  background-color: #ffdfdf;
+}
+

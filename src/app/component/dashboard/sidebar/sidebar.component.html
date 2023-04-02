@@ -6,7 +6,19 @@
     <mat-toolbar>Menu</mat-toolbar>
     <mat-divider></mat-divider>
     <mat-nav-list>
-      <a mat-list-item routerLinkActive="active" routerLink="statistic"><mat-icon>leaderboard</mat-icon>Dashboard</a>
+      <div class="accordion">
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-controls="collapseTwo">
+              <mat-icon>leaderboard</mat-icon>Dashboard
+            </button>
+          </h2>
+          <div id="collapseTwo" class="accordion-collapse collapse">
+            <a mat-list-item routerLinkActive="active" routerLink="statistic"><mat-icon>star</mat-icon>Ratings</a>
+            <a mat-list-item routerLinkActive="" routerLink=""><mat-icon>leaderboard</mat-icon>Number of Passengers</a>
+          </div>
+        </div>
+      </div>
       <a mat-list-item routerLinkActive="active" routerLink="busRoute"><mat-icon>route</mat-icon>Bus Route</a>
       <a mat-list-item routerLinkActive="active" routerLink="busDriver"><mat-icon>person</mat-icon>Bus Driver</a>
       <a mat-list-item routerLinkActive="active" (click)="logOut()"><mat-icon>logout</mat-icon>Sign Out</a>

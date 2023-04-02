@@ -41,11 +41,14 @@ export class DataService {
   }
 
   //adding each bus stop info into the selected bus route's subcollection busStoplist
-  addBusStop(id: string, busStops:any){
+  addBusStop(busStops:any){
     let stops = busStops as FormArray;
+
     for(let i=0; i<stops.length;i++){
-      busStops.at(i).busStopID="BusStop"+i;
-      this.afs.doc("BusRoute/"+id).collection('busStopList/').doc(busStops.at(i).busStopID).set(busStops.at(i));
+      let newDoc = this.afs.collection("BusStop").doc();
+      let docId = newDoc.ref.id;
+      busStops.at(i).busStopID=docId
+      this.afs.collection("BusStop/").doc(docId).set(busStops.at(i));
     }
   }
 
@@ -54,20 +57,27 @@ export class DataService {
   }
 
   updateBusStop(busRoute:any){
-    for (let route of busRoute.busStops){
-      console.log(route.busStopID);
-      this.afs.doc("BusRoute/"+busRoute.id).collection('busStopList/').doc(route.busStopID).set(route);
+    let docId:any;
+    for (let busStop of busRoute.busStops){
+      docId=busStop.busStopID
+      if(docId==null||docId==""){
+        let newDoc = this.afs.collection("BusStop").doc();
+        docId = newDoc.ref.id;
+        busStop.busStopID=docId;
+      }
+      this.afs.collection('BusStop').doc(docId).set(busStop);
     };
   }
 
+  // delete collection busRoute & busStops with same busRouteID
   deleteBusRoute(id: string){
-    //delete subcollection busStopList
-    this.afs.doc("BusRoute/"+id).collection('busStopList/').get().forEach(stopID=>{
-      stopID.forEach(busStop=>{
-        busStop.ref.delete();
-      })
+    this.afs.collection('BusStop', ref => ref.where('busRouteId', '==', id))
+      .get().forEach(stopID=>{
+        stopID.forEach(busStop=>{
+          busStop.ref.delete();
+        });
     })
-    //delete collection busRoute
+
     this.afs.doc("BusRoute/"+id).delete();
   }
 
@@ -102,8 +112,9 @@ export class DataService {
     //     console.log(busStop.ref.collection)
     //   })
     // })
-    return this.afs.doc("BusRoute/"+id).collection('busStopList/').snapshotChanges()
-
+    return new Promise<any>((resolve)=> {
+      this.afs.collection('BusStop', ref => ref.where('busRouteId', '==', id)).valueChanges().subscribe(busStops => resolve(busStops));
+    })
   }
 
   returnBusStop(id:string){
@@ -112,12 +123,13 @@ export class DataService {
 
   deleteBusStop(busRoute:any) {
     for (let stops of busRoute.deletedbusStops){
-      this.afs.doc("BusRoute/"+busRoute.id).collection("busStopList/").get().forEach(stopID=>{
+      this.afs.collection("BusStop").get().forEach(stopID=>{
         stopID.forEach(busStop=>{
           if(busStop.id==stops.busStopID){
-            busStop.ref.delete();
+                busStop.ref.delete();
           }
         })
+
       })
     }
     return

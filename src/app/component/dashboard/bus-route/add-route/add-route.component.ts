@@ -83,7 +83,7 @@ export class AddRouteComponent implements OnInit{
   addBusStops(lat:any, lng:any, title:String, address: String, sublocal:String){
     this.formBusStop=this.routeRegister.get("busStops") as FormArray;
     if(sublocal==undefined||sublocal==""){
-      sublocal=address.split(/\s/)[0];
+      sublocal=address.split(/[\s,]+/)[0]+" "+address.split(/[\s,]+/)[1];
     }
     this.formBusStop.push(this.generatorRow(Number(lat), Number(lng),title,address,sublocal));
     this.updateDepartureAndArrival();
@@ -91,7 +91,8 @@ export class AddRouteComponent implements OnInit{
 
   generatorRow(lat: any, lng:any, title: String, address:String, sublocal:String){
     return this.fb.group({
-      busStopID: '',
+      busStopID: "",
+      busRouteId: this.fb.control(this.routeRegister.value.id),
       busRouteNo:this.fb.control(this.routeRegister.value.routeNo),
       busStop:new FormControl({
         value: title,

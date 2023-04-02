@@ -71,13 +71,11 @@ export class updateBusrouteComponent implements OnInit {
   }
 
 
-
   cancelRegistration(){
     this.dialogRef.close();
   }
 
   registerBusRoute(){
-    console.log(this.form.getRawValue())
     this.dialogRef.close(this.form.getRawValue());
   }
 
@@ -99,8 +97,8 @@ export class updateBusrouteComponent implements OnInit {
 
   generatorRow(lat: any, lng:any, busStop: String, address:String, sublocal:String){
     return this.fb.group({
-      busStopID: "BusStop"+Date.now(),
-      busRouteNo:this.fb.control(this.form.value.routeNo),
+      busStopID: "",
+      busRouteId:this.fb.control(this.id),
       busStop:new FormControl({
         value: busStop,
         disabled: true
@@ -127,7 +125,7 @@ export class updateBusrouteComponent implements OnInit {
   row(stop:any){
     return this.fb.group({
       busStopID: this.fb.control(stop.busStopID),
-      busRouteNo:this.fb.control(stop.routeNo),
+      busRouteId:this.fb.control(stop.busRouteId),
       busStop:new FormControl({
         value: stop.busStop,
         disabled: true
@@ -152,10 +150,10 @@ export class updateBusrouteComponent implements OnInit {
   }
 
   removeBusStop(index:any){
-    if (confirm('do you want to remove this bus stop?')){
-	    this.deletedbusStopForm=this.form.get("deletedbusStops") as FormArray;
-      this.deletedbusStopForm.push(this.row(this.busStopForm.at(index).value));
+    if (confirm('do you want to remove this bus stop?')) {
       this.busStopForm=this.form.get("busStops") as FormArray;
+	    this.deletedbusStopForm=this.form.get("deletedbusStops") as FormArray;
+      this.deletedbusStopForm.push(this.row(this.busStopForm.at(index).getRawValue()));
       this.busStopForm.removeAt(index);
       this.updateMarkers(index, this.markers)
       this.updateFormBusStop(this.busStopForm, index);
@@ -169,19 +167,25 @@ export class updateBusrouteComponent implements OnInit {
 
   //storing retrieved documents in busStops array
   async getBusStops(id:string){
-    await this.dataApi.getBusStopsByRoute(id).subscribe(res=>{
-      this.busStopArr=res.map((e:any)=>{
-        const data = e.payload.doc.data();
-        data.id = e.payload.doc.id;
-        return data;
-      })
-      this.busStopArr.sort((a: { busStop: string; }, b: { busStop: any; }) =>
-        a.busStop.localeCompare(b.busStop));
-      for(let busStop of this.busStopArr){
-        console.log(busStop.busStop)
-        this.addStops(busStop);
-      }
-    });
+    this.busStopArr= await this.dataApi.getBusStopsByRoute(id);
+    this.busStopArr.sort((a: { busStop: string; }, b: { busStop: any; }) =>
+      a.busStop.localeCompare(b.busStop));
+    for(var i=0; i<this.busStopArr.length; i++){
+      this.busStopArr[i].busStop="Bus Stop "+(i+1)
+      this.addStops(this.busStopArr[i]);
+    }
+    // await this.dataApi.getBusStopsByRoute(id).subscribe(res=>{
+    //   this.busStopArr=res.map((e:any)=>{
+    //     const data = e.payload.doc.data();
+    //     data.id = e.payload.doc.id;
+    //     return data;
+    //   })
+    //   this.busStopArr.sort((a: { busStop: string; }, b: { busStop: any; }) =>
+    //     a.busStop.localeCompare(b.busStop));
+    //   for(let busStop of this.busStopArr){
+    //     this.addStops(busStop);
+    //   }
+    // });
     // this.center = {lat: this.busStopArr[0].latitude, lng: this.busStopArr[0].longitude};
     // this.zoom = 15;
   }

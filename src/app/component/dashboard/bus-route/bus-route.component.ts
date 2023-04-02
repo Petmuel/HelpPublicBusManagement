@@ -39,6 +39,7 @@ export class BusRouteComponent implements OnInit {
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.data = {
+      id: "BusRoute"+Date.now(),
       title: 'Register Bus Route',
       buttonName: 'Register'
     }
@@ -48,7 +49,7 @@ export class BusRouteComponent implements OnInit {
       if(data){
         //add bus route object
         var busRouteObj = {
-          id:"BusRoute"+Date.now(),
+          id:data.id,
           routeNo:data.routeNo,
           description: data.description,
           departure: data.departure,
@@ -57,7 +58,7 @@ export class BusRouteComponent implements OnInit {
         this.dataApi.addBusRoute(busRouteObj);//data service to add bus route
         // console.log('add', busRouteObj.id, data.busStops);
             //add bus stops in the bus route
-        this.dataApi.addBusStop( busRouteObj.id, data.busStops);
+        this.dataApi.addBusStop(data.busStops);
         this.snackBar.open('Bus route saved successfully.','OK',{
           duration: 2000
         });
@@ -78,6 +79,7 @@ export class BusRouteComponent implements OnInit {
     const dialogRef = this.dialog.open(updateBusrouteComponent, dialogConfig);
     dialogRef.afterClosed().subscribe((data)=>{
       if(data){
+        console.log(data)
         this.dataApi.deleteBusStop(data);
         this.dataApi.addBusRoute(data);
         this.dataApi.updateBusStop(data);

@@ -33,15 +33,15 @@ export class ViewBusRouteComponent implements OnInit {
   }
 
   getBusStops(){
-    this.dataApi.getBusStopsByRoute(this.id).subscribe(res=>{
-      this.busStops=res.map((e:any)=>{
-        const data = e.payload.doc.data();
-        data.id = e.payload.doc.id;
-        return data;
-      })
-      console.log('busStopsView')
-      this.dataSource = new MatTableDataSource(this.busStops);
-    })
+    // this.dataApi.getBusStopsByRoute(this.id).subscribe(res=>{
+    //   this.busStops=res.map((e:any)=>{
+    //     const data = e.payload.doc.data();
+    //     data.id = e.payload.doc.id;
+    //     return data;
+    //   })
+    //   console.log('busStopsView')
+    //   this.dataSource = new MatTableDataSource(this.busStops);
+    // })
       //console.log('hi',this.busStop.length());
   }
 
