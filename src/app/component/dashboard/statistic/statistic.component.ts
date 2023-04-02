@@ -346,7 +346,7 @@ export class StatisticComponent implements OnInit {
           x: {
             title: {
               display: true,
-              text: 'Day'
+              text: 'Weeks'
             }
           },
           y: {
