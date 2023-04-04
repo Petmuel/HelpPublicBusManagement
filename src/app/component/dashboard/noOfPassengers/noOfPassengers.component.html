@@ -9,15 +9,15 @@
 <body>
   <!-- weekly query form -->
   <div class="container py-3 text-center">
-    <div class="bg-white mat-elevation-z5" [formGroup]="range">
+    <div class="bg-white mat-elevation-z5" [formGroup]="weekNop">
       <div class="p-2 py-4">
         <h2 class="font-monospace fw-bold">Weekly Number of Passengers</h2>
         <!-- bus driver selection dropdown-list -->
         <mat-form-field appearance="fill">
           <mat-label>Select a bus route</mat-label>
-          <mat-select [(ngModel)]="selectedValue" name="driver" formControlName="driver">
-            <mat-option *ngFor="let driver of busDriver" [value]="driver.id">
-              {{driver.fullName}}
+          <mat-select [(ngModel)]="selectedValue" name="driver" formControlName="route">
+            <mat-option *ngFor="let route of busRoute" [value]="route.id">
+              {{route.routeNo}}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -39,8 +39,8 @@
             </mat-date-range-picker-actions>
           </mat-date-range-picker>
 
-          <mat-error *ngIf="range.controls.start.hasError('matStartDateInvalid')">Invalid start date</mat-error>
-          <mat-error *ngIf="range.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error>
+          <mat-error *ngIf="weekNop.controls.start.hasError('matStartDateInvalid')">Invalid start date</mat-error>
+          <mat-error *ngIf="weekNop.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error>
         </mat-form-field>
         <br>
 
@@ -59,8 +59,8 @@
       <div class="col-lg-4">
         <mat-card class="borderBottom">
           <mat-card-header class="justify-content-center">
-            <mat-card-subtitle>Highest Rating Quantity</mat-card-subtitle>
-            <mat-card-title class="fw-bold">{{highestQuantity.rate}}</mat-card-title>
+            <mat-card-subtitle>Highest Passenger Quantity</mat-card-subtitle>
+            <mat-card-title class="fw-bold">{{highestQuantity.busStop}}</mat-card-title>
             <div class="circular py-4">
                {{highestQuantity.quantity}}
             </div>
@@ -70,8 +70,8 @@
       <div class="col-lg-4">
         <mat-card class="borderBottom">
           <mat-card-header class="justify-content-center">
-            <mat-card-subtitle>Average Daily Highest Ratings</mat-card-subtitle>
-            <mat-card-title class="fw-bold">{{averageDaily.rate}}</mat-card-title>
+            <mat-card-subtitle>Average Daily Highest Passenger</mat-card-subtitle>
+            <mat-card-title class="fw-bold">{{averageDaily.busStop}}</mat-card-title>
             <div class="circular py-4">
               {{averageDaily.quantity}}
             </div>
@@ -81,10 +81,10 @@
       <div class="col-lg-4">
         <mat-card class="borderBottom">
           <mat-card-header class="justify-content-center">
-            <mat-card-subtitle>Day with Most Ratings {{topDayRate.rate}}</mat-card-subtitle>
-            <mat-card-title class="fw-bold">{{topDayRate.date}}{{topDayRate.day}}</mat-card-title>
+            <mat-card-subtitle>Day with Most Passengers {{topDayPassenger.busStop}}</mat-card-subtitle>
+            <mat-card-title class="fw-bold">{{topDayPassenger.date}}{{topDayPassenger.day}}</mat-card-title>
             <div class="circular py-4">
-              {{topDayRate.quantity}}
+              {{topDayPassenger.quantity}}
             </div>
           </mat-card-header>
         </mat-card>
@@ -94,10 +94,10 @@
       <div class="col-lg-6">
         <mat-card>
           <mat-card-header>
-            <mat-card-title>Number of Ratings Per Day</mat-card-title>
+            <mat-card-title>No. Of Passengers From Each Bus Stop Per Day</mat-card-title>
           </mat-card-header>
           <mat-divider></mat-divider>
-        <canvas id="linechart"></canvas>
+        <canvas id="noplinechart"></canvas>
         </mat-card>
 
       </div>
@@ -105,10 +105,10 @@
 
         <mat-card>
           <mat-card-header>
-            <mat-card-title>Number of Each Ratings</mat-card-title>
+            <mat-card-title>Total No. Of Passengers From Each Bus Stop</mat-card-title>
           </mat-card-header>
           <mat-divider></mat-divider>
-          <canvas id="barchart"></canvas>
+          <canvas id="nopbarchart"></canvas>
         </mat-card>
       </div>
 
@@ -118,15 +118,15 @@
   <mat-divider></mat-divider>
   <!-- monthly query form -->
   <div class="container py-3 text-center">
-    <div class="bg-white text-center mat-elevation-z5" [formGroup]="monthRange">
+    <div class="bg-white text-center mat-elevation-z5" [formGroup]="monthNop">
       <div class="p-2 py-4">
-        <h2 class="font-monospace fw-bold">Monthly Bus Driver Ratings</h2>
+        <h2 class="font-monospace fw-bold">Monthly Number of Passengers</h2>
         <!-- bus driver selection dropdown-list -->
         <mat-form-field appearance="fill">
-          <mat-label>Select a bus driver</mat-label>
-          <mat-select [(ngModel)]="selectedValue" name="driver" formControlName="driver">
-            <mat-option *ngFor="let driver of busDriver" [value]="driver.id">
-              {{driver.fullName}}
+          <mat-label>Select a bus route</mat-label>
+          <mat-select [(ngModel)]="selectedValue" name="route" formControlName="route">
+            <mat-option *ngFor="let route of busRoute" [value]="route.id">
+              {{route.routeNo}}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -168,8 +168,8 @@
       <div class="col-lg-4">
         <mat-card class="borderBottom">
           <mat-card-header class="justify-content-center">
-            <mat-card-subtitle>Highest Rating Quantity</mat-card-subtitle>
-            <mat-card-title class="fw-bold">{{mHighestQuantity.rate}}</mat-card-title>
+            <mat-card-subtitle>Highest Passenger Quantity</mat-card-subtitle>
+            <mat-card-title class="fw-bold">{{mHighestQuantity.busStop}}</mat-card-title>
             <div class="circular py-4">
                {{mHighestQuantity.quantity}}
             </div>
@@ -179,8 +179,8 @@
       <div class="col-lg-4">
         <mat-card class="borderBottom">
           <mat-card-header class="justify-content-center">
-            <mat-card-subtitle>Average Daily Highest Ratings</mat-card-subtitle>
-            <mat-card-title class="fw-bold">{{mAverageDaily.rate}}</mat-card-title>
+            <mat-card-subtitle>Average Daily Highest Passenger</mat-card-subtitle>
+            <mat-card-title class="fw-bold">{{mAverageDaily.busStop}}</mat-card-title>
             <div class="circular py-4">
               {{mAverageDaily.quantity}}
             </div>
@@ -190,7 +190,7 @@
       <div class="col-lg-4">
         <mat-card class="borderBottom">
           <mat-card-header class="justify-content-center">
-            <mat-card-subtitle>Day with Most Ratings {{mTopDayRate.rate}}</mat-card-subtitle>
+            <mat-card-subtitle>Day with Most Passengers {{mTopDayRate.busStop}}</mat-card-subtitle>
             <mat-card-title class="fw-bold">{{mTopDayRate.date}}{{mTopDayRate.day}}</mat-card-title>
             <div class="circular py-4">
               {{mTopDayRate.quantity}}
@@ -203,19 +203,19 @@
       <div class="col-lg-6">
         <mat-card>
           <mat-card-header>
-            <mat-card-title>Number of Ratings Per Week</mat-card-title>
+            <mat-card-title>No. Of Passengers From Each Bus Stop Per Week</mat-card-title>
           </mat-card-header>
           <mat-divider></mat-divider>
-        <canvas id="linechart2"></canvas>
+        <canvas id="noplinechart2"></canvas>
         </mat-card>
       </div>
       <div class="col-lg-6">
         <mat-card>
           <mat-card-header>
-            <mat-card-title>Number of Each Ratings</mat-card-title>
+            <mat-card-title>Total No. Of Passengers From Each Bus Stop</mat-card-title>
           </mat-card-header>
           <mat-divider></mat-divider>
-          <canvas id="barchart2"></canvas>
+          <canvas id="nopbarchart2"></canvas>
         </mat-card>
       </div>
 

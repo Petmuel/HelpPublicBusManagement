@@ -8,6 +8,9 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { MAT_DATE_RANGE_SELECTION_STRATEGY } from '@angular/material/datepicker';
 import { Rate } from 'src/app/shared/model/rate';
 import { MatRadioChange } from '@angular/material/radio';
+import { BusRoute } from 'src/app/shared/model/bus-route';
+import { DataService } from 'src/app/shared/service/data.service';
+import { NoP } from 'src/app/shared/model/noOfPassenger';
 
 Chart.register(...registerables)
 
@@ -26,9 +29,9 @@ export class noOfPassengersComponent implements OnInit {
   isProgressBarVisible=false;
   minDate: Date;
   maxDate: Date;
-  fromDate : any = 1;
-  toDate : any = 1;
-  driverId= "";
+  fromDate:any;
+  toDate:any;
+  routeId= "";
 
   //monthly selection data
   yearList: number[]=[];
@@ -37,23 +40,24 @@ export class noOfPassengersComponent implements OnInit {
 
   //monthly query data
   monthYear="";
-  mDriverId= "";
+  mrouteId= "";
   selectedYear=0;
 
   dateArray:any[]=[];
   highestQuantity={
     quantity: 0,
-    rate: ""
+    busStop: "",
+    busStopID:""
   };
 
   averageDaily={
     quantity: "0",
-    rate: ""
+    busStop: ""
   }
 
-  topDayRate={
+  topDayPassenger={
     quantity: 0,
-    rate: "",
+    busStop: "",
     day: "",
     date: ""
   }
@@ -61,63 +65,65 @@ export class noOfPassengersComponent implements OnInit {
    //monthly data result
    mHighestQuantity={
     quantity: 0,
-    rate: ""
+    busStop: "",
+    busStopID:""
   };
 
   mAverageDaily={
     quantity: "0",
-    rate: ""
+    busStop: "",
   }
 
   mTopDayRate={
     quantity: 0,
-    rate: "",
+    busStop: "",
     day: "",
     date: ""
   }
 
   //type of weekly charts
-  pie:any=null;
-  line:any=null;
-  bar:any=null;
+  nopline:any=null;
+  nopbar:any=null;
 
   //type of monthly charts
-  pie2:any=null;
-  line2:any=null;
-  bar2:any=null;
+  nopline2:any=null;
+  nopbar2:any=null;
 
-  busDriver: BusDriver[] = [];  // BusDriver model
+  busRoute: BusRoute[] = [];  // BusDriver model
   queryData: Rate[]=[]; //weekly rating data
   queryResult: any[] = []; //ratings quantity
 
   mQueryData: Rate[]=[]; //monthly rating data
   mQueryResult: any[] = []; //monthly ratings quantity
 
-  datas =
-  {
-    labels: ['1 Star', '2 Star', '3 Star', '4 Star', '5 Star'],
-    datasets: [{
-      label: '# of Ratings',
-      data: [0,0,0,0,0],
-      backgroundColor: [
-        'rgba(255, 26, 104, 0.6)',
-        'rgba(54, 162, 235, 0.6)',
-        'rgba(255, 206, 86, 0.6)',
-        'rgba(75, 192, 192, 0.6)',
-        'rgba(153, 102, 255, 0.6)'
-      ],
-      borderColor: [
-        'rgba(255, 26, 104, 1)',
-        'rgba(54, 162, 235, 1)',
-        'rgba(255, 206, 86, 1)',
-        'rgba(75, 192, 192, 1)',
-        'rgba(153, 102, 255, 1)'
-      ],
-      borderWidth: 2,
-      hoverOffset: 4
-    }]
-  }
+  barData:any;
+  // datas =
+  // {
+  //   labels: ['1 Star', '2 Star', '3 Star', '4 Star', '5 Star'],
+  //   datasets: [{
+  //     label: '# of Ratings',
+  //     data: [0,0,0,0,0],
+  //     backgroundColor: [
+  //       'rgba(255, 26, 104, 0.6)',
+  //       'rgba(54, 162, 235, 0.6)',
+  //       'rgba(255, 206, 86, 0.6)',
+  //       'rgba(75, 192, 192, 0.6)',
+  //       'rgba(153, 102, 255, 0.6)'
+  //     ],
+  //     borderColor: [
+  //       'rgba(255, 26, 104, 1)',
+  //       'rgba(54, 162, 235, 1)',
+  //       'rgba(255, 206, 86, 1)',
+  //       'rgba(75, 192, 192, 1)',
+  //       'rgba(153, 102, 255, 1)'
+  //     ],
+  //     borderWidth: 2,
+  //     hoverOffset: 4
+  //   }]
+  // }
 
+  line3Data:any;
+  lineData1:any;
   lineData =
   {
     labels: [],
@@ -239,19 +245,19 @@ export class noOfPassengersComponent implements OnInit {
   }
 
   selectedValue: string ="";
-  range = new FormGroup({
+  weekNop = new FormGroup({
     start: new FormControl<Date | null>(null),
     end: new FormControl<Date | null>(null),
-    driver: new FormControl()
+    route: new FormControl()
   })
 
-  monthRange = new FormGroup({
+  monthNop = new FormGroup({
     selectedYear: new FormControl(),
     monthYear: new FormControl(),
-    driver: new FormControl()
+    route: new FormControl()
   })
 
-  constructor(private dataApi: noOfPassengersService) {
+  constructor(private nopService: noOfPassengersService, private dataApi: DataService) {
     const currentYear = new Date().getFullYear();
     this.minDate = new Date(currentYear - 20, 0, 1);
     this.maxDate = new Date();
@@ -262,7 +268,7 @@ export class noOfPassengersComponent implements OnInit {
 
   ngOnInit(): void {
     this.RenderChart();
-    this.getAllBusDrivers();
+    this.getAllBusRoutes();
   }
 
   RenderChart(){
@@ -275,9 +281,9 @@ export class noOfPassengersComponent implements OnInit {
       }
     }
     //weekly chart
-    this.line = new Chart("linechart", {
+    this.nopline = new Chart("noplinechart", {
       type: 'line',
-      data:this.lineData,
+      data:this.line3Data,
       options: {
         responsive: true,
         plugins: {
@@ -299,28 +305,28 @@ export class noOfPassengersComponent implements OnInit {
           y: {
             title: {
               display: true,
-              text: 'Number of Ratings'
+              text: 'Number of Passengers'
             }
           }
         }
       }
     });
 
-    this.bar = new Chart("barchart", {
+    this.nopbar = new Chart("nopbarchart", {
       type: 'bar',
-      data: this.datas,
+      data: this.barData,
       options: {
         scales: {
           x: {
             title: {
               display: true,
-              text: 'Types of Rating'
+              text: 'Bus Stops'
             }
           },
           y: {
             title: {
               display: true,
-              text: 'Number of Ratings'
+              text: 'Number of Passengers'
             }
           }
         }
@@ -328,9 +334,9 @@ export class noOfPassengersComponent implements OnInit {
     });
 
     //monthly chart
-    this.line2 = new Chart("linechart2", {
+    this.nopline2 = new Chart("noplinechart2", {
       type: 'line',
-      data:this.lineData2,
+      data:this.lineData1,
       options: {
         responsive: true,
         plugins: {
@@ -359,9 +365,9 @@ export class noOfPassengersComponent implements OnInit {
       }
     });
 
-    this.bar2 = new Chart("barchart2", {
+    this.nopbar2 = new Chart("nopbarchart2", {
       type: 'bar',
-      data: this.datas,
+      data: this.barData,
       options: {
         scales: {
           x: {
@@ -381,38 +387,82 @@ export class noOfPassengersComponent implements OnInit {
     });
   }
 
-  updateChart(chartData:any, isMonthly: boolean){
-    if(isMonthly){
-      this.bar2.data.datasets[0].data=chartData;
-      this.bar2.update();
+  getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
     }
-    else{
-      this.bar.data.datasets[0].data=chartData;
-      this.bar.update();
-    }
-    this.isProgressBarVisible=false;
+    return color;
   }
 
-  updateLineChart(allRatings:any, dateArr:any, periodic: string){
-    let weekLabel=[];
+  updateChart(chartData:any, isMonthly: boolean){
+    let totalNops =chartData.map((a: { totalNop: any; })=>a.totalNop);//number of passengers
+    let busStops = chartData.map((a: { name: any; })=>a.name);//bus stop names
+    let barData:any =
+    {
+      labels: [],
+      datasets: [{
+        label: '',
+        data: [],
+        backgroundColor:[],
+        borderWidth: 2,
+        hoverOffset: 4
+      }]
+    }
 
+    if(isMonthly){
+      barData.labels=busStops;
+      busStops.forEach((a:any)=>{
+        barData.datasets[0].backgroundColor.push(this.getRandomColor());
+      })
+      barData.datasets.label='# of Passengers'
+      console.log(totalNops)
+      barData.datasets[0].data=totalNops;
+      console.log(barData)
+      this.nopbar2.data=barData;
+      this.nopbar2.update();
+    }
+    else{
+      barData.labels=busStops;
+      busStops.forEach((a:any)=>{
+        barData.datasets[0].backgroundColor.push(this.getRandomColor());
+      })
+      barData.datasets.label='# of Passengers'
+      console.log(totalNops)
+      barData.datasets[0].data=totalNops;
+      console.log(barData)
+      this.nopbar.data=barData;
+      this.nopbar.update();
+    }
+  }
+
+  updateLineChart(allNops:any, dateArr:any, periodic: string, unique:any){
+    let weekLabel=[];
+    let lineDataSets=[];
     //weekly line chart as default
-    var selectedLine = this.line;
+    var selectedLine = this.nopline;
     //replace to monthly line chart
     if(periodic=="month"){
-      selectedLine=this.line2;
+      selectedLine=this.nopline2;
 
-      for(var i=0;i<allRatings.length;i++) {
-        let allWeeksRating=[];
-        for(var v=1; v<6; v++) {
-          for(var weekArr of allRatings[i]){
+      for(var i=0;i<allNops.length;i++) {
+        let dataset:any = {
+          label: '',
+          data: [],
+          color: [],
+          borderWidth: 2
+        }
+        let allWeeksNops=[];
+        for(var v=0; v<unique.length; v++) {
+          for(var weekArr of allNops[i]){
             let count=0;
-            switch(weekArr[0].level){
-              case (v+" Star"):
+            switch(weekArr[0].busStopID){
+              case (unique[v].busStopID):
                 weekArr.forEach((day: { quantity: number; }) => {
                   count+=day.quantity;
                 });
-                allWeeksRating.push(count);
+                allWeeksNops.push(count);
                 break;
               default:
                 break;
@@ -420,56 +470,74 @@ export class noOfPassengersComponent implements OnInit {
           }
 
         }
-        selectedLine.data.datasets[i].data=allWeeksRating;
+        dataset.data = allWeeksNops;
+
+        dataset.label= allNops[i][0][0].busStop
+        dataset.color= this.getRandomColor();
+        lineDataSets.push(dataset)
       }
-      for(var i=0; i<allRatings[0].length; i++){
+      for(var i=0; i<allNops[0].length; i++){
         weekLabel.push("Week "+(i+1))
       }
+      selectedLine.data.datasets=lineDataSets;
       selectedLine.data.labels=weekLabel;
     }
     else{
-      for(var i=0;i<allRatings.length;i++) {
+
+      for(var i=0;i<allNops.length;i++) {
+        let dataset:any = {
+          label: '',
+          data: [],
+          color: [],
+          borderWidth: 2
+        }
         let starArr=[];
-        for(var obj of allRatings[i]){
+        for(var obj of allNops[i]){
           starArr.push(obj.quantity)
         }
         //to update and overwrite each data
-        selectedLine.data.datasets[i].data=starArr;
+        dataset.data = starArr;
+        dataset.label= allNops[i][0].busStop
+        dataset.color= this.getRandomColor();
+        lineDataSets.push(dataset)
+        // selectedLine.data.datasets[i].data=starArr;
       }
+      selectedLine.data.datasets=lineDataSets;
       selectedLine.data.labels=dateArr;
     }
     selectedLine.update()
+    this.isProgressBarVisible=false;
   }
 
-  getAllBusDrivers(){
-    this.dataApi.getAllBusDrivers().subscribe(res=>{
-      var collect : BusDriver[]=[];
+  getAllBusRoutes(){
+    this.dataApi.getAllBusRoutes().subscribe(res=>{
+      var collect : BusRoute[]=[];
       res.map((e:any)=>{
         const data = e.payload.doc.data();
         data.id = e.payload.doc.id;
         return collect.push(data);
       })
-      this.busDriver=collect;
+      this.busRoute= collect;
     })
   }
 
   async weeklyQuery(){
-    if(this.fromDate==this.range.value.start
-      &&this.toDate== this.range.value.end
-      &&this.driverId==this.range.value.driver){
+    if(this.fromDate==this.weekNop.value.start
+      &&this.toDate== this.weekNop.value.end
+      &&this.routeId==this.weekNop.value.route){
       window.alert("You have selected the same week, please select a different week.");
     }
     else{
-      this.fromDate= this.range.value.start;
-      this.toDate= this.range.value.end;
-      this.driverId = this.range.value.driver;
-      if(this.range.value.driver==null
-        ||this.range.value.driver==""
-        ||this.range.value.start==null
-        ||this.range.value.end==null){
+      this.fromDate= this.weekNop.value.start;
+      this.toDate= this.weekNop.value.end;
+      this.routeId = this.weekNop.value.route;
+      if(this.weekNop.value.route==null
+        ||this.weekNop.value.route==""
+        ||this.weekNop.value.start==null
+        ||this.weekNop.value.end==null){
         window.alert('Please fill in the form')
       }
-      else if(this.range.invalid){
+      else if(this.weekNop.invalid){
         window.alert('Invalid Query, please try again')
       }
       else{
@@ -478,22 +546,24 @@ export class noOfPassengersComponent implements OnInit {
         if (this.fromDate && this.toDate != null){
           var collect : Rate[]=[];
           let dateArr:any[]=[];
-          let checkData= await this.dataApi.getRate((this.simpleDate(this.fromDate)), this.driverId);
-          let checkData2= await this.dataApi.getRate((this.simpleDate(this.toDate)), this.driverId);
+          let simpleDateArr:any[]=[];
+          let checkData= await this.nopService.getNopsFromBusRouteAndDate((this.simpleDate(this.fromDate)), this.routeId);
+          let checkData2= await this.nopService.getNopsFromBusRouteAndDate((this.simpleDate(this.toDate)), this.routeId);
           if(checkData.length==0||checkData2.length==0){
             this.isProgressBarVisible=false;
             window.alert("Please select other week as the chosen week's data is incomplete.")
           }
           else{
             while(this.fromDate <= this.toDate){
-              let dataCollection = await this.dataApi.getRate((this.simpleDate(this.fromDate)), this.driverId)
+              let dataCollection = await this.nopService.getNopsFromBusRouteAndDate((this.simpleDate(this.fromDate)), this.routeId)
               collect.push(dataCollection);
               dateArr.push(this.properDateformat(this.fromDate));
               this.fromDate.setDate(this.fromDate.getDate() + 1);
             }
             this.queryData=collect;
-            this.countRate(this.queryData);
-            this.countPerDay(this.queryData, dateArr);
+            let uniqueArr = this.getUniqueNopArr(this.queryData)
+            this.countNop(this.queryData, uniqueArr);
+            this.countPerDay(this.queryData, dateArr, uniqueArr);
           }
         }
       }
@@ -501,124 +571,178 @@ export class noOfPassengersComponent implements OnInit {
   }
 
   async monthlyQuery(){
-    if(this.monthYear==this.monthRange.value.monthYear
-      &&this.mDriverId==this.monthRange.value.driver
-      &&this.selectedYear==this.monthRange.value.selectedYear){
-      window.alert("You have selected the same month and year, please enter a different month.");
+    if(this.selectedYear==this.monthNop.value.selectedYear
+      &&this.monthYear== this.monthNop.value.monthYear
+      &&this.mrouteId==this.monthNop.value.route){
+      window.alert("You have selected the same week, please select a different week.");
     }
     else{
-      this.monthYear= this.monthRange.value.monthYear;
-      this.mDriverId=this.monthRange.value.driver;
-      this.selectedYear=this.monthRange.value.selectedYear;
-      if(this.monthYear==null
-        ||this.monthYear==""
-        ||this.mDriverId==null
-        ||this.mDriverId==""
-        ||this.selectedYear==0
-        ||this.selectedYear==null){
+      this.selectedYear= this.monthNop.value.selectedYear;
+      this.monthYear= this.monthNop.value.monthYear;
+      this.mrouteId = this.monthNop.value.route;
+      console.log(this.monthNop.value)
+      if(this.monthNop.value.route==null
+        ||this.monthNop.value.route==""
+        ||this.monthNop.value.selectedYear==null
+        ||this.monthNop.value.monthYear==null){
         window.alert('Please fill in the form')
       }
-      else if(this.monthRange.invalid){
+      else if(this.monthNop.invalid){
         window.alert('Invalid Query, please try again')
       }
       else{
         this.isProgressBarVisible=true;
-        let dates: any[] = [];
-        var collect : Rate[]=[];
-        let dateArr:any[]=[];
-        const fromDate = new Date(this.selectedYear, this.monthNames.indexOf(this.monthYear),1);
-        const toDate = new Date(this.selectedYear, this.monthNames.indexOf(this.monthYear)+1,0);
 
-        let checkData= await this.dataApi.getRate((this.simpleDate(fromDate)), this.mDriverId)
-        if(checkData.length==0){
-          this.isProgressBarVisible=false;
-          window.alert("Please select another month as the chosen month's data is incomplete.")
-        }
-        else{
-          while(fromDate <= toDate){
-            var num=0;
-            let dataCollection = await this.dataApi.getRate((this.simpleDate(fromDate)), this.mDriverId)
-            collect.push(dataCollection)
-            ;
-            dateArr.push(this.properDateformat(fromDate))
-            dates = [...dates, new Date(fromDate)];
-            fromDate.setDate(fromDate.getDate() + 1);
-            num++;
+        if (this.selectedYear && this.monthYear != null){
+          let dates: any[] = [];
+          var collect : Rate[]=[];
+          let dateArr:any[]=[];
+          let simpleDateArr:any[]=[];
+          const fromDate = new Date(this.selectedYear, this.monthNames.indexOf(this.monthYear),1);
+          const toDate = new Date(this.selectedYear, this.monthNames.indexOf(this.monthYear)+1,0);
+
+          let checkData= await this.nopService.getNopsFromBusRouteAndDate((this.simpleDate(fromDate)), this.mrouteId)
+          if(checkData.length==0){
+            this.isProgressBarVisible=false;
+            window.alert("Please select another month as the chosen month's data is incomplete.")
           }
-          this.mQueryData=collect;
-          this.countRate(this.mQueryData);
-          this.countPerWeek(this.mQueryData, dateArr);
+          else{
+            while(fromDate <= toDate){
+              var num=0;
+              let dataCollection = await this.nopService.getNopsFromBusRouteAndDate((this.simpleDate(fromDate)), this.mrouteId)
+              collect.push(dataCollection);
+              dateArr.push(this.properDateformat(fromDate));
+              simpleDateArr.push(this.simpleDate(fromDate));
+              dates = [...dates, new Date(fromDate)];
+              fromDate.setDate(fromDate.getDate() + 1);
+              num++;
+            }
+            this.mQueryData=collect;
+            let uniqueArr = this.getUniqueNopArr(this.mQueryData)
+            this.countNop(this.mQueryData, uniqueArr);
+            this.countPerWeek(this.mQueryData, dateArr, simpleDateArr, uniqueArr);
+          }
         }
       }
     }
   }
 
-  //count ratings quantity per week for each rate star
-  countPerWeek(rateList:any, dateArr:any){
+  //count passenger quantity per week for each rate star
+  async countPerWeek(nopList:any, dateArr:any, simpleDateArr:any, unique:any){
+    console.log(nopList, dateArr, unique)
     let week=7;
     let monthEachStarRate:any[]=[];
-    for(var v=1; v<6; v++){
-      let weeklyRatings:any[]=[];
-      let countingRates:any[]=[];
-      for(var day=0; day<rateList.length; day++){
-        let ratingPerDay={
-          quantity:0,
-          level:"",
-          date:""
-        }
+    let nopListPerDay:any[]=[];
+    for(var i=0; i<unique.length;i++){
+      let weeklyNops:any[]=[];
+      let countingNops:any[]=[];
+
+      for(var day=0; day<simpleDateArr.length; day++){
+        let dateNop={
+          date: "",
+          busStopID:"",
+          busStop:"",
+          quantity: 0
+        };
         //if day has already reached to the end of week
         if(day==week){
-          weeklyRatings.push(countingRates);
-          countingRates=[];  //week1=[day1,day2,dy3,dy4,dy5,dy6,dy7], week2=[],
+          weeklyNops.push(countingNops);
+          countingNops=[];  //week1=[day1,day2,dy3,dy4,dy5,dy6,dy7], week2=[],
           week+=7
         }
 
-        //each rate object from the same day
-        for(var obj of rateList[day]){
-          //if the rate is same as the selected rate level
-          if(obj.ratingLevel==v){
-            ratingPerDay.quantity++
-          }
+        for(var k=0; k<nopList.length;k++){
+          nopList[k].forEach((obj: {countedDateTime: any;numberOfPassenger: number; busStopID: any;}) => {
+            if(obj.busStopID == unique[i].busStopID&&obj.countedDateTime==simpleDateArr[day]){
+              dateNop.quantity+=obj.numberOfPassenger;
+            }
+          });
         }
-        ratingPerDay.date=rateList[day][0].ratingDate;
-        ratingPerDay.level= v+" Star";
-        //push the total same rate quantity from the same day into the week arr
-        countingRates.push(ratingPerDay); //week1:day1.quantity, day2.quantity
+        let busStop= await this.dataApi.getBusStopById(unique[i].busStopID);
+        dateNop.busStopID=busStop.busStopID;
+        dateNop.busStop=busStop.name;
+        dateNop.date=dateArr[day];
+        countingNops.push(dateNop);
 
-        if(rateList.length-day==1){
-          weeklyRatings.push(countingRates);
-          countingRates=[];
+        if(dateArr.length-day==1){
+          weeklyNops.push(countingNops);
+          countingNops=[];
           week=7;
         }
       }
-      monthEachStarRate.push(weeklyRatings); //1 Star=[wk1[],wk2[],wk3[],wk4[],wk5[]]
+      monthEachStarRate.push(weeklyNops);
     }
-    this.updateLineChart(monthEachStarRate, dateArr, "month");
+    console.log(monthEachStarRate)
+
+    this.updateLineChart(monthEachStarRate, dateArr, "month", unique);
+
+    // let week=7;
+    // let monthEachStarRate:any[]=[];
+    // for(var v=1; v<6; v++){
+    //   let weeklyRatings:any[]=[];
+    //   let countingRates:any[]=[];
+    //   for(var day=0; day<rateList.length; day++){
+    //     let ratingPerDay={
+    //       quantity:0,
+    //       level:"",
+    //       date:""
+    //     }
+    //     //if day has already reached to the end of week
+    //     if(day==week){
+    //       weeklyRatings.push(countingRates);
+    //       countingRates=[];  //week1=[day1,day2,dy3,dy4,dy5,dy6,dy7], week2=[],
+    //       week+=7
+    //     }
+
+    //     //each rate object from the same day
+    //     for(var obj of rateList[day]){
+    //       //if the rate is same as the selected rate level
+    //       if(obj.ratingLevel==v){
+    //         ratingPerDay.quantity++
+    //       }
+    //     }
+    //     ratingPerDay.date=rateList[day][0].ratingDate;
+    //     ratingPerDay.level= v+" Star";
+    //     //push the total same rate quantity from the same day into the week arr
+    //     countingRates.push(ratingPerDay); //week1:day1.quantity, day2.quantity
+
+    //     if(rateList.length-day==1){
+    //       weeklyRatings.push(countingRates);
+    //       countingRates=[];
+    //       week=7;
+    //     }
+    //   }
+    //   monthEachStarRate.push(weeklyRatings); //1 Star=[wk1[],wk2[],wk3[],wk4[],wk5[]]
+    // }
+    // this.updateLineChart(monthEachStarRate, dateArr, "month");
+
   }
 
-  countPerDay(rateList:any, dateArr:any){
-    let rateListPerDay:any[]=[];
-    for(var v=1; v<6; v++){
-      let ratings:any[]=[];
-      for(var i=0; i<rateList.length; i++){
-        let dateRate={
+  async countPerDay(nopList:any, dateArr:any, unique:any){
+    let nopListPerDay:any[]=[];
+    for(var i=0; i<unique.length;i++){
+      let nops =[];
+      for(var k=0; k<nopList.length;k++){
+        let dateNop={
           date: "",
-          rate:"",
+          busStop:"",
           quantity: 0
         };
-
-        for(var obj of rateList[i]){
-          if(obj.ratingLevel==v){
-            dateRate.quantity++
+        nopList[k].forEach((obj: {numberOfPassenger: number; busStopID: any;}) => {
+          if(obj.busStopID == unique[i].busStopID){
+            dateNop.quantity+=obj.numberOfPassenger;
           }
-        }
-        dateRate.date=rateList[i][0].ratingDate;
-        dateRate.rate= v+" Star";
-        ratings.push(dateRate)
+        });
+        let busStop= await this.dataApi.getBusStopById(unique[i].busStopID);
+        dateNop.busStop=busStop.name;
+        dateNop.date=nopList[k][0].countedDateTime;
+        nops.push(dateNop);
       }
-      rateListPerDay.push(ratings)
+      nopListPerDay.push(nops);
     }
-    this.updateLineChart(rateListPerDay, dateArr, "week");
+    console.log(nopListPerDay)
+
+    this.updateLineChart(nopListPerDay, dateArr, "week", unique);
   }
 
   //convert data format into a simple string format
@@ -626,138 +750,120 @@ export class noOfPassengersComponent implements OnInit {
     return (date.getDate()+"-"+(date.getMonth()+1)+"-"+date.getFullYear())
   }
 
+  getUniqueNopArr(nopList:any){
+    let findDuplicates = (arr: any[]) => arr.filter((item, index) => arr.indexOf(item.busStopID) !== index)
+    let unique = [...new Set(findDuplicates(nopList[0]))] // Unique duplicates
+    return unique;
+  }
   //count the number of each rating
-  countRate(rateList:any){
-    let rate1Obj={
-      rate:"1 Star",
-      rateQuantity:0
+  async countNop(nopList:any, unique:any){
+    console.log(unique)
+    let allResults:any[]=[];
+
+    const busStopNopObjBody = {
+      name:'',
+      busStopID: '',
+      totalNop: 0,
+    };
+
+    let busStopNopArr:any[] = [];
+    for (let i = 0; i <unique.length; i++) {
+      let busStopObj = await this.dataApi.getBusStopById(unique[i].busStopID);
+      busStopNopArr.push({ ...busStopNopObjBody  });
+      busStopNopArr[i].busStopID = unique[i].busStopID;
+      busStopNopArr[i].name = busStopObj.name;
     }
-    let rate2Obj={
-      rate:"2 Star",
-      rateQuantity:0
-    }
-    let rate3Obj={
-      rate:"3 Star",
-      rateQuantity:0
-    }
-    let rate4Obj={
-      rate:"4 Star",
-      rateQuantity:0
-    }
-    let rate5Obj={
-      rate:"5 Star",
-      rateQuantity:0
-    }
-    for(var i=0; i<rateList.length; i++){
-      rateList[i].forEach((obj:any) => {
-        switch(obj.ratingLevel){
-          case 1:
-            rate1Obj.rateQuantity++;
-            break;
-          case 2:
-            rate2Obj.rateQuantity++;
-            break;
-          case 3:
-            rate3Obj.rateQuantity++;
-            break;
-          case 4:
-            rate4Obj.rateQuantity++;
-            break;
-          case 5:
-            rate5Obj.rateQuantity++;
-            break
-          default:
-            break;
+
+
+    for(var u of unique){
+      let result =[];
+
+      for(var k of nopList){
+        result.push(k.find((x: { busStopID: any; }) => x.busStopID===u.busStopID))
+      }
+      switch(result.length){
+        case (0):{
+          break;
         }
-      });
+        default:
+          var index = busStopNopArr.findIndex((x: { busStopID: any; }) => x.busStopID===u.busStopID)
+          result.forEach(obj=>{
+            busStopNopArr[index].totalNop+=obj.numberOfPassenger;
+          });
+          allResults.push(result);
+          break;
+      }
     }
     var isMonthly = true;
-    if(rateList.length>7){
-      this.highQuantity([rate1Obj, rate2Obj, rate3Obj, rate4Obj, rate5Obj], isMonthly, rateList.length);
-      this.mQueryResult =[rate1Obj.rateQuantity,rate2Obj.rateQuantity,rate3Obj.rateQuantity,
-        rate4Obj.rateQuantity,rate5Obj.rateQuantity];
-      this.updateChart(this.mQueryResult, isMonthly);
+    if(nopList.length>7){
+      this.highQuantity(busStopNopArr, isMonthly, nopList.length, allResults);
+      this.mQueryResult =busStopNopArr.map(a=>a.totalNop);
+      this.updateChart(busStopNopArr, isMonthly);
     }
     else{
-      this.highQuantity([rate1Obj, rate2Obj, rate3Obj, rate4Obj, rate5Obj], !isMonthly, 7);
-      this.queryResult =[rate1Obj.rateQuantity,rate2Obj.rateQuantity,rate3Obj.rateQuantity,
-        rate4Obj.rateQuantity,rate5Obj.rateQuantity];
-      this.updateChart(this.queryResult, !isMonthly)
+      this.highQuantity(busStopNopArr, !isMonthly, 7, allResults);
+      this.updateChart(busStopNopArr, !isMonthly)
     }
-
   }
 
-  //find the highest quantity of rating
-  highQuantity(rateObjs:any[], isMonthly: boolean, days: number){
-    const maxRate = rateObjs.reduce(function(prev, current) {
-      return (prev.rateQuantity > current.rateQuantity) ? prev : current
+  //find the highest quantity of nop
+  async highQuantity(nopObjs:any[], isMonthly: boolean, days: number, busStops:any[]){
+    const maxRate = nopObjs.reduce(function(prev, current) {
+      return (prev.totalNop > current.totalNop) ? prev : current
     });
-
+    let busStop = await this.dataApi.getBusStopById(maxRate.busStopID);
     if(isMonthly) {
-      this.mHighestQuantity.quantity=maxRate.rateQuantity;
-      this.mHighestQuantity.rate=maxRate.rate;
+      this.mHighestQuantity.quantity=maxRate.totalNop;
+      this.mHighestQuantity.busStop=maxRate.name;
+      this.mHighestQuantity.busStopID=busStop.busStopID;
       //find the day with top ratings
-      var max = this.dayTopRate(this.mHighestQuantity, this.mQueryData);
+      var max = this.dayTopRate(this.mHighestQuantity, busStops);
       this.mTopDayRate= this.getHighestRateObj(max);
       //get average daily amount of the highest rating quantity
-      this.mAverageDaily.rate=this.mHighestQuantity.rate;
-      this.mAverageDaily.quantity=(this.mHighestQuantity.quantity/days).toPrecision(3);
+      this.mAverageDaily.busStop=maxRate.name;
+      this.mAverageDaily.quantity=(maxRate.totalNop/days).toPrecision(3);
     }
     else{
-      this.highestQuantity.quantity=maxRate.rateQuantity;
-      this.highestQuantity.rate=maxRate.rate;
+      this.highestQuantity.quantity=maxRate.totalNop;
+      this.highestQuantity.busStop=busStop.name;
+      this.highestQuantity.busStopID=busStop.busStopID;
       //find the day with top ratings
-      var max=this.dayTopRate(this.highestQuantity, this.queryData);
-      this.topDayRate= this.getHighestRateObj(max);
+      var max=this.dayTopRate(this.highestQuantity, busStops);
+      this.topDayPassenger= this.getHighestRateObj(max);
       //get average daily amount of the highest rating quantity
-      this.averageDaily.rate=this.highestQuantity.rate;
+      this.averageDaily.busStop=this.highestQuantity.busStop;
       this.averageDaily.quantity=(this.highestQuantity.quantity/days).toPrecision(3);
     }
   }
 
-  //find the day with the most amount of the highest ratings quantity
-  dayTopRate(rate: any, rateList:any[]){
-    let specificDayRate:any[]=[];
-    for(var v=1; v<6; v++){
-      let ratenum=v+" Star"
-      if(rate.rate==ratenum){
-        for(var i=0; i<rateList.length; i++){
-          let dateRate={
-            date: "",
-            rate:"",
-            quantity: 0
-          };
-          for(var obj of rateList[i]){
-            if(obj.ratingLevel==v){
-              dateRate.quantity++
-            }
-          }
-          dateRate.date=rateList[i][0].ratingDate;
-          dateRate.rate= ratenum;
-          specificDayRate.push(dateRate)
-        }
+  //find the day with the most amount of the highest passengers quantity
+  dayTopRate(highQuantity: any, nopList:any[]){
+    let result:any[]=[];
+    for(var k of nopList){
+      if((k.find((x: { busStopID: String; }) => x.busStopID===highQuantity.busStopID))!=null){
+        k.forEach((a: {busStopID:String, countedDateTime: String; numberOfPassenger: Number; })=>{
+          result.push({date:a.countedDateTime, quantity: a.numberOfPassenger, busStop:highQuantity.busStop});
+        })
       }
     }
-    //Find the day object whose property "rate" has the greatest value in the array specificDayRate
-    const max = specificDayRate.reduce(function(prev, current) {
+    const max = result.reduce(function(prev, current) {
       return (prev.quantity > current.quantity) ? prev : current
-    }) //returns object
-
+    })
     return max;
   }
 
-  getHighestRateObj(maxRateObj: any){
+  getHighestRateObj(maxNopObj: any){
     var days = [' (Sunday)', ' (Monday)', ' (Tuesday)', ' (Wednesday)', ' (Thursday)', ' (Friday)', ' (Saturday)'];
-    const str = maxRateObj.date;
+    const str = maxNopObj.date;
     const [day, month, year] = str.split('-');
     const date = new Date(+year, +month - 1, +day);
-    var topDayRate ={
+    var topDayPassenger ={
       day: days[date.getDay()],
-      rate: "("+maxRateObj.rate+")",
-      quantity: maxRateObj.quantity,
+      busStop: "("+maxNopObj.busStop+")",
+      quantity: maxNopObj.quantity,
       date: this.properDateformat(date)
     }
-    return topDayRate;
+    return topDayPassenger;
   }
 
   properDateformat(date:any){
@@ -786,7 +892,7 @@ export class noOfPassengersComponent implements OnInit {
 
     //hardcoded the rating list on bus driver
   // async lol(){
-
+  //   // this.nopService.hi();
   //   var date = new Date()
   //   var stops= await this.dataApi.getBusStopsByRoute("BusRoute1680460045688")
   //   // var yesterday = new Date(date.getTime());
@@ -794,7 +900,7 @@ export class noOfPassengersComponent implements OnInit {
   //   // console.log(yesterday.getDate()+"/"+yesterday.getDay()+"/"+yesterday.getFullYear())
   //   for(var stop of stops) {
 
-  //     for(var l=1; l<8; l++){
+  //     for(var l=1; l<14; l++){
   //       var yesterday = new Date(date.getTime());
   //       yesterday.setDate(date.getDate() + l );
   //       var currDay = yesterday.getDate()+"-"+(yesterday.getMonth()+1)+"-"+yesterday.getFullYear();
@@ -805,11 +911,30 @@ export class noOfPassengersComponent implements OnInit {
   //         var num = Math.floor(Math.random() * (5 - 1 + 1) + 1);
   //         var noOfP = {
   //           countID:'',
-  //           countedDateTime: yesterday,
+  //           countedDateTime: currDay,
   //           numberOfPassenger: ran,
   //           busStopID: stop.busStopID,
   //         };
-  //         this.dataApi.hi(currDay, noOfP);
+  //         this.nopService.hi(currDay, noOfP, currDat2);
+
+  //       }
+
+  //     for(var l=0; l<40; l++){
+  //       var yesterday = new Date(date.getTime());
+  //       yesterday.setDate(date.getDate() - l );
+  //       var currDay = yesterday.getDate()+"-"+(yesterday.getMonth()+1)+"-"+yesterday.getFullYear();
+  //       var currDat2 = yesterday.getTime();
+  //       var ran = Math.floor(Math.random() * 100);
+
+  //         var date = new Date();
+  //         var num = Math.floor(Math.random() * (5 - 1 + 1) + 1);
+  //         var noOfP = {
+  //           countID:'',
+  //           countedDateTime: currDay,
+  //           numberOfPassenger: ran,
+  //           busStopID: stop.busStopID,
+  //         };
+  //         this.nopService.hi(currDay, noOfP, currDat2);
 
   //       }
   //     }

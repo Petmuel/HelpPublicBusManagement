@@ -10,6 +10,7 @@ import { Observable, of, single, throwIfEmpty } from 'rxjs';
 import { off } from 'process';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AnyObject } from 'chart.js/dist/types/basic';
+import { NoP } from '../model/noOfPassenger';
 @Injectable({
   providedIn: 'root'
 })
@@ -33,11 +34,14 @@ export class noOfPassengersService {
 
 
   addBusRoute(busRoute : any) {
-    return this.afs.collection("BusRoute/").doc(busRoute.id).set({
+    let doc=this.afs.collection("BusRoute/").doc();
+
+    return this.afs.collection("BusRoute/").doc(doc.ref.id).set({
       routeNo:busRoute.routeNo,
+      routeId: doc.ref.id,
       description:busRoute.description,
       departure:busRoute.departure,
-      arrival:busRoute.arrival,
+      arrival:busRoute.arrival
     });
   }
 
@@ -210,22 +214,55 @@ export class noOfPassengersService {
 
 
  //hardcoded the rating list on bus driver
-  // hi(day: any, rate: any){
+  // hi(day: any){
   //   var c = this.afs.collection("NumOfPassengers");
-  //   let doc = c.doc();
-  //   rate.countID=doc.ref.id;
-  //   c.doc(doc.ref.id).set(rate);
+  //    c.get().forEach(stopID=>{
+  //       stopID.forEach(busStop=>{
+  //         busStop.ref.delete();
+  //       });
+  //   })
+  //   // let doc = c.doc();
+  //   // rate.countID=doc.ref.id;
+  //   // c.doc(doc.ref.id).set(rate);
+  // }
+
+  // hi(day: any, rate: any, ko:any){
+  //   var obj={
+  //         date: ko
+  //   }
+  //   var c = this.afs.collection("NumOfPassengers");
+  //   c.doc(day).set(obj);
+  //   var doc =c.doc(day).collection("BusRoute1680460045688").doc()
+  //   var docid = doc.ref.id
+  //   rate.countID=docid;
+  //   c.doc(day).collection("BusRoute1680460045688").doc(docid).set(rate);
   // }
 
   //testing
-  getRate(date:any, driver:any){
-    var c = this.afs.collection("Rating");
-    // return c.doc('9-2-2023').collection("RatingList").doc('rate1').get();
+  // async getNop(startDate:String, routeId:string){
+  //   var s =  await this.getBusStopsByRoute(routeId);
+  //   let nops:NoP[]=[];
+  //   for(var stop of s){
+  //     nops.push(await this.getNopsFromBusStopAndDate(startDate, stop.busStopID))
+  //   }
+  //   return nops;
+  // }
+
+//   getNopsFromBusRouteAndDate(startDate:String, routeId:string){
+
+//     var c = this.afs.collection("NumOfPassengers").doc(startDate) ref => ref
+//       .where('busStopID', '==', busStopID)
+//       .where('countedDateTime', '==', startDate));
+
 //     return new Promise<any>((resolve)=> {
-//       c.doc('9-2-2023').collection("hfRK37clJ8MEc0sPgyW01YyptVg2").doc('rate1').valueChanges({ ratingId: 'rate1' }).subscribe(users => resolve(users));
-//     })
+//       c.valueChanges().subscribe(users => resolve(users));
+//     })
+//   }
+
+  getNopsFromBusRouteAndDate(date:any, routeId:string){
+    var c = this.afs.collection("NumOfPassengers");
     return new Promise<any>((resolve)=> {
-      c.doc(date).collection(driver).valueChanges({ idField: 'id' }).subscribe(users => resolve(users));
+      c.doc(date).collection(routeId).valueChanges({ idField: 'id' }).subscribe(users => resolve(users));
     })
   }
 
