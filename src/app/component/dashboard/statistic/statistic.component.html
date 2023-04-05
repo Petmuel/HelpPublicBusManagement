@@ -7,6 +7,13 @@
   <title>Document</title>
 </head>
 <body>
+  <div class="container py-3 text-right">
+    <div class="bg-white mat-elevation-z5">
+      <div class="p-2 py-4">
+        <button mat-raised-button color="accent" class="px-5 py-2 mt-3 fs-6" (click)="genrateReport()">Generate Report</button>
+      </div>
+    </div>
+  </div>
   <!-- weekly query form -->
   <div class="container py-3 text-center">
     <div class="bg-white mat-elevation-z5" [formGroup]="range">

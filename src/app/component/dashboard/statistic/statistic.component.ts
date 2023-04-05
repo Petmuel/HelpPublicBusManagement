@@ -8,6 +8,8 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { MAT_DATE_RANGE_SELECTION_STRATEGY } from '@angular/material/datepicker';
 import { Rate } from 'src/app/shared/model/rate';
 import { MatRadioChange } from '@angular/material/radio';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 Chart.register(...registerables)
 
@@ -29,6 +31,9 @@ export class StatisticComponent implements OnInit {
   fromDate : any = 1;
   toDate : any = 1;
   driverId= "";
+
+  isDailyRatingsFatch = false;
+  isMonthlyRatingsFetch = false;
 
   //monthly selection data
   yearList: number[]=[];
@@ -592,6 +597,7 @@ export class StatisticComponent implements OnInit {
           week=7;
         }
       }
+      this.isMonthlyRatingsFetch = true;
       monthEachStarRate.push(weeklyRatings); //1 Star=[wk1[],wk2[],wk3[],wk4[],wk5[]]
     }
     this.updateLineChart(monthEachStarRate, dateArr, "month");
@@ -619,6 +625,7 @@ export class StatisticComponent implements OnInit {
       }
       rateListPerDay.push(ratings)
     }
+    this.isDailyRatingsFatch = true;
     this.updateLineChart(rateListPerDay, dateArr, "week");
   }
 
@@ -783,6 +790,134 @@ export class StatisticComponent implements OnInit {
       "July", "August", "September", "October", "November", "December"];
     }
     this.monthNames=monthArr;
+  }
+
+  async genrateReport(){
+
+    if(!this.isDailyRatingsFatch && !this.isMonthlyRatingsFetch){
+      window.alert("Pleace query the informaton");
+      return;
+    }
+
+    var doc = new jsPDF();
+    var canvas;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const padding = 10;
+
+    if(this.isDailyRatingsFatch){
+
+      //Title
+      doc.setFontSize(26);
+      doc.text('Weekly Bus Driver Rating Report', 10, 20);
+
+      //Quantity
+      doc.setFontSize(12);
+      doc.text('Highest Rating Quantity', 10, 30);
+      doc.setFontSize(10);
+      doc.text('Highest Rating : ' + this.highestQuantity.rate, 10, 35);
+      doc.text('Quantity : ' + this.highestQuantity.quantity, 10, 40);
+
+      doc.setFontSize(12);
+      doc.text('Averrage Daily Highest Ratings', 70, 30);
+      doc.setFontSize(10);
+      doc.text('Highest Rating : ' + this.averageDaily.rate, 70, 35);
+      doc.text('Averrage : ' + this.averageDaily.quantity, 70, 40);
+
+      doc.setFontSize(12);
+      doc.text('Daily with Most Ratings '+this.topDayRate.rate, 140, 30);
+      doc.setFontSize(10);
+      doc.text('Date : ' + this.topDayRate.date + this.topDayRate.day, 140, 35);
+      doc.text('Quantity : ' + this.topDayRate.quantity, 140, 40);
+
+
+
+      //chart
+      canvas = await html2canvas(document.querySelector("#linechart")!);
+
+      var imgData  = canvas.toDataURL("image/jpeg");
+
+      if (canvas.width > pageWidth) {
+        const ratio = pageWidth / canvas.width;
+        canvas.height = canvas.height * ratio - padding;
+        canvas.width = canvas.width * ratio - padding;
+      }
+
+      doc.setFontSize(20);
+      doc.text('Number of Ratings Per Day', 10, 60)
+      doc.addImage(imgData,padding,65,canvas.width, canvas.height);
+
+      //bar
+      canvas = await html2canvas(document.querySelector("#barchart")!);
+      var imgData  = canvas.toDataURL("image/jpeg");
+      if (canvas.width > pageWidth) {
+        const ratio = pageWidth / canvas.width;
+        canvas.height = canvas.height * ratio - padding;
+        canvas.width = canvas.width * ratio - padding;
+      }
+
+      doc.setFontSize(20);
+      doc.text('Number of Each Ratings', 10, 170)
+      doc.addImage(imgData,padding,175,canvas.width, canvas.height);
+    }
+
+    if(this.isMonthlyRatingsFetch){
+      //monthly
+      if(this.isDailyRatingsFatch){
+        doc.addPage();
+      }
+
+      //Title
+      doc.setFontSize(26);
+      doc.text('Monthly Bus Driver Rating Report', 10, 20);
+
+      //Quantity
+      doc.setFontSize(12);
+      doc.text('Highest Rating Quantity', 10, 30);
+      doc.setFontSize(10);
+      doc.text('Highest Rating : ' + this.mHighestQuantity.rate, 10, 35);
+      doc.text('Quantity : ' + this.mHighestQuantity.quantity, 10, 40);
+
+      doc.setFontSize(12);
+      doc.text('Averrage Daily Highest Ratings', 70, 30);
+      doc.setFontSize(10);
+      doc.text('Highest Rating : ' + this.mAverageDaily.rate, 70, 35);
+      doc.text('Averrage : ' + this.mAverageDaily.quantity, 70, 40);
+
+      doc.setFontSize(12);
+      doc.text('Daily with Most Ratings '+this.mTopDayRate.rate, 140, 30);
+      doc.setFontSize(10);
+      doc.text('Date : ' + this.mTopDayRate.date + this.mTopDayRate.day, 140, 35);
+      doc.text('Quantity : ' + this.mTopDayRate.quantity, 140, 40);
+
+      //chart
+      canvas = await html2canvas(document.querySelector("#linechart2")!);
+      var imgData  = canvas.toDataURL("image/jpeg");
+      if (canvas.width > pageWidth) {
+          const ratio = pageWidth / canvas.width;
+          canvas.height = canvas.height * ratio - padding;
+          canvas.width = canvas.width * ratio - padding;
+      }
+
+      doc.setFontSize(20);
+      doc.text('Number of Ratings Per Week', 10, 60)
+      doc.addImage(imgData,padding,65,canvas.width, canvas.height);
+
+      //bar
+      canvas = await html2canvas(document.querySelector("#barchart2")!);
+      var imgData  = canvas.toDataURL("image/jpeg");
+      if (canvas.width > pageWidth) {
+        const ratio = pageWidth / canvas.width;
+        canvas.height = canvas.height * ratio - padding;
+        canvas.width = canvas.width * ratio - padding;
+      }
+
+      doc.setFontSize(20);
+      doc.text('Number of Each Ratings', 10, 170)
+      doc.addImage(imgData,padding,175,canvas.width, canvas.height);
+
+    }
+
+    doc.save('bus_driver_rating_report.pdf');
   }
 
     //hardcoded the rating list on bus driver
