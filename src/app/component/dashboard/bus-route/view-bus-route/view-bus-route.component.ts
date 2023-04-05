@@ -32,27 +32,19 @@ export class ViewBusRouteComponent implements OnInit {
 
   }
 
-  getBusStops(){
-    // this.dataApi.getBusStopsByRoute(this.id).subscribe(res=>{
-    //   this.busStops=res.map((e:any)=>{
-    //     const data = e.payload.doc.data();
-    //     data.id = e.payload.doc.id;
-    //     return data;
-    //   })
-    //   console.log('busStopsView')
-    //   this.dataSource = new MatTableDataSource(this.busStops);
-    // })
-      //console.log('hi',this.busStop.length());
+  async getBusStops(){
+    this.busStops = await this.dataApi.getBusStopsByRoute(this.id);
+    this.dataSource = new MatTableDataSource(this.busStops);
   }
 
-  // applyFilter(event: Event) {
-  //   const filterValue = (event.target as HTMLInputElement).value;
-  //   this.dataSource.filter = filterValue.trim().toLowerCase();
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
 
-  //   if (this.dataSource.paginator) {
-  //     this.dataSource.paginator.firstPage();
-  //   }
-  // }
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
 
 
 }
@@ -85,5 +77,5 @@ export class ViewBusRouteComponent implements OnInit {
       console.log(this.id)
     })
   }
-}
-*/
+}*/
+
