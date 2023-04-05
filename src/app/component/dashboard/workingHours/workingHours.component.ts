@@ -11,13 +11,14 @@ import { MatRadioChange } from '@angular/material/radio';
 import { BusRoute } from 'src/app/shared/model/bus-route';
 import { DataService } from 'src/app/shared/service/data.service';
 import { NoP } from 'src/app/shared/model/noOfPassenger';
+import { workingHoursService } from 'src/app/shared/service/workingHours.service';
 
 Chart.register(...registerables)
 
 @Component({
-  selector: 'app-noOfPassengers',
-  templateUrl: './noOfPassengers.component.html',
-  styleUrls: ['./noOfPassengers.component.css'],
+  selector: 'app-workingHours',
+  templateUrl: './workingHours.component.html',
+  styleUrls: ['./workingHours.component.css'],
   providers: [
     {
       provide: MAT_DATE_RANGE_SELECTION_STRATEGY,
@@ -25,13 +26,13 @@ Chart.register(...registerables)
     },
   ],
 })
-export class noOfPassengersComponent implements OnInit {
+export class workingHoursComponent implements OnInit {
   isProgressBarVisible=false;
   minDate: Date;
   maxDate: Date;
   fromDate:any;
   toDate:any;
-  routeId= "";
+  driverId= "";
 
   //monthly selection data
   yearList: number[]=[];
@@ -40,7 +41,7 @@ export class noOfPassengersComponent implements OnInit {
 
   //monthly query data
   monthYear="";
-  mrouteId= "";
+  mdriverId= "";
   selectedYear=0;
 
   dateArray:any[]=[];
@@ -82,14 +83,14 @@ export class noOfPassengersComponent implements OnInit {
   }
 
   //type of weekly charts
-  nopline:any=null;
-  nopbar:any=null;
+  wkHrline:any=null;
+  wkHrbar:any=null;
 
   //type of monthly charts
-  nopline2:any=null;
-  nopbar2:any=null;
+  wkHrline2:any=null;
+  wkHrbar2:any=null;
 
-  busRoute: BusRoute[] = [];  // BusDriver model
+  busDriver: BusDriver[] = [];  // BusDriver model
   queryData: Rate[]=[]; //weekly rating data
   queryResult: any[] = []; //ratings quantity
 
@@ -124,140 +125,22 @@ export class noOfPassengersComponent implements OnInit {
 
   line3Data:any;
   lineData1:any;
-  lineData =
-  {
-    labels: [],
-    datasets: [{
-      label: '1 Star',
-      data: [],
-      backgroundColor: [
-        'rgba(255, 26, 104, 0.6)'
-      ],
-      borderColor: [
-        'rgba(255, 26, 104, 1)'
-      ],
-      borderWidth: 2
-    },
-    {
-      label: '2 Star',
-      data: [],
-      backgroundColor: [
-        'rgba(54, 162, 235, 0.6)'
-      ],
-      borderColor: [
-        'rgba(54, 162, 235, 1)'
-      ],
-      borderWidth: 2
-    },
-    {
-      label: '3 Star',
-      data: [],
-      backgroundColor: [
-        'rgba(255, 206, 86, 0.6)'
-      ],
-      borderColor: [
-        'rgba(255, 206, 86, 1)'
-      ],
-      borderWidth: 2
-    },
-    {
-      label: '4 Star',
-      data: [],
-      backgroundColor: [
-        'rgba(75, 192, 192, 0.6)'
-      ],
-      borderColor: [,
-        'rgba(75, 192, 192, 1)'
-      ],
-      borderWidth: 2
-    },
-    {
-      label: '5 Star',
-      data: [],
-      backgroundColor: [
-        'rgba(153, 102, 255, 0.6)'
-      ],
-      borderColor: [
-        'rgba(153, 102, 255, 1)'
-      ],
-      borderWidth: 2
-    }]
-  }
-
-  lineData2 =
-  {
-    labels: [],
-    datasets: [{
-      label: '1 Star',
-      data: [],
-      backgroundColor: [
-        'rgba(255, 26, 104, 0.6)'
-      ],
-      borderColor: [
-        'rgba(255, 26, 104, 1)'
-      ],
-      borderWidth: 2
-    },
-    {
-      label: '2 Star',
-      data: [],
-      backgroundColor: [
-        'rgba(54, 162, 235, 0.6)'
-      ],
-      borderColor: [
-        'rgba(54, 162, 235, 1)'
-      ],
-      borderWidth: 2
-    },
-    {
-      label: '3 Star',
-      data: [],
-      backgroundColor: [
-        'rgba(255, 206, 86, 0.6)'
-      ],
-      borderColor: [
-        'rgba(255, 206, 86, 1)'
-      ],
-      borderWidth: 2
-    },
-    {
-      label: '4 Star',
-      data: [],
-      backgroundColor: [
-        'rgba(75, 192, 192, 0.6)'
-      ],
-      borderColor: [,
-        'rgba(75, 192, 192, 1)'
-      ],
-      borderWidth: 2
-    },
-    {
-      label: '5 Star',
-      data: [],
-      backgroundColor: [
-        'rgba(153, 102, 255, 0.6)'
-      ],
-      borderColor: [
-        'rgba(153, 102, 255, 1)'
-      ],
-      borderWidth: 2
-    }]
-  }
 
   selectedValue: string ="";
-  weekNop = new FormGroup({
+  weekHr = new FormGroup({
     start: new FormControl<Date | null>(null),
     end: new FormControl<Date | null>(null),
-    route: new FormControl()
+    driver: new FormControl()
   })
 
-  monthNop = new FormGroup({
+  monthHr = new FormGroup({
     selectedYear: new FormControl(),
     monthYear: new FormControl(),
-    route: new FormControl()
+    driver: new FormControl()
   })
 
-  constructor(private nopService: noOfPassengersService, private dataApi: DataService) {
+  constructor(private nopService: noOfPassengersService, private dataApi: DataService,
+    private wkHrService:workingHoursService) {
     const currentYear = new Date().getFullYear();
     this.minDate = new Date(currentYear - 20, 0, 1);
     this.maxDate = new Date();
@@ -268,7 +151,7 @@ export class noOfPassengersComponent implements OnInit {
 
   ngOnInit(): void {
     this.RenderChart();
-    this.getAllBusRoutes();
+    this.getAllBusDrivers();
   }
 
   RenderChart(){
@@ -281,7 +164,7 @@ export class noOfPassengersComponent implements OnInit {
       }
     }
     //weekly chart
-    this.nopline = new Chart("noplinechart", {
+    this.wkHrline = new Chart("wkHrlinechart", {
       type: 'line',
       data:this.line3Data,
       options: {
@@ -312,7 +195,7 @@ export class noOfPassengersComponent implements OnInit {
       }
     });
 
-    this.nopbar = new Chart("nopbarchart", {
+    this.wkHrbar = new Chart("wkHrbarchart", {
       type: 'bar',
       data: this.barData,
       options: {
@@ -334,7 +217,7 @@ export class noOfPassengersComponent implements OnInit {
     });
 
     //monthly chart
-    this.nopline2 = new Chart("noplinechart2", {
+    this.wkHrline2 = new Chart("wkHrlinechart2", {
       type: 'line',
       data:this.lineData1,
       options: {
@@ -365,7 +248,7 @@ export class noOfPassengersComponent implements OnInit {
       }
     });
 
-    this.nopbar2 = new Chart("nopbarchart2", {
+    this.wkHrbar2 = new Chart("wkHrbarchart2", {
       type: 'bar',
       data: this.barData,
       options: {
@@ -420,8 +303,8 @@ export class noOfPassengersComponent implements OnInit {
       console.log(totalNops)
       barData.datasets[0].data=totalNops;
       console.log(barData)
-      this.nopbar2.data=barData;
-      this.nopbar2.update();
+      this.wkHrbar2.data=barData;
+      this.wkHrbar2.update();
     }
     else{
       barData.labels=busStops;
@@ -432,8 +315,8 @@ export class noOfPassengersComponent implements OnInit {
       console.log(totalNops)
       barData.datasets[0].data=totalNops;
       console.log(barData)
-      this.nopbar.data=barData;
-      this.nopbar.update();
+      this.wkHrbar.data=barData;
+      this.wkHrbar.update();
     }
   }
 
@@ -441,10 +324,10 @@ export class noOfPassengersComponent implements OnInit {
     let weekLabel=[];
     let lineDataSets=[];
     //weekly line chart as default
-    var selectedLine = this.nopline;
+    var selectedLine = this.wkHrline;
     //replace to monthly line chart
     if(periodic=="month"){
-      selectedLine=this.nopline2;
+      selectedLine=this.wkHrline2;
 
       for(var i=0;i<allNops.length;i++) {
         let dataset:any = {
@@ -509,35 +392,35 @@ export class noOfPassengersComponent implements OnInit {
     this.isProgressBarVisible=false;
   }
 
-  getAllBusRoutes(){
-    this.dataApi.getAllBusRoutes().subscribe(res=>{
-      var collect : BusRoute[]=[];
+  getAllBusDrivers(){
+    this.dataApi.getAllBusDrivers().subscribe(res=>{
+      var collect : BusDriver[]=[];
       res.map((e:any)=>{
         const data = e.payload.doc.data();
         data.id = e.payload.doc.id;
         return collect.push(data);
       })
-      this.busRoute= collect;
+      this.busDriver=collect;
     })
   }
 
   async weeklyQuery(){
-    if(this.fromDate==this.weekNop.value.start
-      &&this.toDate== this.weekNop.value.end
-      &&this.routeId==this.weekNop.value.route){
+    if(this.fromDate==this.weekHr.value.start
+      &&this.toDate== this.weekHr.value.end
+      &&this.driverId==this.weekHr.value.driver){
       window.alert("You have selected the same week, please select a different week.");
     }
     else{
-      this.fromDate= this.weekNop.value.start;
-      this.toDate= this.weekNop.value.end;
-      this.routeId = this.weekNop.value.route;
-      if(this.weekNop.value.route==null
-        ||this.weekNop.value.route==""
-        ||this.weekNop.value.start==null
-        ||this.weekNop.value.end==null){
+      this.fromDate= this.weekHr.value.start;
+      this.toDate= this.weekHr.value.end;
+      this.driverId = this.weekHr.value.driver;
+      if(this.weekHr.value.driver==null
+        ||this.weekHr.value.driver==""
+        ||this.weekHr.value.start==null
+        ||this.weekHr.value.end==null){
         window.alert('Please fill in the form')
       }
-      else if(this.weekNop.invalid){
+      else if(this.weekHr.invalid){
         window.alert('Invalid Query, please try again')
       }
       else{
@@ -547,47 +430,48 @@ export class noOfPassengersComponent implements OnInit {
           var collect : Rate[]=[];
           let dateArr:any[]=[];
           let simpleDateArr:any[]=[];
-          let checkData= await this.nopService.getNopsFromBusRouteAndDate((this.simpleDate(this.fromDate)), this.routeId);
-          let checkData2= await this.nopService.getNopsFromBusRouteAndDate((this.simpleDate(this.toDate)), this.routeId);
-          if(checkData.length==0||checkData2.length==0){
-            this.isProgressBarVisible=false;
-            window.alert("Please select other week as the chosen week's data is incomplete.")
-          }
-          else{
+          let checkData= await this.wkHrService.getAllDriverRecordsAndWorkingHours((this.simpleDate(this.fromDate)), this.driverId);
+          let checkData2= await this.wkHrService.getAllDriverRecordsAndWorkingHours((this.simpleDate(this.toDate)), this.driverId);
+          // if(checkData.length==0||checkData2.length==0){
+          //   this.isProgressBarVisible=false;
+          //   window.alert("Please select other week as the chosen week's data is incomplete.")
+          // }
+          // else{
             while(this.fromDate <= this.toDate){
-              let dataCollection = await this.nopService.getNopsFromBusRouteAndDate((this.simpleDate(this.fromDate)), this.routeId)
+              let dataCollection = await this.wkHrService.getAllDriverRecordsAndWorkingHours((this.simpleDate(this.fromDate)), this.driverId)
               collect.push(dataCollection);
               dateArr.push(this.properDateformat(this.fromDate));
               this.fromDate.setDate(this.fromDate.getDate() + 1);
             }
             this.queryData=collect;
-            let uniqueArr = this.getUniqueNopArr(this.queryData)
-            this.countNop(this.queryData, uniqueArr);
-            this.countPerDay(this.queryData, dateArr, uniqueArr);
+            console.log(this.queryData)
+            // let uniqueArr = this.getUniqueNopArr(this.queryData)
+            // this.countNop(this.queryData, uniqueArr);
+            // this.countPerDay(this.queryData, dateArr, uniqueArr);
           }
         }
-      }
+
     }
   }
 
   async monthlyQuery(){
-    if(this.selectedYear==this.monthNop.value.selectedYear
-      &&this.monthYear== this.monthNop.value.monthYear
-      &&this.mrouteId==this.monthNop.value.route){
+    if(this.selectedYear==this.monthHr.value.selectedYear
+      &&this.monthYear== this.monthHr.value.monthYear
+      &&this.mdriverId==this.monthHr.value.driver){
       window.alert("You have selected the same week, please select a different week.");
     }
     else{
-      this.selectedYear= this.monthNop.value.selectedYear;
-      this.monthYear= this.monthNop.value.monthYear;
-      this.mrouteId = this.monthNop.value.route;
-      console.log(this.monthNop.value)
-      if(this.monthNop.value.route==null
-        ||this.monthNop.value.route==""
-        ||this.monthNop.value.selectedYear==null
-        ||this.monthNop.value.monthYear==null){
+      this.selectedYear= this.monthHr.value.selectedYear;
+      this.monthYear= this.monthHr.value.monthYear;
+      this.mdriverId = this.monthHr.value.driver;
+      console.log(this.monthHr.value)
+      if(this.monthHr.value.driver==null
+        ||this.monthHr.value.driver==""
+        ||this.monthHr.value.selectedYear==null
+        ||this.monthHr.value.monthYear==null){
         window.alert('Please fill in the form')
       }
-      else if(this.monthNop.invalid){
+      else if(this.monthHr.invalid){
         window.alert('Invalid Query, please try again')
       }
       else{
@@ -601,7 +485,7 @@ export class noOfPassengersComponent implements OnInit {
           const fromDate = new Date(this.selectedYear, this.monthNames.indexOf(this.monthYear),1);
           const toDate = new Date(this.selectedYear, this.monthNames.indexOf(this.monthYear)+1,0);
 
-          let checkData= await this.nopService.getNopsFromBusRouteAndDate((this.simpleDate(fromDate)), this.mrouteId)
+          let checkData= await this.nopService.getNopsFromBusRouteAndDate((this.simpleDate(fromDate)), this.mdriverId)
           if(checkData.length==0){
             this.isProgressBarVisible=false;
             window.alert("Please select another month as the chosen month's data is incomplete.")
@@ -609,7 +493,7 @@ export class noOfPassengersComponent implements OnInit {
           else{
             while(fromDate <= toDate){
               var num=0;
-              let dataCollection = await this.nopService.getNopsFromBusRouteAndDate((this.simpleDate(fromDate)), this.mrouteId)
+              let dataCollection = await this.nopService.getNopsFromBusRouteAndDate((this.simpleDate(fromDate)), this.mdriverId)
               collect.push(dataCollection);
               dateArr.push(this.properDateformat(fromDate));
               simpleDateArr.push(this.simpleDate(fromDate));
@@ -900,26 +784,25 @@ export class noOfPassengersComponent implements OnInit {
   //   // console.log(yesterday.getDate()+"/"+yesterday.getDay()+"/"+yesterday.getFullYear())
   //   for(var stop of stops) {
 
-  //     for(var l=1; l<14; l++){
-  //       var yesterday = new Date(date.getTime());
-  //       yesterday.setDate(date.getDate() + l );
-  //       var currDay = yesterday.getDate()+"-"+(yesterday.getMonth()+1)+"-"+yesterday.getFullYear();
-  //       var currDat2 = yesterday.getTime();
-  //       var ran = Math.floor(Math.random() * 100);
+  //     // for(var l=0; l<14; l++){
+  //     //   var yesterday = new Date(date.getTime());
+  //     //   yesterday.setDate(date.getDate() + l );
+  //     //   var currDay = yesterday.getDate()+"-"+(yesterday.getMonth()+1)+"-"+yesterday.getFullYear();
+  //     //   var currDat2 = yesterday.getTime();
+  //     //   var ran = Math.floor(Math.random() * 100);
 
-  //         var date = new Date();
-  //         var num = Math.floor(Math.random() * (5 - 1 + 1) + 1);
-  //         var noOfP = {
-  //           countID:'',
-  //           countedDateTime: currDay,
-  //           numberOfPassenger: ran,
-  //           busStopID: stop.busStopID,
-  //         };
-  //         this.nopService.hi(currDay, noOfP, currDat2);
+  //     //     var date = new Date();
+  //     //     var num = Math.floor(Math.random() * (5 - 1 + 1) + 1);
+  //     //     var noOfP = {
+  //     //       busDriverId:"hfRK37clJ8MEc0sPgyW01YyptVg2",
+  //     //       busRouteId: "NMQlnUla3nfKcRiyZZyi",
+  //     //       recordDate: currDay
+  //     //     };
+  //     //     this.wkHrService.hi(currDay, noOfP, ran);
 
-  //       }
+  //     //   }
 
-  //     for(var l=0; l<40; l++){
+  //     for(var l=0; l<35; l++){
   //       var yesterday = new Date(date.getTime());
   //       yesterday.setDate(date.getDate() - l );
   //       var currDay = yesterday.getDate()+"-"+(yesterday.getMonth()+1)+"-"+yesterday.getFullYear();
@@ -929,12 +812,11 @@ export class noOfPassengersComponent implements OnInit {
   //         var date = new Date();
   //         var num = Math.floor(Math.random() * (5 - 1 + 1) + 1);
   //         var noOfP = {
-  //           countID:'',
-  //           countedDateTime: currDay,
-  //           numberOfPassenger: ran,
-  //           busStopID: stop.busStopID,
+  //           busDriverId:"hfRK37clJ8MEc0sPgyW01YyptVg2",
+  //           busRouteId: "NMQlnUla3nfKcRiyZZyi",
+  //           recordDate: currDay
   //         };
-  //         this.nopService.hi(currDay, noOfP, currDat2);
+  //         this.wkHrService.hi(currDay, noOfP, ran);
 
   //       }
   //     }

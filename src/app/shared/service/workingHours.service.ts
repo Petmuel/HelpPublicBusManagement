@@ -14,22 +14,29 @@ import { NoP } from '../model/noOfPassenger';
 @Injectable({
   providedIn: 'root'
 })
-export class noOfPassengersService {
+export class workingHoursService {
 
   constructor(private afs: AngularFirestore, private afa: AngularFireAuth, private snackBar: MatSnackBar) {
   }
 
  //hardcoded the rating list on bus driver
-  // hi(day: any){
-  //   var c = this.afs.collection("NumOfPassengers");
-  //    c.get().forEach(stopID=>{
-  //       stopID.forEach(busStop=>{
-  //         busStop.ref.delete();
-  //       });
-  //   })
+  // hi(day: any, obj:any, a:any){
+  //   var c = this.afs.collection("DriveRecord");
+  //   var v = this.afs.collection("WorkingHour")
+  //   //  c.get().forEach(stopID=>{
+  //   //     stopID.forEach(busStop=>{
+  //   //       busStop.ref.delete();
+  //   //     });
+  //   // })
   //   // let doc = c.doc();
   //   // rate.countID=doc.ref.id;
-  //   // c.doc(doc.ref.id).set(rate);
+  //   c.doc(day).collection("DriveRecordList").doc('zwauDFnI3MUuMd2oxnNP').set(obj);
+  //   // v.doc().set({
+  //   //   driveRecordId: "zwauDFnI3MUuMd2oxnNP",
+  //   //   driveDuration: a,
+  //   //   endTime: new Date(day),
+  //   //   startTime: new Date(day)
+  //   // })
   // }
 
   // hi(day: any, rate: any, ko:any){
@@ -78,6 +85,31 @@ export class noOfPassengersService {
 
   simpleDate(date:any){
     return (date.getDate()+"-"+(date.getMonth()+1)+"-"+date.getFullYear())
+  }
+
+  async getAllDriverRecordsAndWorkingHours(date:any, driverId:String){
+    let driverRecord = await this.getDriveRecord(date, driverId)
+    //let wk = await this.getWorkingHours(driverRecord.doc.id)
+    driverRecord.id = "zwauDFnI3MUuMd2oxnNP"
+    console.log(driverRecord.id)
+    //driverRecord.duration=wk.driveDuration;
+    return driverRecord;
+  }
+
+  getWorkingHours(driveRecordId:String){
+    var f = this.afs.collection("WorkingHour");
+
+    return new Promise<any>((resolve)=> {
+      this.afs.collection("WorkingHour", ref => ref.where('driveRecordId', '==', driveRecordId)).valueChanges({ idField: 'id' }).subscribe(busStops => resolve(busStops));
+    })
+  }
+
+  getDriveRecord(date: any, driverId: String){
+    var f = this.afs.collection("DriveRecord");
+    console.log(date, driverId)
+    return new Promise<any>((resolve)=> {
+      f.doc(date).collection("DriveRecordList", ref => ref.where('busDriverId', '==', driverId)).valueChanges({ idField: 'id' }).subscribe(busStops => resolve(busStops));
+    })
   }
 }
 

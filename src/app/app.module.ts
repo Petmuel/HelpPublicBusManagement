@@ -23,6 +23,7 @@ import { AddRouteComponent } from './component/dashboard/bus-route/add-route/add
 import { AddBusDriverComponent } from './component/dashboard/bus-driver/add-bus-driver/add-bus-driver.component';
 import { noOfPassengersComponent } from './component/dashboard/noOfPassengers/noOfPassengers.component';
 import { StatisticComponent } from './component/dashboard/statistic/statistic.component';
+import { workingHoursComponent } from './component/dashboard/workingHours/workingHours.component';
 // import { MychartComponent } from './component/dashboard/mychart/mychart.component';
 
 //angular materials (design & styling)
@@ -55,7 +56,8 @@ import { AngularFireDatabaseModule } from '@angular/fire/compat/database';
     AddRouteComponent,
     AddBusDriverComponent,
     StatisticComponent,
-    noOfPassengersComponent
+    noOfPassengersComponent,
+    workingHoursComponent
   ],
   imports: [
     CommonModule,

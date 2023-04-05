@@ -10,6 +10,7 @@ import { DashboardComponent } from './component/dashboard/dashboard.component';
 // import { MychartComponent } from './component/dashboard/mychart/mychart.component';
 import { StatisticComponent } from './component/dashboard/statistic/statistic.component';
 import { noOfPassengersComponent } from './component/dashboard/noOfPassengers/noOfPassengers.component';
+import { workingHoursComponent } from './component/dashboard/workingHours/workingHours.component';
 const routes: Routes = [
   {path: 'dashboard',
     component: DashboardComponent,
@@ -21,6 +22,7 @@ const routes: Routes = [
     {path:'busRoute/:id', component: ViewBusRouteComponent},
     {path: 'statistic', component: StatisticComponent},
     {path: 'noOfPassengers', component: noOfPassengersComponent},
+    {path: 'workingHours', component: workingHoursComponent},
     {path:'busDriver', component: BusDriverComponent}
     // {path: 'busRoute/multiform', redirectTo: 'multiform', pathMatch: 'full'}
   ]

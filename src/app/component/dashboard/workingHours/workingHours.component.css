@@ -1,0 +1,44 @@
+body{
+  background-color: rgb(255, 239, 244);
+  height: auto;
+}
+
+button{
+  background-color: white;
+}
+
+.mat-card{
+  margin-top:10px;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2)
+}
+
+.mat-radio-button{
+  margin-left: 15px;
+}
+
+.circular{
+
+  padding: 8%;
+  border: solid;
+  border-color: rgb(31, 72, 153);
+  border-radius: 50%;
+  font-size: large;
+}
+
+.borderBottom{
+  border-bottom: 4px solid;
+  border-color: rgb(33, 95, 171);
+}
+
+.example-additional-selection {
+  opacity: 0.75;
+  font-size: 0.75em;
+}
+
+mat-form-field{
+  width: 60%;
+}
+
+
+

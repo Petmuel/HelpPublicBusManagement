@@ -32,11 +32,14 @@ export class DataService {
 
 
   addBusRoute(busRoute : any) {
-    return this.afs.collection("BusRoute/").doc(busRoute.id).set({
+    let doc=this.afs.collection("BusRoute/").doc();
+
+    return this.afs.collection("BusRoute/").doc(doc.ref.id).set({
       routeNo:busRoute.routeNo,
+      routeId: doc.ref.id,
       description:busRoute.description,
       departure:busRoute.departure,
-      arrival:busRoute.arrival,
+      arrival:busRoute.arrival
     });
   }
 
@@ -100,6 +103,12 @@ export class DataService {
   //   })
   // }
 
+  getBusStopById(id:string){
+    return new Promise<any>((resolve)=> {
+      this.afs.collection('BusStop/').doc(id).valueChanges().subscribe(busStop => resolve(busStop));
+    })
+  }
+
 
   // stops !:FormArray<any>;
   //retrieving documents from bus stop sub-collection in firebase
@@ -117,8 +126,11 @@ export class DataService {
     })
   }
 
-  returnBusStop(id:string){
-    return this.afs.doc("BusRoute/"+id).collection('busStopList/').valueChanges()
+  findBusStopById(id:string){
+    return new Promise<any>((resolve)=> {
+      return this.afs.collection('BusStop').doc(id).valueChanges().subscribe(busStop => resolve(busStop));
+    })
+
   }
 
   deleteBusStop(busRoute:any) {

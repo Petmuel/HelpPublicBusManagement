@@ -560,6 +560,7 @@ export class StatisticComponent implements OnInit {
 
   //count ratings quantity per week for each rate star
   countPerWeek(rateList:any, dateArr:any){
+    console.log(rateList)
     let week=7;
     let monthEachStarRate:any[]=[];
     for(var v=1; v<6; v++){

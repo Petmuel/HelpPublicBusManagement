@@ -9,15 +9,15 @@
 <body>
   <!-- weekly query form -->
   <div class="container py-3 text-center">
-    <div class="bg-white mat-elevation-z5" [formGroup]="weekNop">
+    <div class="bg-white mat-elevation-z5" [formGroup]="weekHr">
       <div class="p-2 py-4">
-        <h2 class="font-monospace fw-bold">Weekly Number of Passengers</h2>
+        <h2 class="font-monospace fw-bold">Weekly Working Hours</h2>
         <!-- bus driver selection dropdown-list -->
         <mat-form-field appearance="fill">
-          <mat-label>Select a bus route</mat-label>
-          <mat-select [(ngModel)]="selectedValue" name="driver" formControlName="route">
-            <mat-option *ngFor="let route of busRoute" [value]="route.id">
-              {{route.routeNo}}
+          <mat-label>Select a bus driver</mat-label>
+          <mat-select [(ngModel)]="selectedValue" name="driver" formControlName="driver">
+            <mat-option *ngFor="let driver of busDriver" [value]="driver.id">
+              {{driver.fullName}}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -39,8 +39,8 @@
             </mat-date-range-picker-actions>
           </mat-date-range-picker>
 
-          <mat-error *ngIf="weekNop.controls.start.hasError('matStartDateInvalid')">Invalid start date</mat-error>
-          <mat-error *ngIf="weekNop.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error>
+          <mat-error *ngIf="weekHr.controls.start.hasError('matStartDateInvalid')">Invalid start date</mat-error>
+          <mat-error *ngIf="weekHr.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error>
         </mat-form-field>
         <br>
 
@@ -97,7 +97,7 @@
             <mat-card-title>No. Of Passengers From Each Bus Stop Per Day</mat-card-title>
           </mat-card-header>
           <mat-divider></mat-divider>
-        <canvas id="noplinechart"></canvas>
+        <canvas id="wkHrlinechart"></canvas>
         </mat-card>
 
       </div>
@@ -108,7 +108,7 @@
             <mat-card-title>Total No. Of Passengers From Each Bus Stop</mat-card-title>
           </mat-card-header>
           <mat-divider></mat-divider>
-          <canvas id="nopbarchart"></canvas>
+          <canvas id="wkHrbarchart"></canvas>
         </mat-card>
       </div>
 
@@ -118,15 +118,15 @@
   <mat-divider></mat-divider>
   <!-- monthly query form -->
   <div class="container py-3 text-center">
-    <div class="bg-white text-center mat-elevation-z5" [formGroup]="monthNop">
+    <div class="bg-white text-center mat-elevation-z5" [formGroup]="monthHr">
       <div class="p-2 py-4">
         <h2 class="font-monospace fw-bold">Monthly Number of Passengers</h2>
         <!-- bus driver selection dropdown-list -->
         <mat-form-field appearance="fill">
           <mat-label>Select a bus route</mat-label>
-          <mat-select [(ngModel)]="selectedValue" name="route" formControlName="route">
-            <mat-option *ngFor="let route of busRoute" [value]="route.id">
-              {{route.routeNo}}
+          <mat-select [(ngModel)]="selectedValue" name="route" formControlName="driver">
+            <mat-option *ngFor="let driver of busDriver" [value]="driver.id">
+              {{driver.fullName}}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -206,7 +206,7 @@
             <mat-card-title>No. Of Passengers From Each Bus Stop Per Week</mat-card-title>
           </mat-card-header>
           <mat-divider></mat-divider>
-        <canvas id="noplinechart2"></canvas>
+        <canvas id="wkHrlinechart2"></canvas>
         </mat-card>
       </div>
       <div class="col-lg-6">
@@ -215,7 +215,7 @@
             <mat-card-title>Total No. Of Passengers From Each Bus Stop</mat-card-title>
           </mat-card-header>
           <mat-divider></mat-divider>
-          <canvas id="nopbarchart2"></canvas>
+          <canvas id="wkHrbarchart2"></canvas>
         </mat-card>
       </div>
 
