@@ -874,20 +874,20 @@ export class StatisticComponent implements OnInit {
       doc.setFontSize(12);
       doc.text('Highest Rating Quantity', 10, 30);
       doc.setFontSize(10);
-      doc.text('Highest Rating : ' + this.highestQuantity.rate, 10, 35);
-      doc.text('Quantity : ' + this.highestQuantity.quantity, 10, 40);
+      doc.text('Highest Rating : ' + this.mHighestQuantity.rate, 10, 35);
+      doc.text('Quantity : ' + this.mHighestQuantity.quantity, 10, 40);
 
       doc.setFontSize(12);
       doc.text('Averrage Daily Highest Ratings', 70, 30);
       doc.setFontSize(10);
-      doc.text('Highest Rating : ' + this.averageDaily.rate, 70, 35);
-      doc.text('Averrage : ' + this.averageDaily.quantity, 70, 40);
+      doc.text('Highest Rating : ' + this.mAverageDaily.rate, 70, 35);
+      doc.text('Averrage : ' + this.mAverageDaily.quantity, 70, 40);
 
       doc.setFontSize(12);
-      doc.text('Daily with Most Ratings '+this.topDayRate.rate, 140, 30);
+      doc.text('Daily with Most Ratings '+this.mTopDayRate.rate, 140, 30);
       doc.setFontSize(10);
-      doc.text('Date : ' + this.topDayRate.date + this.topDayRate.day, 140, 35);
-      doc.text('Quantity : ' + this.topDayRate.quantity, 140, 40);
+      doc.text('Date : ' + this.mTopDayRate.date + this.mTopDayRate.day, 140, 35);
+      doc.text('Quantity : ' + this.mTopDayRate.quantity, 140, 40);
 
       //chart
       canvas = await html2canvas(document.querySelector("#linechart2")!);

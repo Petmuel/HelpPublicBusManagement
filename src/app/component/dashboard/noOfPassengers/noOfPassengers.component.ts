@@ -11,6 +11,8 @@ import { MatRadioChange } from '@angular/material/radio';
 import { BusRoute } from 'src/app/shared/model/bus-route';
 import { DataService } from 'src/app/shared/service/data.service';
 import { NoP } from 'src/app/shared/model/noOfPassenger';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 Chart.register(...registerables)
 
@@ -32,6 +34,8 @@ export class noOfPassengersComponent implements OnInit {
   fromDate:any;
   toDate:any;
   routeId= "";
+  isDailyNoOfPassengerFatch = false;
+  isMonthlyNoOfPassengerFetch = false;
 
   //monthly selection data
   yearList: number[]=[];
@@ -673,7 +677,7 @@ export class noOfPassengersComponent implements OnInit {
       monthEachStarRate.push(weeklyNops);
     }
     console.log(monthEachStarRate)
-
+    this.isMonthlyNoOfPassengerFetch = true;
     this.updateLineChart(monthEachStarRate, dateArr, "month", unique);
 
     // let week=7;
@@ -741,7 +745,7 @@ export class noOfPassengersComponent implements OnInit {
       nopListPerDay.push(nops);
     }
     console.log(nopListPerDay)
-
+    this.isDailyNoOfPassengerFatch = true;
     this.updateLineChart(nopListPerDay, dateArr, "week", unique);
   }
 
@@ -890,6 +894,134 @@ export class noOfPassengersComponent implements OnInit {
     this.monthNames=monthArr;
   }
 
+
+  async genrateReport(){
+
+    if(!this.isDailyNoOfPassengerFatch && !this.isMonthlyNoOfPassengerFetch){
+      window.alert("Pleace query the informaton");
+      return;
+    }
+
+    var doc = new jsPDF();
+    var canvas;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const padding = 10;
+
+    if(this.isDailyNoOfPassengerFatch){
+
+      //Title
+      doc.setFontSize(26);
+      doc.text('Monthly Number of Passengers', 10, 20);
+
+      //Quantity
+      doc.setFontSize(12);
+      doc.text('Highest Passenger Quantity', 10, 30);
+      doc.setFontSize(10);
+      doc.text('Highest Passengers : ' + this.highestQuantity.busStop, 10, 35);
+      doc.text('Quantity : ' + this.highestQuantity.quantity, 10, 40);
+
+      doc.setFontSize(12);
+      doc.text('Averrage Daily Highest Passenger', 70, 30);
+      doc.setFontSize(10);
+      doc.text('Highest Passengers : ' + this.averageDaily.busStop, 70, 35);
+      doc.text('Averrage : ' + this.averageDaily.quantity, 70, 40);
+
+      doc.setFontSize(12);
+      doc.text('Daily with Most Passengers '+this.topDayPassenger.busStop, 140, 30);
+      doc.setFontSize(10);
+      doc.text('Date : ' + this.topDayPassenger.date + this.topDayPassenger.day, 140, 35);
+      doc.text('Quantity : ' + this.topDayPassenger.quantity, 140, 40);
+
+
+
+      //chart
+      canvas = await html2canvas(document.querySelector("#noplinechart")!);
+
+      var imgData  = canvas.toDataURL("image/jpeg");
+
+      if (canvas.width > pageWidth) {
+        const ratio = pageWidth / canvas.width;
+        canvas.height = canvas.height * ratio - padding;
+        canvas.width = canvas.width * ratio - padding;
+      }
+
+      doc.setFontSize(20);
+      doc.text('No. Of Passengers From Each Bus Stop Per Day', 10, 60)
+      doc.addImage(imgData,padding,65,canvas.width, canvas.height);
+
+      //bar
+      canvas = await html2canvas(document.querySelector("#nopbarchart")!);
+      var imgData  = canvas.toDataURL("image/jpeg");
+      if (canvas.width > pageWidth) {
+        const ratio = pageWidth / canvas.width;
+        canvas.height = canvas.height * ratio - padding;
+        canvas.width = canvas.width * ratio - padding;
+      }
+
+      doc.setFontSize(20);
+      doc.text('Total No. Of Passengers From Each Bus Stop', 10, 170)
+      doc.addImage(imgData,padding,175,canvas.width, canvas.height);
+    }
+
+    if(this.isMonthlyNoOfPassengerFetch){
+      //monthly
+      if(this.isDailyNoOfPassengerFatch){
+        doc.addPage();
+      }
+
+      //Title
+      doc.setFontSize(26);
+      doc.text('Monthly Bus Driver Rating Report', 10, 20);
+
+      //Quantity
+      doc.setFontSize(12);
+      doc.text('Highest Passenger Quantity', 10, 30);
+      doc.setFontSize(10);
+      doc.text('Highest Passengers : ' + this.mHighestQuantity.busStop, 10, 35);
+      doc.text('Quantity : ' + this.mHighestQuantity.quantity, 10, 40);
+
+      doc.setFontSize(12);
+      doc.text('Average Daily Highest Passenger', 70, 30);
+      doc.setFontSize(10);
+      doc.text('Highest Passengers : ' + this.mAverageDaily.busStop, 70, 35);
+      doc.text('Averrage : ' + this.mAverageDaily.quantity, 70, 40);
+
+      doc.setFontSize(12);
+      doc.text('Day with Most Passengers '+this.mTopDayRate.busStop, 140, 30);
+      doc.setFontSize(10);
+      doc.text('Date : ' + this.mTopDayRate.date + this.mTopDayRate.day, 140, 35);
+      doc.text('Quantity : ' + this.mTopDayRate.quantity, 140, 40);
+
+      //chart
+      canvas = await html2canvas(document.querySelector("#noplinechart2")!);
+      var imgData  = canvas.toDataURL("image/jpeg");
+      if (canvas.width > pageWidth) {
+          const ratio = pageWidth / canvas.width;
+          canvas.height = canvas.height * ratio - padding;
+          canvas.width = canvas.width * ratio - padding;
+      }
+
+      doc.setFontSize(20);
+      doc.text('No. Of Passengers From Each Bus Stop Per Week', 10, 60)
+      doc.addImage(imgData,padding,65,canvas.width, canvas.height);
+
+      //bar
+      canvas = await html2canvas(document.querySelector("#nopbarchart2")!);
+      var imgData  = canvas.toDataURL("image/jpeg");
+      if (canvas.width > pageWidth) {
+        const ratio = pageWidth / canvas.width;
+        canvas.height = canvas.height * ratio - padding;
+        canvas.width = canvas.width * ratio - padding;
+      }
+
+      doc.setFontSize(20);
+      doc.text('Total No. Of Passengers From Each Bus Stop', 10, 170)
+      doc.addImage(imgData,padding,175,canvas.width, canvas.height);
+
+    }
+
+    doc.save('number_of_passenger_report.pdf');
+  }
     //hardcoded the rating list on bus driver
   // async lol(){
   //   // this.nopService.hi();
