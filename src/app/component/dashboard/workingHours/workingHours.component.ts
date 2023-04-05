@@ -12,6 +12,8 @@ import { BusRoute } from 'src/app/shared/model/bus-route';
 import { DataService } from 'src/app/shared/service/data.service';
 import { NoP } from 'src/app/shared/model/noOfPassenger';
 import { workingHoursService } from 'src/app/shared/service/workingHours.service';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 Chart.register(...registerables)
 
@@ -827,6 +829,8 @@ export class workingHoursComponent implements OnInit {
   fromDate : any = 1;
   toDate : any = 1;
   driverId= "";
+  isDailyWorkingHourFatch = false;
+  isMonthlyWorkingHourFetch = false;
 
   //monthly selection data
   yearList: number[]=[];
@@ -1240,7 +1244,7 @@ export class workingHoursComponent implements OnInit {
 
   countPerDay(rateList:any, dateArr:any){
 
-
+    this.isDailyWorkingHourFatch = true;
     this.updateLineChart(this.wkData, this.wkData2, dateArr, "week");
   }
 
@@ -1344,7 +1348,7 @@ export class workingHoursComponent implements OnInit {
       for(var i=0; i< this.wkData.length; i++){
 
         total += this.wkData[i];
-      
+
       }
       for(var i=0; i< this.wkData2.length; i++){
         total += this.wkData[i];
@@ -1424,7 +1428,137 @@ export class workingHoursComponent implements OnInit {
       "July", "August", "September", "October", "November", "December"];
     }
     this.monthNames=monthArr;
+    this.isMonthlyWorkingHourFetch = true;
   }
+
+    async genrateReport(){
+
+    if(!this.isDailyWorkingHourFatch && !this.isMonthlyWorkingHourFetch){
+      window.alert("Pleace query the informaton");
+      return;
+    }
+
+    var doc = new jsPDF();
+    var canvas;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const padding = 10;
+
+    if(this.isDailyWorkingHourFatch){
+
+      //Title
+      doc.setFontSize(26);
+      doc.text('Weekly Working Hours Report', 10, 20);
+
+      //Quantity
+      doc.setFontSize(12);
+      doc.text('Total Working Hours', 10, 30);
+      doc.setFontSize(10);
+      doc.text('Bus Driver : ' + this.highestQuantity.rate, 10, 35);
+      doc.text('Quantity : ' + this.highestQuantity.quantity, 10, 40);
+
+      doc.setFontSize(12);
+      doc.text('Average Daily Working Hours', 70, 30);
+      doc.setFontSize(10);
+      doc.text('Bus Driver : ' + this.averageDaily.rate, 70, 35);
+      doc.text('Averrage : ' + this.averageDaily.quantity, 70, 40);
+
+      // doc.setFontSize(12);
+      // doc.text('Daily with Most Passengers '+this.topDayPassenger.busStop, 140, 30);
+      // doc.setFontSize(10);
+      // doc.text('Date : ' + this.topDayPassenger.date + this.topDayPassenger.day, 140, 35);
+      // doc.text('Quantity : ' + this.topDayPassenger.quantity, 140, 40);
+
+
+
+      //chart
+      canvas = await html2canvas(document.querySelector("#linechartt")!);
+
+      var imgData  = canvas.toDataURL("image/jpeg");
+
+      if (canvas.width > pageWidth) {
+        const ratio = pageWidth / canvas.width;
+        canvas.height = canvas.height * ratio - padding;
+        canvas.width = canvas.width * ratio - padding;
+      }
+
+      doc.setFontSize(20);
+      doc.text('Working Hours Per Day', 10, 60)
+      doc.addImage(imgData,padding,65,canvas.width, canvas.height);
+
+      //bar
+    //   canvas = await html2canvas(document.querySelector("#nopbarchart")!);
+    //   var imgData  = canvas.toDataURL("image/jpeg");
+    //   if (canvas.width > pageWidth) {
+    //     const ratio = pageWidth / canvas.width;
+    //     canvas.height = canvas.height * ratio - padding;
+    //     canvas.width = canvas.width * ratio - padding;
+    //   }
+
+    //   doc.setFontSize(20);
+    //   doc.text('Total No. Of Passengers From Each Bus Stop', 10, 170)
+    //   doc.addImage(imgData,padding,175,canvas.width, canvas.height);
+    // }
+
+    if(this.isMonthlyWorkingHourFetch){
+      //monthly
+      if(this.isDailyWorkingHourFatch){
+        doc.addPage();
+      }
+
+      //Title
+      doc.setFontSize(26);
+      doc.text('Monthly Working Hours Report', 10, 20);
+
+      //Quantity
+      doc.setFontSize(12);
+      doc.text('Total Working Hours', 10, 30);
+      doc.setFontSize(10);
+      doc.text('Bus Driver : ' + this.mHighestQuantity.rate, 10, 35);
+      doc.text('Quantity : ' + this.mHighestQuantity.quantity, 10, 40);
+
+      doc.setFontSize(12);
+      doc.text('Average Daily Working Hours', 70, 30);
+      doc.setFontSize(10);
+      doc.text('Bus Driver : ' + this.mAverageDaily.rate, 70, 35);
+      doc.text('Averrage : ' + this.mAverageDaily.quantity, 70, 40);
+
+      // doc.setFontSize(12);
+      // doc.text('Day with Most Passengers '+this.mTopDayRate.busStop, 140, 30);
+      // doc.setFontSize(10);
+      // doc.text('Date : ' + this.mTopDayRate.date + this.mTopDayRate.day, 140, 35);
+      // doc.text('Quantity : ' + this.mTopDayRate.quantity, 140, 40);
+
+      //chart
+      canvas = await html2canvas(document.querySelector("#linechartt2")!);
+      var imgData  = canvas.toDataURL("image/jpeg");
+      if (canvas.width > pageWidth) {
+          const ratio = pageWidth / canvas.width;
+          canvas.height = canvas.height * ratio - padding;
+          canvas.width = canvas.width * ratio - padding;
+      }
+
+      doc.setFontSize(20);
+      doc.text('Working Hours Per Week', 10, 60)
+      doc.addImage(imgData,padding,65,canvas.width, canvas.height);
+
+      //bar
+      // canvas = await html2canvas(document.querySelector("#nopbarchart2")!);
+      // var imgData  = canvas.toDataURL("image/jpeg");
+      // if (canvas.width > pageWidth) {
+      //   const ratio = pageWidth / canvas.width;
+      //   canvas.height = canvas.height * ratio - padding;
+      //   canvas.width = canvas.width * ratio - padding;
+      // }
+
+      // doc.setFontSize(20);
+      // doc.text('Total No. Of Passengers From Each Bus Stop', 10, 170)
+      // doc.addImage(imgData,padding,175,canvas.width, canvas.height);
+
+    }
+
+    doc.save('working_hour_report.pdf');
+  }
+}
 
     //hardcoded the rating list on bus driver
   // lol(){

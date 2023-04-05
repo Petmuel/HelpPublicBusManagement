@@ -911,7 +911,7 @@ export class noOfPassengersComponent implements OnInit {
 
       //Title
       doc.setFontSize(26);
-      doc.text('Monthly Number of Passengers', 10, 20);
+      doc.text('Weekly Number of Passengers Report', 10, 20);
 
       //Quantity
       doc.setFontSize(12);
