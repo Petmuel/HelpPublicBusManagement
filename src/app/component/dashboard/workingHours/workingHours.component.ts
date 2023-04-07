@@ -365,8 +365,8 @@ export class workingHoursComponent implements OnInit {
             }
             this.queryData=collect;
             // let uniqueArr = this.getUniqueNopArr(this.queryData)
-            this.countHour(this.queryData);
-            this.countPerDay(this.queryData, dateArr);
+            this.countHour(collect);
+            this.countPerDay(collect, dateArr);
           }
         }
       }
@@ -398,17 +398,17 @@ export class workingHoursComponent implements OnInit {
 
         if (this.selectedYear && this.monthYear != null){
           let dates: any[] = [];
-          var collect : Rate[]=[];
+          var collect : any[]=[];
           let dateArr:any[]=[];
           let simpleDateArr:any[]=[];
           const fromDate = new Date(this.selectedYear, this.monthNames.indexOf(this.monthYear),1);
           const toDate = new Date(this.selectedYear, this.monthNames.indexOf(this.monthYear)+1,0);
-          console.log(this.simpleDate(fromDate), this.simpleDate(toDate));
-          let checkData= await this.wkHrService.getDriveRecord((this.simpleDate(fromDate)), this.driverId);
-          let checkData2= await this.wkHrService.getDriveRecord((this.simpleDate(toDate)), this.driverId);
+          console.log(await this.wkHrService.getDriveRecord((this.simpleDate(fromDate)), this.driverId), this.simpleDate(toDate));
+          let checkData= await this.wkHrService.getDriveRecord((this.simpleDate(this.fromDate)), this.driverId);
+          let checkData2= await this.wkHrService.getDriveRecord((this.simpleDate(this.toDate)), this.driverId);
           if(checkData.length==0||checkData2.length==0){
             this.isProgressBarVisible=false;
-            window.alert("Please select other week as the chosen week's data is incomplete.")
+            window.alert("Please select other month as the chosen month's data is incomplete.")
           }
           else{
             while(fromDate <= toDate){
@@ -450,10 +450,10 @@ export class workingHoursComponent implements OnInit {
               simpleDateArr.push(this.simpleDate(fromDate));
               fromDate.setDate(fromDate.getDate() + 1);
             }
-            this.queryData=collect;
+            this.mQueryData=collect;
             // let uniqueArr = this.getUniqueNopArr(this.queryData)
-            this.countHour(this.queryData);
-            this.countPerWeek(this.queryData, dateArr, simpleDateArr);
+            this.countHour(collect);
+            this.countPerWeek(collect, dateArr, simpleDateArr);
           }
         }
       }
@@ -486,35 +486,31 @@ export class workingHoursComponent implements OnInit {
     let weeklyWorkHours:any[]=[];
     let countingHours:any[]=[];
     let durations:any[]=[];
+    let count:number=0;
       for(var day=0; day<simpleDate.length; day++){
-        let count:number=0;
+
         //if day has already reached to the end of week
         if(day==week){
-          weeklyWorkHours.push(countingHours);
-          countingHours=[];  //week1=[day1,day2,dy3,dy4,dy5,dy6,dy7], week2=[],
+          weeklyWorkHours.push(count); //week1=[day1,day2,dy3,dy4,dy5,dy6,dy7], week2=[],
+          count=0;
           week+=7
         }
 
 
         workHourList.forEach((x:any)=>{
           if(x.date == simpleDate[day]){
-            count+=Number((x.duration).toFixed(1))
+            count+=Number((x.duration/3600).toFixed(1))
           }
         })
 
-
-        countingHours.push(count);
-
         if(simpleDate.length-day==1){
-          weeklyWorkHours.push(countingHours);
-          countingHours=[];
+          weeklyWorkHours.push(count);
+          count=0;
           week=7;
         }
     }
-    monthEachWorkHour.push(weeklyWorkHours);
-    console.log(monthEachWorkHour, dateArr)
     this.isMonthlyWorkingHourFetch = true;
-    this.updateLineChart(monthEachWorkHour, dateArr, "month");
+    this.updateLineChart(weeklyWorkHours, dateArr, "month");
   }
 
   async countPerDay(nopList:any, dateArr:any){
@@ -545,23 +541,27 @@ export class workingHoursComponent implements OnInit {
   }
 
   //find the highest quantity of nop
-  async highQuantity(nopObjs:any[], isMonthly: boolean, days: number){
-    const maxRate = nopObjs.reduce(function(prev, current) {
+  async highQuantity(workHrObjs:any[], isMonthly: boolean, days: number){
+    const maxRate = workHrObjs.reduce(function(prev, current) {
       return (prev.duration > current.duration) ? prev : current
     });
     let busDriver:any = this.busDriver.find(x=>{
       return x.id===this.weekHr.value.driver;
     })
+    let count =0;
+    workHrObjs.forEach((x:any)=>{
+      count+=x.duration;
+    })
     if(isMonthly) {
-      this.mTotalDuration.duration=Number((maxRate.duration/3600).toFixed(1));
+      this.mTotalDuration.duration=Number((count/3600).toFixed(1));
       this.mTotalDuration.busDriver=busDriver.fullName;
       //get average daily amount of the highest rating quantity
       this.mAverageDaily.busDriver=maxRate.name;
-      this.mAverageDaily.duration=(maxRate.totalNop/days).toPrecision(3);
+      this.mAverageDaily.duration=Number((this.mTotalDuration.duration/days)).toFixed(1);
     }
     else{
       console.log(maxRate.duration)
-      this.totalDuration.duration=Number((maxRate.duration/3600).toFixed(1));
+      this.totalDuration.duration=Number((count/3600).toFixed(1));
       this.totalDuration.busDriver=busDriver.fullName
       //get average daily amount of the highest rating quantity
       this.averageDaily.busDriver=this.totalDuration.busDriver;
