@@ -746,7 +746,7 @@ export class workingHoursComponent implements OnInit {
       doc.setFontSize(12);
       doc.text('Average Daily Working Hours', 70, 30);
       doc.setFontSize(10);
-      doc.text('Bus Driver : ' + this.mAverageDaily.busDriver, 70, 35);
+      doc.text('Bus Driver : ' + this.mTotalDuration.busDriver, 70, 35);
       doc.text('Averrage : ' + this.mAverageDaily.duration, 70, 40);
 
       // doc.setFontSize(12);
