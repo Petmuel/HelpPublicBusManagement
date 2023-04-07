@@ -82,7 +82,7 @@ export class BusRouteComponent implements OnInit {
         console.log(data)
         this.dataApi.deleteBusStop(data);
         this.dataApi.addBusRoute(data);
-        this.dataApi.updateBusStop(data);
+        //this.dataApi.updateBusStop(data);
         this.snackBar.open('Bus route updated successfully.','OK',{
           duration: 2000
         });

@@ -22,7 +22,7 @@ export class workingHoursService {
  //hardcoded the rating list on bus driver
   // hi(day: any, obj:any, a:any){
   //   var c = this.afs.collection("DriveRecord");
-  //   var v = this.afs.collection("WorkingHour")
+  //   //var v = this.afs.collection("WorkingHour")
   //   //  c.get().forEach(stopID=>{
   //   //     stopID.forEach(busStop=>{
   //   //       busStop.ref.delete();
@@ -30,7 +30,7 @@ export class workingHoursService {
   //   // })
   //   // let doc = c.doc();
   //   // rate.countID=doc.ref.id;
-  //   c.doc(day).collection("DriveRecordList").doc('zwauDFnI3MUuMd2oxnNP').set(obj);
+  //   c.doc(day).collection("DriveRecordList").doc("zwauDFnI3MUuMd2oxnNP").set(obj);
   //   // v.doc().set({
   //   //   driveRecordId: "zwauDFnI3MUuMd2oxnNP",
   //   //   driveDuration: a,
@@ -39,38 +39,6 @@ export class workingHoursService {
   //   // })
   // }
 
-  // hi(day: any, rate: any, ko:any){
-  //   var obj={
-  //         date: ko
-  //   }
-  //   var c = this.afs.collection("NumOfPassengers");
-  //   c.doc(day).set(obj);
-  //   var doc =c.doc(day).collection("BusRoute1680460045688").doc()
-  //   var docid = doc.ref.id
-  //   rate.countID=docid;
-  //   c.doc(day).collection("BusRoute1680460045688").doc(docid).set(rate);
-  // }
-
-  //testing
-  // async getNop(startDate:String, routeId:string){
-  //   var s =  await this.getBusStopsByRoute(routeId);
-  //   let nops:NoP[]=[];
-  //   for(var stop of s){
-  //     nops.push(await this.getNopsFromBusStopAndDate(startDate, stop.busStopID))
-  //   }
-  //   return nops;
-  // }
-
-//   getNopsFromBusRouteAndDate(startDate:String, routeId:string){
-
-//     var c = this.afs.collection("NumOfPassengers").doc(startDate) ref => ref
-//       .where('busStopID', '==', busStopID)
-//       .where('countedDateTime', '==', startDate));
-
-//     return new Promise<any>((resolve)=> {
-//       c.valueChanges().subscribe(users => resolve(users));
-//     })
-//   }
 
   getNopsFromBusRouteAndDate(date:any, routeId:string){
     var c = this.afs.collection("NumOfPassengers");
@@ -79,34 +47,39 @@ export class workingHoursService {
     })
   }
 
-  openSnackBar(message: string, action: string) {
-      this.snackBar.open(message, action);
-  }
-
-  simpleDate(date:any){
-    return (date.getDate()+"-"+(date.getMonth()+1)+"-"+date.getFullYear())
-  }
 
   async getAllDriverRecordsAndWorkingHours(date:any, driverId:String){
     let driverRecord = await this.getDriveRecord(date, driverId)
+    let driverRecordId = await this.getDriveRecordID(date, driverId)
     //let wk = await this.getWorkingHours(driverRecord.doc.id)
-    driverRecord.id = "zwauDFnI3MUuMd2oxnNP"
-    console.log(driverRecord.id)
+    let workingHour= await this.getWorkingHours(driverRecordId)
     //driverRecord.duration=wk.driveDuration;
-    return driverRecord;
+    var wkObj={
+      driverRecordId: driverRecordId,
+      busRouteId: driverRecord.busRouteId,
+      date: driverRecord.recordDate,
+      duration: workingHour.duration
+    }
+    console.log(wkObj)
+    return wkObj;
   }
 
   getWorkingHours(driveRecordId:String){
     var f = this.afs.collection("WorkingHour");
-
     return new Promise<any>((resolve)=> {
       this.afs.collection("WorkingHour", ref => ref.where('driveRecordId', '==', driveRecordId)).valueChanges({ idField: 'id' }).subscribe(busStops => resolve(busStops));
     })
   }
 
+  getDriveRecordID(date: any, driverId: String){
+    var f = this.afs.collection("DriveRecord");
+    return new Promise<any>((resolve)=> {
+      f.doc(date).collection("DriveRecordList", ref => ref.where('busDriverId', '==', driverId)).get().subscribe(busStops => resolve(busStops.docs[0].id));
+    })
+  }
+
   getDriveRecord(date: any, driverId: String){
     var f = this.afs.collection("DriveRecord");
-    console.log(date, driverId)
     return new Promise<any>((resolve)=> {
       f.doc(date).collection("DriveRecordList", ref => ref.where('busDriverId', '==', driverId)).valueChanges({ idField: 'id' }).subscribe(busStops => resolve(busStops));
     })

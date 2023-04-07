@@ -80,18 +80,19 @@ export class AddRouteComponent implements OnInit{
     this.dialogRef.close(this.routeRegister.getRawValue());
   }
 
-  addBusStops(lat:any, lng:any, title:String, address: String, sublocal:String){
+  addBusStops(lat:any, lng:any, title:String, address: String, sublocal:String, busStopNo:Number){
     this.formBusStop=this.routeRegister.get("busStops") as FormArray;
     if(sublocal==undefined||sublocal==""){
       sublocal=address.split(/[\s,]+/)[0]+" "+address.split(/[\s,]+/)[1];
     }
-    this.formBusStop.push(this.generatorRow(Number(lat), Number(lng),title,address,sublocal));
+    this.formBusStop.push(this.generatorRow(Number(lat), Number(lng),title,address,sublocal, busStopNo));
     this.updateDepartureAndArrival();
   }
 
-  generatorRow(lat: any, lng:any, title: String, address:String, sublocal:String){
+  generatorRow(lat: any, lng:any, title: String, address:String, sublocal:String, busStopNo: Number){
     return this.fb.group({
       busStopID: "",
+      position: busStopNo,
       busRouteId: this.fb.control(this.routeRegister.value.id),
       busRouteNo:this.fb.control(this.routeRegister.value.routeNo),
       busStop:new FormControl({
@@ -133,7 +134,7 @@ export class AddRouteComponent implements OnInit{
 
   updateFormBusStop(formBusStop: FormArray<any>, index: any) {
     for(var i = index; i < formBusStop.length; i++) {
-      formBusStop.at(i).patchValue({busStop:this.markers[i].title})
+      formBusStop.at(i).patchValue({busStop:this.markers[i].title, position: i})
     }
   }
 
@@ -157,7 +158,8 @@ export class AddRouteComponent implements OnInit{
     var lng = event.latLng.lng();
     var locations = await this.getAddress(lat, lng);
     var address = locations.address;
-    var title = "Bus Stop " + (this.markers.length + 1);
+    var busStopNo:number = this.markers.length + 1;
+    var title = "Bus Stop " + busStopNo;
     this.markers.push({
       position: {
         lat: lat,
@@ -173,7 +175,7 @@ export class AddRouteComponent implements OnInit{
         animation: google.maps.Animation.DROP,
       },
     })
-    this.addBusStops(lat, lng, title, address, locations.sublocal);
+    this.addBusStops(lat, lng, title, address, locations.sublocal, busStopNo);
   }
 
   //get nearest address from the marker lat and lng

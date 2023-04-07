@@ -86,18 +86,19 @@ export class updateBusrouteComponent implements OnInit {
     //this.markerPositions.push(new google.maps.LatLng(stop.latitude, stop.longitude))
   }
 
-  addBusStops(lat:any, lng:any, busStop:String, address: String, sublocal:String){
+  addBusStops(lat:any, lng:any, busStop:String, address: String, sublocal:String, busStopNo:Number){
     this.busStopForm=this.form.get("busStops") as FormArray;
     if(sublocal==undefined||sublocal==""){
       sublocal=address.split(/\s/)[0];
     }
-    this.busStopForm.push(this.generatorRow(Number(lat), Number(lng),busStop,address,sublocal));
+    this.busStopForm.push(this.generatorRow(Number(lat), Number(lng),busStop,address,sublocal, busStopNo));
     this.updateDepartureAndArrival();
   }
 
-  generatorRow(lat: any, lng:any, busStop: String, address:String, sublocal:String){
+  generatorRow(lat: any, lng:any, busStop: String, address:String, sublocal:String, busStopNo:Number){
     return this.fb.group({
       busStopID: "",
+      position: busStopNo,
       busRouteId:this.fb.control(this.id),
       busStop:new FormControl({
         value: busStop,
@@ -125,6 +126,7 @@ export class updateBusrouteComponent implements OnInit {
   row(stop:any){
     return this.fb.group({
       busStopID: this.fb.control(stop.busStopID),
+      position: stop.position,
       busRouteId:this.fb.control(stop.busRouteId),
       busStop:new FormControl({
         value: stop.busStop,
@@ -167,34 +169,21 @@ export class updateBusrouteComponent implements OnInit {
 
   //storing retrieved documents in busStops array
   async getBusStops(id:string){
+    console.log(id)
     this.busStopArr= await this.dataApi.getBusStopsByRoute(id);
-    this.busStopArr.sort((a: { busStop: string; }, b: { busStop: any; }) =>
-      a.busStop.localeCompare(b.busStop));
+    console.log(this.busStopArr)
+    this.busStopArr.sort((a: { position: number; }, b: { position: number; }) =>
+      a.position - b.position);
     for(var i=0; i<this.busStopArr.length; i++){
-      this.busStopArr[i].busStop="Bus Stop "+(i+1)
       this.addStops(this.busStopArr[i]);
     }
-    // await this.dataApi.getBusStopsByRoute(id).subscribe(res=>{
-    //   this.busStopArr=res.map((e:any)=>{
-    //     const data = e.payload.doc.data();
-    //     data.id = e.payload.doc.id;
-    //     return data;
-    //   })
-    //   this.busStopArr.sort((a: { busStop: string; }, b: { busStop: any; }) =>
-    //     a.busStop.localeCompare(b.busStop));
-    //   for(let busStop of this.busStopArr){
-    //     this.addStops(busStop);
-    //   }
-    // });
-    // this.center = {lat: this.busStopArr[0].latitude, lng: this.busStopArr[0].longitude};
-    // this.zoom = 15;
   }
 
 
 
   updateFormBusStop(formBusStop: FormArray<any>, index: any) {
     for(var i = index; i < formBusStop.length; i++) {
-      formBusStop.at(i).patchValue({busStop:this.markers[i].title})
+      formBusStop.at(i).patchValue({busStop:this.markers[i].title, position:i})
     }
   }
 
@@ -211,7 +200,8 @@ export class updateBusrouteComponent implements OnInit {
     var lng = event.latLng.lng();
     var locations = await this.getAddress(lat, lng);
     var address = locations.address;
-    var busStop = "Bus Stop " + (this.markers.length + 1);
+    var busStopNo:Number = this.markers.length + 1;
+    var busStop = "Bus Stop " + busStopNo;
     this.markers.push({
       position: {
         lat: lat,
@@ -227,7 +217,7 @@ export class updateBusrouteComponent implements OnInit {
         animation: google.maps.Animation.DROP,
       },
     })
-    this.addBusStops(lat, lng, busStop, address, locations.sublocal);
+    this.addBusStops(lat, lng, busStop, address, locations.sublocal, busStopNo);
   }
 
   //get nearest address from the marker lat and lng

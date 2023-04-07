@@ -32,15 +32,14 @@ export class DataService {
 
 
   addBusRoute(busRoute : any) {
-    let doc=this.afs.collection("BusRoute/").doc();
 
-    return this.afs.collection("BusRoute/").doc(doc.ref.id).set({
-      routeNo:busRoute.routeNo,
-      routeId: doc.ref.id,
-      description:busRoute.description,
-      departure:busRoute.departure,
-      arrival:busRoute.arrival
-    });
+      let doc=this.afs.collection("BusRoute/").doc();
+      this.afs.collection("BusRoute/").doc(busRoute.id).set({
+        routeNo:busRoute.routeNo,
+        description:busRoute.description,
+        departure:busRoute.departure,
+        arrival:busRoute.arrival
+      });
   }
 
   //adding each bus stop info into the selected bus route's subcollection busStoplist
@@ -51,7 +50,7 @@ export class DataService {
       let newDoc = this.afs.collection("BusStop").doc();
       let docId = newDoc.ref.id;
       busStops.at(i).busStopID=docId
-      this.afs.collection("BusStop/").doc(docId).set(busStops.at(i));
+      this.afs.collection("BusStop").doc(docId).set(busStops.at(i));
     }
   }
 
@@ -62,7 +61,7 @@ export class DataService {
   updateBusStop(busRoute:any){
     let docId:any;
     for (let busStop of busRoute.busStops){
-      docId=busStop.busStopID
+      docId=busStop.busStopID;
       if(docId==null||docId==""){
         let newDoc = this.afs.collection("BusStop").doc();
         docId = newDoc.ref.id;
