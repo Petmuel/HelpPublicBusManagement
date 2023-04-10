@@ -51,7 +51,6 @@ export class BusDriverComponent implements OnInit {
         title: 'Register Bus Driver',
         buttonName: 'Register'
       }
-
       const dialogRef = this.dialog.open(AddBusDriverComponent, dialogConfig);
       dialogRef.afterClosed().subscribe(data=>{
         if(data){
@@ -64,7 +63,6 @@ export class BusDriverComponent implements OnInit {
       if (row.id == null){
         return;
       }
-
       const dialogConfig = new MatDialogConfig();
       dialogConfig.disableClose = true;
       dialogConfig.autoFocus = true;
@@ -101,7 +99,6 @@ export class BusDriverComponent implements OnInit {
           });
         }
       })
-
     }
 
     getAllBusDrivers(){

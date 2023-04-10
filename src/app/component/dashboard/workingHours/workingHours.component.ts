@@ -313,14 +313,13 @@ export class workingHoursComponent implements OnInit {
       }
       else{
         this.isProgressBarVisible=true;
-
         if (this.fromDate && this.toDate != null){
           var collect : any[]=[];
           let dateArr:any[]=[];
           let simpleDateArr:any[]=[];
           let checkData= await this.wkHrService.getDriveRecord((this.simpleDate(this.fromDate)), this.driverId);
           let checkData2= await this.wkHrService.getDriveRecord((this.simpleDate(this.toDate)), this.driverId);
-          if(checkData.length==0||checkData2.length==0){
+          if(checkData.length==0||checkData2.length==0||checkData==null||checkData2==null){
             this.isProgressBarVisible=false;
             window.alert("Please select other week as the chosen week's data is incomplete.")
           }
@@ -353,12 +352,10 @@ export class workingHoursComponent implements OnInit {
               if(typeof date !== 'string'){
                 date = this.simpleDate(date.toDate());
               }
-
               dataCollection.driveRecordId= driveRecordId
               dataCollection.busRouteId= driveRecord[0].busRouteId
               dataCollection.date = date
               dataCollection.duration= duration
-
               collect.push(dataCollection);
               dateArr.push(this.properDateformat(this.fromDate));
               this.fromDate.setDate(this.fromDate.getDate() + 1);
@@ -395,7 +392,6 @@ export class workingHoursComponent implements OnInit {
       }
       else{
         this.isProgressBarVisible=true;
-
         if (this.selectedYear && this.monthYear != null){
           let dates: any[] = [];
           var collect : any[]=[];
@@ -426,25 +422,20 @@ export class workingHoursComponent implements OnInit {
               let driveRecord = await this.wkHrService.getDriveRecord((this.simpleDate(fromDate)), this.driverId);
               let driveRecordId = await this.wkHrService.getDriveRecordID((this.simpleDate(fromDate)), this.driverId);
               let workHour:any = await this.wkHrService.getWorkingHours(driveRecordId);
-
-
               workHour.forEach((obj: any) => {
                 if(obj.endTime.toDate().getTime() <after.getTime()&&obj.startTime.toDate().getTime() >previous.getTime()){
                   duration+=obj.driveDuration
                 }
               })
-
               var date = driveRecord[0].recordDate;
               //if date is not string
               if(typeof date !== 'string'){
                 date = this.simpleDate(date.toDate());
               }
-
               dataCollection.driveRecordId= driveRecordId
               dataCollection.busRouteId= driveRecord[0].busRouteId
               dataCollection.date = date
               dataCollection.duration= duration
-
               collect.push(dataCollection);
               dateArr.push(this.properDateformat(fromDate));
               simpleDateArr.push(this.simpleDate(fromDate));
@@ -659,133 +650,80 @@ export class workingHoursComponent implements OnInit {
   //   }
 
     async generateReport(){
-
-    if(!this.isDailyWorkingHourFatch && !this.isMonthlyWorkingHourFetch){
-      window.alert("Pleace query the informaton");
-      return;
-    }
-
-    var doc = new jsPDF();
-    var canvas;
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const padding = 10;
-
-    if(this.isDailyWorkingHourFatch){
-
-      //Title
-      doc.setFontSize(26);
-      doc.text('Weekly Working Hours Report', 10, 20);
-
-      //Quantity
-      doc.setFontSize(12);
-      doc.text('Total Working Hours', 10, 30);
-      doc.setFontSize(10);
-      doc.text('Bus Driver : ' + this.totalDuration.busDriver, 10, 35);
-      doc.text('Duration : ' + this.totalDuration.duration, 10, 40);
-
-      doc.setFontSize(12);
-      doc.text('Average Daily Working Hours', 70, 30);
-      doc.setFontSize(10);
-      doc.text('Bus Driver : ' + this.averageDaily.busDriver, 70, 35);
-      doc.text('Average : ' + this.averageDaily.duration, 70, 40);
-
-      // doc.setFontSize(12);
-      // doc.text('Daily with Most Passengers '+this.topDayPassenger.busStop, 140, 30);
-      // doc.setFontSize(10);
-      // doc.text('Date : ' + this.topDayPassenger.date + this.topDayPassenger.day, 140, 35);
-      // doc.text('Quantity : ' + this.topDayPassenger.quantity, 140, 40);
-
-
-
-      //chart
-      canvas = await html2canvas(document.querySelector("#wkHrlinechart")!);
-
-      var imgData  = canvas.toDataURL("image/jpeg");
-
-      if (canvas.width > pageWidth) {
-        const ratio = pageWidth / canvas.width;
-        canvas.height = canvas.height * ratio - padding;
-        canvas.width = canvas.width * ratio - padding;
+      if(!this.isDailyWorkingHourFatch && !this.isMonthlyWorkingHourFetch){
+        window.alert("Pleace query the informaton");
+        return;
       }
-
-      doc.setFontSize(20);
-      doc.text('Working Hours Per Day', 10, 60)
-      doc.addImage(imgData,padding,65,canvas.width, canvas.height);
-
-      //bar
-    //   canvas = await html2canvas(document.querySelector("#nopbarchart")!);
-    //   var imgData  = canvas.toDataURL("image/jpeg");
-    //   if (canvas.width > pageWidth) {
-    //     const ratio = pageWidth / canvas.width;
-    //     canvas.height = canvas.height * ratio - padding;
-    //     canvas.width = canvas.width * ratio - padding;
-    //   }
-
-    //   doc.setFontSize(20);
-    //   doc.text('Total No. Of Passengers From Each Bus Stop', 10, 170)
-    //   doc.addImage(imgData,padding,175,canvas.width, canvas.height);
-    // }
-
-    if(this.isMonthlyWorkingHourFetch){
-      //monthly
+      var doc = new jsPDF();
+      var canvas;
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const padding = 10;
       if(this.isDailyWorkingHourFatch){
-        doc.addPage();
-      }
+        //Title
+        doc.setFontSize(26);
+        doc.text('Weekly Working Hours Report', 10, 20);
 
-      //Title
-      doc.setFontSize(26);
-      doc.text('Monthly Working Hours Report', 10, 20);
+        //Quantity
+        doc.setFontSize(12);
+        doc.text('Total Working Hours', 10, 30);
+        doc.setFontSize(10);
+        doc.text('Bus Driver : ' + this.totalDuration.busDriver, 10, 35);
+        doc.text('Duration : ' + this.totalDuration.duration, 10, 40);
 
-      //Quantity
-      doc.setFontSize(12);
-      doc.text('Total Working Hours', 10, 30);
-      doc.setFontSize(10);
-      doc.text('Bus Driver : ' + this.mTotalDuration.busDriver, 10, 35);
-      doc.text('Quantity : ' + this.mTotalDuration.duration, 10, 40);
+        doc.setFontSize(12);
+        doc.text('Average Daily Working Hours', 70, 30);
+        doc.setFontSize(10);
+        doc.text('Bus Driver : ' + this.averageDaily.busDriver, 70, 35);
+        doc.text('Average : ' + this.averageDaily.duration, 70, 40);
 
-      doc.setFontSize(12);
-      doc.text('Average Daily Working Hours', 70, 30);
-      doc.setFontSize(10);
-      doc.text('Bus Driver : ' + this.mTotalDuration.busDriver, 70, 35);
-      doc.text('Averrage : ' + this.mAverageDaily.duration, 70, 40);
+        //chart
+        canvas = await html2canvas(document.querySelector("#wkHrlinechart")!);
 
-      // doc.setFontSize(12);
-      // doc.text('Day with Most Passengers '+this.mTopDayRate.busStop, 140, 30);
-      // doc.setFontSize(10);
-      // doc.text('Date : ' + this.mTopDayRate.date + this.mTopDayRate.day, 140, 35);
-      // doc.text('Quantity : ' + this.mTopDayRate.quantity, 140, 40);
+        var imgData  = canvas.toDataURL("image/jpeg");
 
-      //chart
-      canvas = await html2canvas(document.querySelector("#wkHrlinechart2")!);
-      var imgData  = canvas.toDataURL("image/jpeg");
-      if (canvas.width > pageWidth) {
+        if (canvas.width > pageWidth) {
           const ratio = pageWidth / canvas.width;
           canvas.height = canvas.height * ratio - padding;
           canvas.width = canvas.width * ratio - padding;
-      }
+        }
+        doc.setFontSize(20);
+        doc.text('Working Hours Per Day', 10, 60)
+        doc.addImage(imgData,padding,65,canvas.width, canvas.height);
+        if(this.isMonthlyWorkingHourFetch){
+          //monthly
+          if(this.isDailyWorkingHourFatch){
+            doc.addPage();
+          }
+          //Title
+          doc.setFontSize(26);
+          doc.text('Monthly Working Hours Report', 10, 20);
+          //Quantity
+          doc.setFontSize(12);
+          doc.text('Total Working Hours', 10, 30);
+          doc.setFontSize(10);
+          doc.text('Bus Driver : ' + this.mTotalDuration.busDriver, 10, 35);
+          doc.text('Quantity : ' + this.mTotalDuration.duration, 10, 40);
 
-      doc.setFontSize(20);
-      doc.text('Working Hours Per Week', 10, 60)
-      doc.addImage(imgData,padding,65,canvas.width, canvas.height);
-
-      //bar
-      // canvas = await html2canvas(document.querySelector("#nopbarchart2")!);
-      // var imgData  = canvas.toDataURL("image/jpeg");
-      // if (canvas.width > pageWidth) {
-      //   const ratio = pageWidth / canvas.width;
-      //   canvas.height = canvas.height * ratio - padding;
-      //   canvas.width = canvas.width * ratio - padding;
-      // }
-
-      // doc.setFontSize(20);
-      // doc.text('Total No. Of Passengers From Each Bus Stop', 10, 170)
-      // doc.addImage(imgData,padding,175,canvas.width, canvas.height);
-
-    }
-
-    doc.save('working_hour_report.pdf');
-  }
-}
+          doc.setFontSize(12);
+          doc.text('Average Daily Working Hours', 70, 30);
+          doc.setFontSize(10);
+          doc.text('Bus Driver : ' + this.mTotalDuration.busDriver, 70, 35);
+          doc.text('Averrage : ' + this.mAverageDaily.duration, 70, 40);
+          //chart
+          canvas = await html2canvas(document.querySelector("#wkHrlinechart2")!);
+          var imgData  = canvas.toDataURL("image/jpeg");
+          if (canvas.width > pageWidth) {
+              const ratio = pageWidth / canvas.width;
+              canvas.height = canvas.height * ratio - padding;
+              canvas.width = canvas.width * ratio - padding;
+          }
+          doc.setFontSize(20);
+          doc.text('Working Hours Per Week', 10, 60)
+          doc.addImage(imgData,padding,65,canvas.width, canvas.height);
+        }
+        doc.save('working_hour_report.pdf');
+        }
+     }
 
     //hardcoded the rating list on bus driver
   // lol(){

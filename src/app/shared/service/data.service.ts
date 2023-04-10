@@ -16,21 +16,6 @@ export class DataService {
 
   constructor(private afs: AngularFirestore, private afa: AngularFireAuth, private snackBar: MatSnackBar) {
   }
-  // private data: any;
-
-  // setData(data:any){
-  //   this.data = data;
-  // }
-
-  // getData(){
-  //     return this.data;
-  // }
-
-  // hasData(){
-  //     return this.data && this.data.length;
-  // }
-
-
   addBusRoute(busRoute : any) {
 
       let doc=this.afs.collection("BusRoute/").doc();
@@ -87,39 +72,13 @@ export class DataService {
     return this.afs.doc("BusRoute/"+id).valueChanges();
   }
 
-  // isBusRouteChange(busRoute:any){
-  //   let routeObj!: any;
-  //   return this.afs.doc("BusRoute/"+busRoute.id).valueChanges().subscribe(res=>{
-  //     routeObj=res;
-  //     console.log('retreived route: ',routeObj.routeNo);
-  //     console.log('input: ',busRoute.routeNo);
-  //     if (routeObj.routeNo== busRoute.routeNo||
-  //       routeObj.description== busRoute.description||
-  //       routeObj.destination== busRoute.destination||
-  //       routeObj.arrival== busRoute.arrival){
-  //         console.log('True very');
-  //       }
-  //   })
-  // }
-
   getBusStopById(id:string){
     return new Promise<any>((resolve)=> {
       this.afs.collection('BusStop/').doc(id).valueChanges().subscribe(busStop => resolve(busStop));
     })
   }
 
-
-  // stops !:FormArray<any>;
-  //retrieving documents from bus stop sub-collection in firebase
   getBusStopsByRoute(id:string){
-    // let stops = this.afs.doc("BusRoute/"+id).collection('busStopList/').get();
-    // let stops: any;
-
-    // constthis.afs.doc("BusRoute/"+id).collection('busStopList/').get().forEach(stopID=>{
-    //   stopID.forEach(busStop=>{
-    //     console.log(busStop.ref.collection)
-    //   })
-    // })
     return new Promise<any>((resolve)=> {
       this.afs.collection('BusStop', ref => ref.where('busRouteId', '==', id)).valueChanges().subscribe(busStops => resolve(busStops));
     })
@@ -148,7 +107,6 @@ export class DataService {
 
   //bus driver
   addBusDriver(busDriver : any) {
-
     this.afa.fetchSignInMethodsForEmail(busDriver.email)
     .then((result)=> {
        if(result.length > 0){
@@ -170,8 +128,6 @@ export class DataService {
   }
 
   updateBusDriverAuth(busDriver : any, row: any){
-    console.log(row.email)
-    console.log(busDriver.email)
     this.afa.signInWithEmailAndPassword(row.email, row.password).then(credential=>{
       if(credential.user){
         credential.user.updateEmail(busDriver.email)
@@ -232,10 +188,6 @@ export class DataService {
   //testing
   getRate(date:any, driver:any){
     var c = this.afs.collection("Rating");
-    // return c.doc('9-2-2023').collection("RatingList").doc('rate1').get();
-//     return new Promise<any>((resolve)=> {
-//       c.doc('9-2-2023').collection("hfRK37clJ8MEc0sPgyW01YyptVg2").doc('rate1').valueChanges({ ratingId: 'rate1' }).subscribe(users => resolve(users));
-//     })
     return new Promise<any>((resolve)=> {
       c.doc(date).collection(driver).valueChanges({ idField: 'id' }).subscribe(users => resolve(users));
     })
@@ -250,29 +202,8 @@ export class DataService {
   }
 
   queryRate(fromDate: any, driverId: any){
-    //let rate: any[] = [];
-
     return this.afs.collection("Rating").doc(fromDate).collection(driverId).snapshotChanges();
-    // return c.doc('9-2-2023').collection("RatingList").doc('rate1').get();
-    // if (fromDate && toDate != null){
-    //   let dates: any[] = [];
-    //   while(fromDate <= toDate){
-    // //     return new Promise<any>((resolve)=> {
-    // //       rate.push(rating.doc(fromDate).collection(driverId).doc('rate1').valueChanges({ ratingId: 'rate1' }).subscribe(users => resolve(users)));
-    // //     })
-    //     var simpleFromDate = this.simpleDate(fromDate);
-    //     rate.push(rating.doc(simpleFromDate).collection(driverId).snapshotChanges)
-    //     dates = [...dates, new Date(fromDate)];
-    //     fromDate.setDate(fromDate.getDate() + 1);
-    //   }
-    // }
   }
-
-//   getDrivers(){
-//     return new Promise<any>((resolve)=> {
-//       this.afs.collection('BusDriver/').valueChanges().subscribe(users => resolve(users));
-//     })
-//   }
 
   openSnackBar(message: string, action: string) {
       this.snackBar.open(message, action);

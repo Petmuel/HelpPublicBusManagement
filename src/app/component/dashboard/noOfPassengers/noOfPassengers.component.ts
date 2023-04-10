@@ -449,7 +449,6 @@ export class noOfPassengersComponent implements OnInit {
     //replace to monthly line chart
     if(periodic=="month"){
       selectedLine=this.nopline2;
-
       for(var i=0;i<allNops.length;i++) {
         let dataset:any = {
           label: '',
@@ -472,10 +471,8 @@ export class noOfPassengersComponent implements OnInit {
                 break;
             }
           }
-
         }
         dataset.data = allWeeksNops;
-
         dataset.label= allNops[i][0][0].busStop
         dataset.color= this.getRandomColor();
         lineDataSets.push(dataset)
@@ -487,7 +484,6 @@ export class noOfPassengersComponent implements OnInit {
       selectedLine.data.labels=weekLabel;
     }
     else{
-
       for(var i=0;i<allNops.length;i++) {
         let dataset:any = {
           label: '',
@@ -651,7 +647,7 @@ export class noOfPassengersComponent implements OnInit {
         //if day has already reached to the end of week
         if(day==week){
           weeklyNops.push(countingNops);
-          countingNops=[];  //week1=[day1,day2,dy3,dy4,dy5,dy6,dy7], week2=[],
+          countingNops=[];
           week+=7
         }
 
@@ -679,47 +675,6 @@ export class noOfPassengersComponent implements OnInit {
     console.log(monthEachStarRate)
     this.isMonthlyNoOfPassengerFetch = true;
     this.updateLineChart(monthEachStarRate, dateArr, "month", unique);
-
-    // let week=7;
-    // let monthEachStarRate:any[]=[];
-    // for(var v=1; v<6; v++){
-    //   let weeklyRatings:any[]=[];
-    //   let countingRates:any[]=[];
-    //   for(var day=0; day<rateList.length; day++){
-    //     let ratingPerDay={
-    //       quantity:0,
-    //       level:"",
-    //       date:""
-    //     }
-    //     //if day has already reached to the end of week
-    //     if(day==week){
-    //       weeklyRatings.push(countingRates);
-    //       countingRates=[];  //week1=[day1,day2,dy3,dy4,dy5,dy6,dy7], week2=[],
-    //       week+=7
-    //     }
-
-    //     //each rate object from the same day
-    //     for(var obj of rateList[day]){
-    //       //if the rate is same as the selected rate level
-    //       if(obj.ratingLevel==v){
-    //         ratingPerDay.quantity++
-    //       }
-    //     }
-    //     ratingPerDay.date=rateList[day][0].ratingDate;
-    //     ratingPerDay.level= v+" Star";
-    //     //push the total same rate quantity from the same day into the week arr
-    //     countingRates.push(ratingPerDay); //week1:day1.quantity, day2.quantity
-
-    //     if(rateList.length-day==1){
-    //       weeklyRatings.push(countingRates);
-    //       countingRates=[];
-    //       week=7;
-    //     }
-    //   }
-    //   monthEachStarRate.push(weeklyRatings); //1 Star=[wk1[],wk2[],wk3[],wk4[],wk5[]]
-    // }
-    // this.updateLineChart(monthEachStarRate, dateArr, "month");
-
   }
 
   async countPerDay(nopList:any, dateArr:any, unique:any){
@@ -896,23 +851,18 @@ export class noOfPassengersComponent implements OnInit {
 
 
   async genrateReport(){
-
     if(!this.isDailyNoOfPassengerFatch && !this.isMonthlyNoOfPassengerFetch){
       window.alert("Pleace query the informaton");
       return;
     }
-
     var doc = new jsPDF();
     var canvas;
     const pageWidth = doc.internal.pageSize.getWidth();
     const padding = 10;
-
     if(this.isDailyNoOfPassengerFatch){
-
       //Title
       doc.setFontSize(26);
       doc.text('Weekly Number of Passengers Report', 10, 20);
-
       //Quantity
       doc.setFontSize(12);
       doc.text('Highest Passenger Quantity', 10, 30);
@@ -931,14 +881,9 @@ export class noOfPassengersComponent implements OnInit {
       doc.setFontSize(10);
       doc.text('Date : ' + this.topDayPassenger.date + this.topDayPassenger.day, 140, 35);
       doc.text('Quantity : ' + this.topDayPassenger.quantity, 140, 40);
-
-
-
       //chart
       canvas = await html2canvas(document.querySelector("#noplinechart")!);
-
       var imgData  = canvas.toDataURL("image/jpeg");
-
       if (canvas.width > pageWidth) {
         const ratio = pageWidth / canvas.width;
         canvas.height = canvas.height * ratio - padding;
@@ -948,7 +893,6 @@ export class noOfPassengersComponent implements OnInit {
       doc.setFontSize(20);
       doc.text('No. Of Passengers From Each Bus Stop Per Day', 10, 60)
       doc.addImage(imgData,padding,65,canvas.width, canvas.height);
-
       //bar
       canvas = await html2canvas(document.querySelector("#nopbarchart")!);
       var imgData  = canvas.toDataURL("image/jpeg");
@@ -957,7 +901,6 @@ export class noOfPassengersComponent implements OnInit {
         canvas.height = canvas.height * ratio - padding;
         canvas.width = canvas.width * ratio - padding;
       }
-
       doc.setFontSize(20);
       doc.text('Total No. Of Passengers From Each Bus Stop', 10, 170)
       doc.addImage(imgData,padding,175,canvas.width, canvas.height);
@@ -968,11 +911,9 @@ export class noOfPassengersComponent implements OnInit {
       if(this.isDailyNoOfPassengerFatch){
         doc.addPage();
       }
-
       //Title
       doc.setFontSize(26);
       doc.text('Monthly Bus Driver Rating Report', 10, 20);
-
       //Quantity
       doc.setFontSize(12);
       doc.text('Highest Passenger Quantity', 10, 30);
@@ -991,7 +932,6 @@ export class noOfPassengersComponent implements OnInit {
       doc.setFontSize(10);
       doc.text('Date : ' + this.mTopDayRate.date + this.mTopDayRate.day, 140, 35);
       doc.text('Quantity : ' + this.mTopDayRate.quantity, 140, 40);
-
       //chart
       canvas = await html2canvas(document.querySelector("#noplinechart2")!);
       var imgData  = canvas.toDataURL("image/jpeg");
@@ -1000,7 +940,6 @@ export class noOfPassengersComponent implements OnInit {
           canvas.height = canvas.height * ratio - padding;
           canvas.width = canvas.width * ratio - padding;
       }
-
       doc.setFontSize(20);
       doc.text('No. Of Passengers From Each Bus Stop Per Week', 10, 60)
       doc.addImage(imgData,padding,65,canvas.width, canvas.height);
@@ -1013,13 +952,10 @@ export class noOfPassengersComponent implements OnInit {
         canvas.height = canvas.height * ratio - padding;
         canvas.width = canvas.width * ratio - padding;
       }
-
       doc.setFontSize(20);
       doc.text('Total No. Of Passengers From Each Bus Stop', 10, 170)
       doc.addImage(imgData,padding,175,canvas.width, canvas.height);
-
     }
-
     doc.save('number_of_passenger_report.pdf');
   }
     //hardcoded the rating list on bus driver

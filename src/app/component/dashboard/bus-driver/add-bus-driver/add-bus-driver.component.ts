@@ -34,7 +34,6 @@ export class AddBusDriverComponent implements OnInit {
       this.driverNo = data.driverNo;
       this.phoneNo = data.phoneNo;
       this.buttonName = data.buttonName;
-
     }
 
   ngOnInit(): void {
@@ -45,8 +44,8 @@ export class AddBusDriverComponent implements OnInit {
       password: [this.password, [Validators.required, Validators.minLength(6)]],
       driverNo: [this.driverNo, [Validators.required]],
       phoneNo:[this.phoneNo, [Validators.required]],
-      cLong:[''],
-      cLat:[''],
+      cLong:0,
+      cLat:0,
       status:['']
     })
   }

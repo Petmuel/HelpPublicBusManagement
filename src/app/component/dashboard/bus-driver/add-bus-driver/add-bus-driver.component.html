@@ -1,7 +1,6 @@
 <h2 class="text-center" mat-dialog-tile>{{title}}</h2>
 <mat-dialog-content [formGroup]="busDriverRegister">
     <div class="text-center">
-
         <mat-form-field appearance="fill">
           <mat-label>Email</mat-label>
           <input matInput
@@ -50,7 +49,6 @@
           <mat-error *ngIf="busDriverRegister.get('phoneNo')?.invalid || busDriverRegister.get('phoneNo')?.dirty || busDriverRegister.get('phoneNo')?.touched">Please enter a valid phone number</mat-error>
         </mat-form-field>
     </div>
-
     <div mat-dialog-actions>
       <button mat-raised-button mat-dialog-close (click)="cancelRegistration()">Cancel</button>
       <button mat-raised-button  color="primary" mat-dialog-close cdkFocusInitial (click)="registerBusDriver()" [disabled]="busDriverRegister.invalid">{{buttonName}}</button>

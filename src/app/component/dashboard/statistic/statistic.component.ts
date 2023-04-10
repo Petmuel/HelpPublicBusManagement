@@ -400,7 +400,6 @@ export class StatisticComponent implements OnInit {
 
   updateLineChart(allRatings:any, dateArr:any, periodic: string){
     let weekLabel=[];
-
     //weekly line chart as default
     var selectedLine = this.line;
     //replace to monthly line chart
@@ -423,7 +422,6 @@ export class StatisticComponent implements OnInit {
                 break;
             }
           }
-
         }
         selectedLine.data.datasets[i].data=allWeeksRating;
       }
@@ -793,23 +791,18 @@ export class StatisticComponent implements OnInit {
   }
 
   async genrateReport(){
-
     if(!this.isDailyRatingsFatch && !this.isMonthlyRatingsFetch){
       window.alert("Pleace query the informaton");
       return;
     }
-
     var doc = new jsPDF();
     var canvas;
     const pageWidth = doc.internal.pageSize.getWidth();
     const padding = 10;
-
     if(this.isDailyRatingsFatch){
-
       //Title
       doc.setFontSize(26);
       doc.text('Weekly Bus Driver Rating Report', 10, 20);
-
       //Quantity
       doc.setFontSize(12);
       doc.text('Highest Rating Quantity', 10, 30);
@@ -828,12 +821,8 @@ export class StatisticComponent implements OnInit {
       doc.setFontSize(10);
       doc.text('Date : ' + this.topDayRate.date + this.topDayRate.day, 140, 35);
       doc.text('Quantity : ' + this.topDayRate.quantity, 140, 40);
-
-
-
       //chart
       canvas = await html2canvas(document.querySelector("#linechart")!);
-
       var imgData  = canvas.toDataURL("image/jpeg");
 
       if (canvas.width > pageWidth) {
@@ -841,11 +830,9 @@ export class StatisticComponent implements OnInit {
         canvas.height = canvas.height * ratio - padding;
         canvas.width = canvas.width * ratio - padding;
       }
-
       doc.setFontSize(20);
       doc.text('Number of Ratings Per Day', 10, 60)
       doc.addImage(imgData,padding,65,canvas.width, canvas.height);
-
       //bar
       canvas = await html2canvas(document.querySelector("#barchart")!);
       var imgData  = canvas.toDataURL("image/jpeg");
@@ -854,18 +841,15 @@ export class StatisticComponent implements OnInit {
         canvas.height = canvas.height * ratio - padding;
         canvas.width = canvas.width * ratio - padding;
       }
-
       doc.setFontSize(20);
       doc.text('Number of Each Ratings', 10, 170)
       doc.addImage(imgData,padding,175,canvas.width, canvas.height);
     }
-
     if(this.isMonthlyRatingsFetch){
       //monthly
       if(this.isDailyRatingsFatch){
         doc.addPage();
       }
-
       //Title
       doc.setFontSize(26);
       doc.text('Monthly Bus Driver Rating Report', 10, 20);
@@ -888,7 +872,6 @@ export class StatisticComponent implements OnInit {
       doc.setFontSize(10);
       doc.text('Date : ' + this.mTopDayRate.date + this.mTopDayRate.day, 140, 35);
       doc.text('Quantity : ' + this.mTopDayRate.quantity, 140, 40);
-
       //chart
       canvas = await html2canvas(document.querySelector("#linechart2")!);
       var imgData  = canvas.toDataURL("image/jpeg");
@@ -897,11 +880,9 @@ export class StatisticComponent implements OnInit {
           canvas.height = canvas.height * ratio - padding;
           canvas.width = canvas.width * ratio - padding;
       }
-
       doc.setFontSize(20);
       doc.text('Number of Ratings Per Week', 10, 60)
       doc.addImage(imgData,padding,65,canvas.width, canvas.height);
-
       //bar
       canvas = await html2canvas(document.querySelector("#barchart2")!);
       var imgData  = canvas.toDataURL("image/jpeg");
@@ -910,13 +891,10 @@ export class StatisticComponent implements OnInit {
         canvas.height = canvas.height * ratio - padding;
         canvas.width = canvas.width * ratio - padding;
       }
-
       doc.setFontSize(20);
       doc.text('Number of Each Ratings', 10, 170)
       doc.addImage(imgData,padding,175,canvas.width, canvas.height);
-
     }
-
     doc.save('bus_driver_rating_report.pdf');
   }
 

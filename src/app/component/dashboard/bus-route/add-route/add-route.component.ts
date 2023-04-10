@@ -190,7 +190,6 @@ export class AddRouteComponent implements OnInit{
     .then(data => {
       address = data.results[0].formatted_address
       locations = data.results[0].address_components;
-      // sublocal=locations.find((x:{long_name: any; types: string | string[];})=> x.types==="sublocality_level_1").long_name;
 
       locations.forEach((a: {long_name: any; types: string | string[];}) => {
         if (a.types.includes("sublocality_level_1")) {

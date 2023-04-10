@@ -182,7 +182,7 @@ export class updateBusrouteComponent implements OnInit {
 
 
   updateFormBusStop(formBusStop: FormArray<any>, index: any) {
-    for(var i = index; i < formBusStop.length; i++) {
+    for(var i = index; i < formBusStop.length; i++) { 
       formBusStop.at(i).patchValue({busStop:this.markers[i].title, position:i})
     }
   }
